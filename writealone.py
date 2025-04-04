@@ -192,19 +192,115 @@ def piano2():
     save(v3 * 0.2, "writealone", "piano_3")
 
 
+def plucks(save = False):
+    n1 = Pluck(3, WHOLE)
 
+
+    #   (V1) Verse 1 ---------------------------------
+    m1 = build_measure(n1.q_a,
+                       n1.q_a,
+                       n1.q_a,
+                       n1.q_a,
+                       n1.q_a,
+                       n1.q_a,
+                       n1.q_a,
+                       n1.q_a,)
+    m1 = fade_out(m1, 12)
+
+
+    m2 = build_measure(n1.q_g,
+                       n1.q_g,
+                       n1.q_g,
+                       n1.q_g)
+    m2 = fade_out(m2, 12)
+
+    m3 = build_measure(n1.e_a, n1.e_a, 
+                       n1.e_a, rest(EIGHTH),
+                       n1.e_a, n1.e_a, n1.e_a, 
+                       rest(EIGHTH))
+   #m3 = fade_out(n1.w_a, 16)
+    m4 = n1.w_g
+
+
+
+    #   (V2) Verse 2 ---------------------------------
+    m5 = build_measure(n1.e_g, rest(EIGHTH),
+                       n1.e_g, rest(EIGHTH), 
+                       n1.e_a, rest(EIGHTH), 
+                       n1.e_g, n1.e_a,
+                       )
+    
+    m6 = build_measure(rest(EIGHTH), n1.e_g,
+                       n1.e_a, rest(EIGHTH),
+                       n1.e_a, # 2.5
+                       n1.q_g, # 3.5
+                       rest(EIGHTH),
+                       )
+
+    m7 = build_measure(n1.s_g, n1.s_g, n1.e_g,
+                       n1.e_g, rest(EIGHTH),
+                       n1.e_a, rest(EIGHTH),
+                       n1.e_g, n1.e_fs,
+                       )
+    
+    m8 = build_measure(rest(EIGHTH), n1.e_g,
+                       n1.e_fs, rest(EIGHTH),
+                       n1.e_e, rest(EIGHTH), 
+                       n1.e_fs, rest(EIGHTH)
+                       )
+
+    m9 = build_measure(n1.q_b, 
+                       n1.e_g, rest(EIGHTH),
+                       n1.e_g, n1.e_fs, # 3
+                       n1.e_g, # 3.5 
+                       )
+    
+    m10 = build_measure(n1.q_b, # 1
+                       n1.e_g, rest(EIGHTH), # 2
+                       n1.e_g, # 2.5
+                       rest(QUARTER), # 3.5
+                       n1.e_g, n1.e_g, # 4.5 as desired, par the lacking eigth note in m5
+    )
+    
+    m11 = build_measure(n1.e_g, rest(EIGHTH), # 1
+                       n1.e_g, n1.e_a, # 2
+                       rest(EIGHTH), n1.e_g, # 3
+                       rest(EIGHTH), n1.e_fs, # 4
+    )
+
+    m12 = build_measure(rest(EIGHTH), n1.e_g,
+                       n1.e_fs, rest(EIGHTH),
+                       n1.e_fs, n1.e_e,
+                       n1.e_a, rest(EIGHTH))
+    
+    #   Combine and return
+    v1 = build_measure(m1, m2, m2,
+                       m3, m3, m2, m2) * 0.2
+    
+    v2 = build_measure(m5, m6, m7, m8,
+                       m9, m10, m11, m12) * 0.2
+    if not save:
+        return v1, v2
+    
 def xylos(save = False):
     """Piano melody incorporating XyloTech"""
     
     #   Define our notes
     n6 = XyloTech(7, WHOLE)
-    n5 = XyloTech(6, WHOLE)
+    n5 = XyloTech(7, get_measure(160), "2")
 
     fade_factor = 0.75
 
 
     #   Create each 4-beat measure
 
+    ##  (I1) High xylos at the intro
+    i1 = build_measure(n5.e_g, rest(EIGHTH),
+                       n5.e_g, rest(EIGHTH),
+                       rest(EIGHTH), n5.e_g,
+                       rest(EIGHTH), n5.e_f)
+
+    i1 = build_measure(rest(WHOLE))
 
     ##  (V1) Top Half ver 1 ---------------------------------------------
     m1 = build_measure(n6.e_g, rest(EIGHTH),
@@ -356,7 +452,7 @@ def xylos(save = False):
     final3 = build_measure(m17, m18, m19, m20,
                            m5, m6, m7, m8) * 0.1
     if not save:
-        return final, final2, final3
+        return i1, final, final2, final3
     
     save(final, "writealone", "piano")
 
@@ -483,15 +579,22 @@ def produce():
     d, d1, d2 = drums()
 
     #   (2) The Xylos: 32 beats
-    x1, x2, x3 = xylos()
+    xi, x1, x2, x3 = xylos()
 
     #   (3) The Plucks: 32 beats
-    #p1 = plucks()
+    p1, p2 = plucks()
     
     #   Combine each verse
+    d = combine(d, xi)
+
     v1 = combine(d2, x2) # jiggier
+
     v2 = combine(d2, x1) # also add plucks; snappier
+    v2 = combine(v2, p1)
+
     v3 = combine(d2, x2) # jiggier v1 but with plucks
+    v3 = combine(v3, p2)
+
     v4 = combine(d2, x3) # jiggier with less repetitive top half
 
     #   Build the final production

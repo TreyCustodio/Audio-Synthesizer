@@ -142,8 +142,11 @@ class Xylo(Instrument):
         super().__init__(octave, measure, xylo)
 
 class XyloTech(Instrument):
-    def __init__(self, octave, measure):
-        super().__init__(octave, measure, xylotech)
+    def __init__(self, octave, measure, type=""):
+        if type == "2":
+            super().__init__(octave, measure, xylotech2)
+        else:
+            super().__init__(octave, measure, xylotech)
         
 class Bass(Instrument):
     def __init__(self, octave, measure):

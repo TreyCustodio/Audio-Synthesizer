@@ -717,6 +717,23 @@ def xylotech(frequency, duration):
     base = envelope(base, a, d, s, r)
     return fade_out(base, 2)
 
+def xylotech2(frequency, duration):
+    volume_reduction = 0.4
+
+    base = sine_wave(frequency, duration)
+    a = sine_wave(frequency * 3, duration) #* (volume_reduction / 2)
+    b = sine_wave(frequency / 2, duration) #* (volume_reduction)
+
+    base += (a + b)
+
+    a = 0.001 * duration
+    d = 0.2 * duration
+    s = 1.0
+    r = 0.3 * duration
+
+    base = envelope(base, a, d, s, r)
+    return fade_out(base, 2)
+
 def snare(frequency = 140, duration = 0.17):
     """Generate a snare sound, following the percussion framework
     Larger decrements create more of a bass effect"""
