@@ -35,25 +35,19 @@ WHOLE = NOTE * 4
 def bass():
     n = Bass(2, WHOLE)
 
-    m1 = build_measure(n.q_f, 
-                       rest(TREY - EIGHTH))
-
-    m2 = build_measure(n.e_d, n.e_d, 
-                       n.q_c, 
-                       rest(HALF + EIGHTH))
-
-    m3 =build_measure(n.e_d, n.e_d, 
-                       n.q_c, 
-                       rest(HALF), n.e_e)
+    m1 = build_measure(n.q_e, 
+                       rest(EIGHTH), n.e_e,
+                       n.e_e, rest(EIGHTH),
+                       n.e_e, n.e_e,)
     
-    final = build_measure(m1, m3,
-                          m1, m2,
-                          m1, m3,
-                          m1, m3
-                          
-                          ) * 0.4
-    save(final, "writealone", "bass")
-
+    m2 = build_measure(n.e_e, rest(EIGHTH),
+                       n.e_e, n.q_e, # 2.5
+                       rest(EIGHTH), n.e_e, n.e_e)
+    
+    v1 = build_measure(m1, m2, m1, m2,
+                       m1, m2, m1, m2) * 0.4
+    
+    return v1
 
 def piano2():
     #   Define our notes
@@ -273,14 +267,20 @@ def plucks(save = False):
                        n1.e_fs, n1.e_e,
                        n1.e_a, rest(EIGHTH))
     
+
+
+
     #   Combine and return
     v1 = build_measure(m1, m2, m2,
                        m3, m3, m2, m2) * 0.2
     
     v2 = build_measure(m5, m6, m7, m8,
                        m9, m10, m11, m12) * 0.2
+    
+    v3 = build_measure(rest(WHOLE * 4),
+                       m9, m10, m11, m12) * 0.2
     if not save:
-        return v1, v2
+        return v1, v2, v3
     
 def xylos(save = False):
     """Piano melody incorporating XyloTech"""
@@ -582,26 +582,34 @@ def produce():
     xi, x1, x2, x3 = xylos()
 
     #   (3) The Plucks: 32 beats
-    p1, p2 = plucks()
+    p1, p2, p3 = plucks()
     
+    #   (4) The Bass Thuds: 32 beats
+    b1 = bass()
+
     #   Combine each verse
-    d = combine(d, xi)
+    #d2 = combine(d2, b1)
 
-    v1 = combine(d2, x2) # jiggier
+    d = combine(d, xi) # intro
 
-    v2 = combine(d2, x1) # also add plucks; snappier
-    v2 = combine(v2, p1)
+    v1 = combine(d2, x2) # jiggy xylos
 
-    v3 = combine(d2, x2) # jiggier v1 but with plucks
-    v3 = combine(v3, p2)
+    v2 = combine(d2, x1) # snappy xylos
+    v2 = combine(v2, p1) # plunks longer, dont match xylos
 
-    v4 = combine(d2, x3) # jiggier with less repetitive top half
+    v3 = combine(d2, x2) # jiggier xylos
+    v3 = combine(v3, p2) # plucks match xylos
+
+    v4 = combine(d2, x3) # jiggy top half
+    v4 = combine(v4, p3) # Pause plucks until 2nd half
+    
+    v5 = combine(v4, p3)
 
     #   Build the final production
     production = build_measure(d, d1, # Intro (Drums only)
                                v1, v2,
                                v3, v2, v4, v2,
-                               v2, v2, v3, v2)
+                               v3, v2, v3, v2)
 
     save(production, "writealone", "production")
 
