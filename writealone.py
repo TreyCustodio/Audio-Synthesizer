@@ -204,6 +204,9 @@ def xylos(save = False):
 
 
     #   Create each 4-beat measure
+
+
+    ##  (V1) Top Half ver 1 ---------------------------------------------
     m1 = build_measure(n6.e_g, rest(EIGHTH),
                        n6.e_g, rest(EIGHTH), 
                        n6.e_a, rest(EIGHTH), 
@@ -229,17 +232,131 @@ def xylos(save = False):
                        n6.e_fs, rest(EIGHTH)
                        )
     
-    m5 = None
-    m6 = None
-    m7 = None
-    m8 = None
+
+    ##  (V1) Bottom Half ver 1
+    m5 = build_measure(n6.q_b, 
+                       n6.e_g, rest(EIGHTH),
+                       n6.e_g, rest(EIGHTH), # 3
+                       n6.e_g, # 3.5 
+                       )
     
-    #   Combine measures into 32-beat verses
+    m6 = build_measure(n6.q_b, # 1
+                       n6.e_g, rest(EIGHTH), # 2
+                       n6.e_g, # 2.5
+                       rest(QUARTER), # 3.5
+                       n6.e_g, n6.e_g, # 4.5 as desired, par the lacking eigth note in m5
+    )
+    
+    m7 = build_measure(n6.e_g, rest(EIGHTH), # 1
+                       n6.e_g, n6.e_a, # 2
+                       rest(EIGHTH), n6.e_g, # 3
+                       rest(EIGHTH), n6.e_fs, # 4
+    )
+
+    m8 = build_measure(rest(EIGHTH), n6.e_g,
+                       n6.e_fs, rest(EIGHTH),
+                       n6.s_fs, n6.s_e, n6.e_e,
+                       n6.q_a,)
+
+
+
+
+    ##  (V2) Top Half ver 2 ---------------------------------------------
+    m9 = build_measure(n6.e_g, rest(EIGHTH),
+                       n6.e_g, rest(EIGHTH), 
+                       n6.e_a, rest(EIGHTH), 
+                       n6.e_g, n6.e_a,
+                       )
+    
+    m10 = build_measure(rest(EIGHTH), n6.e_g,
+                       n6.e_a, rest(EIGHTH),
+                       n6.e_a, # 2.5
+                       n6.q_g, # 3.5
+                       rest(EIGHTH),
+                       )
+
+    m11 = build_measure(n6.s_g, n6.s_g, n6.e_g,
+                       n6.e_g, rest(EIGHTH),
+                       n6.e_a, rest(EIGHTH),
+                       n6.e_g, n6.e_fs,
+                       )
+    
+    m12 = build_measure(rest(EIGHTH), n6.e_g,
+                       n6.e_fs, rest(EIGHTH),
+                       n6.e_e, rest(EIGHTH), 
+                       n6.e_fs, rest(EIGHTH)
+                       )
+    
+    ##  (V2) Bottom Half ver 2
+    m13 = build_measure(n6.q_b, 
+                       n6.e_g, rest(EIGHTH),
+                       n6.e_g, n6.e_fs, # 3
+                       n6.e_g, # 3.5 
+                       )
+    
+    m14 = build_measure(n6.q_b, # 1
+                       n6.e_g, rest(EIGHTH), # 2
+                       n6.e_g, # 2.5
+                       rest(QUARTER), # 3.5
+                       n6.e_g, n6.e_g, # 4.5 as desired, par the lacking eigth note in m5
+    )
+    
+    m15 = build_measure(n6.e_g, rest(EIGHTH), # 1
+                       n6.e_g, n6.e_a, # 2
+                       rest(EIGHTH), n6.e_g, # 3
+                       rest(EIGHTH), n6.e_fs, # 4
+    )
+
+    m16 = build_measure(rest(EIGHTH), n6.e_g,
+                       n6.e_fs, rest(EIGHTH),
+                       n6.e_fs, n6.e_e,
+                       n6.e_a, rest(EIGHTH))
+    
+
+
+    ##  (V3) Top Half ver 3 ---------------------------------------------
+    ## Make the first measure less repetitive
+    m17 = build_measure(n6.e_a, n6.e_g, #rest(EIGHTH),
+                       n6.e_g, rest(EIGHTH), 
+                       n6.e_a, rest(EIGHTH), 
+                       n6.e_g, n6.e_a,
+                       )
+    
+    m18 = build_measure(rest(EIGHTH), n6.e_g,
+                       n6.e_a, n6.e_g, #rest(EIGHTH),
+                       n6.e_a, # 2.5
+                       n6.q_g, # 3.5
+                       rest(EIGHTH),
+                       )
+
+    m19 = build_measure(n6.s_g, n6.s_g, n6.e_g,
+                       n6.e_g, rest(EIGHTH),
+                       n6.e_a, rest(EIGHTH),
+                       n6.e_g, n6.e_fs,
+                       )
+    
+    m20 = build_measure(rest(EIGHTH), n6.e_g,
+                       n6.e_fs, rest(EIGHTH),
+                       n6.e_e, rest(EIGHTH), 
+                       n6.e_fs, rest(EIGHTH)
+                       )
+    
+
+    ##  (V3) Bottom Half ver 3
+
+
+
+    #   (FINAL) Combine measures into 32-beat verses
     final = build_measure(m1, m2, m3, m4,
-                          m1, m2, m3, m4,) * 0.1
+                          m5, m6, m7, m8) * 0.1
     
+    final2 = build_measure(m9, m10, m11, m12,
+                           m13, m14, m15, m16) * 0.1
+    
+    final3 = build_measure(m17, m18, m19, m20,
+                           m5, m6, m7, m8) * 0.1
     if not save:
-        return final
+        return final, final2, final3
     
     save(final, "writealone", "piano")
 
@@ -366,16 +483,22 @@ def produce():
     d, d1, d2 = drums()
 
     #   (2) The Xylos: 32 beats
-    x1 = xylos()
+    x1, x2, x3 = xylos()
 
     #   (3) The Plucks: 32 beats
-    p1 = plucks()
+    #p1 = plucks()
     
     #   Combine each verse
-    d2 = combine(d2, x1)
+    v1 = combine(d2, x2) # jiggier
+    v2 = combine(d2, x1) # also add plucks; snappier
+    v3 = combine(d2, x2) # jiggier v1 but with plucks
+    v4 = combine(d2, x3) # jiggier with less repetitive top half
 
     #   Build the final production
-    production = build_measure(d, d1, d2)
+    production = build_measure(d, d1, # Intro (Drums only)
+                               v1, v2,
+                               v3, v2, v4, v2,
+                               v2, v2, v3, v2)
 
     save(production, "writealone", "production")
 
