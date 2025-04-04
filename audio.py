@@ -127,6 +127,9 @@ C8 = 4186.0090
 def get_measure(bpm):
     return (1 / (bpm / 60)) * 4
 
+def get_eighth(bpm):
+    return (1 / (bpm / 60)) / 2
+
 def ensure_1(number):
     """Ensures that an integer or float is at least 1"""
     if number < 1:
@@ -154,7 +157,6 @@ def combine(wave1, wave2):
     else:
         end = len(wave2) - 1
         num_zeros = end - (len(wave1) - 1)
-        print("difference", num_zeros)
         zeros = [0 for i in range(num_zeros)]
         wave1 = np.append(wave1, zeros)
 
@@ -369,8 +371,6 @@ def create_triple(wave, wait_time = 0.0):
 def shift_note(frequency, delta: int):
     """Shift tone based on 12-TET"""
     final = frequency * (2**(delta/12))
-    # print("original", frequency)
-    # print("final", final)
     return final
 
 def scale_amplitude(wav):
@@ -707,10 +707,6 @@ def xylotech(frequency, duration):
     a = sine_wave(frequency * 3, duration) #* (volume_reduction / 2)
     b = sine_wave(frequency / 4, duration) #* (volume_reduction)
 
-    print(base.dtype)
-    print(a.dtype)
-    print(b.dtype)
-
     base += (a + b)
 
     a = 0.001 * duration
@@ -719,7 +715,7 @@ def xylotech(frequency, duration):
     r = 0.3 * duration
 
     base = envelope(base, a, d, s, r)
-    return base
+    return fade_out(base, 2)
 
 def snare(frequency = 140, duration = 0.17):
     """Generate a snare sound, following the percussion framework
