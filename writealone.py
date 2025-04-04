@@ -19,7 +19,7 @@ import wave
 
 
 #   Set the tempo
-BPM = 180 # 180 or 160
+BPM = 160 # 180 or 160
 BPS = BPM / 60
 NOTE = 1 / BPS
 
@@ -351,68 +351,40 @@ def piano():
     save(final, "writealone", "piano")
     #save(n6.q_c + n5.q_a, "writealone", "piano")
 
-def drums_intro():
-    #   (1) Notes
-    n = Snare(2, WHOLE)
-    c = Skirt(3, WHOLE)
-    s = Skirt(4, WHOLE)
-
-    #   (2) Intro
-    m1 = build_measure(n.q_e, # 1
-                       rest(EIGHTH), # 1.5
-                       n.e_e, c.q_e, # 3
-                       rest(EIGHTH), # 3.5
-                       n.e_e, n.e_e, n.e_e, # 5
-                       rest(EIGHTH), # 5.5
-                       n.e_e, c.q_e, # 7
-                       rest(EIGHTH), n.e_e # 8
-                       )
-    
-    m2 = build_measure(s.q_c, # 1
-                       s.q_c, # 2
-                       s.q_c, # 3
-                       s.q_c, # 4
-                       s.q_c, # 5
-                       s.q_c, # 6
-                       s.q_c, # 7
-                       s.q_c, # 8
-                       ) * 0.1
-
-    v1 = build_measure(m1, m1, m1, fade_out(m1, 2))
-    v1_noFade = build_measure(m1, m1, m1, m1, m1)
-
-    v2 = build_measure(m2, m2, m2, fade_out(m2, 2))
-    v2_noFade = build_measure(m2, m2, m2, m2, m2)
-
-    save(v1_noFade, "writealone", "intro_drums")
-    save(v2_noFade, "writealone", "intro_skirts")
     
 def drums(save = False):
     
     #   (1) Notes
+    ##  main notes (bpm = 180)
     n = Snare(2, WHOLE)
     c = Skirt(3, WHOLE)
     s = Skirt(4, WHOLE)
 
-    #   (2) Intro
-    m1 = build_measure(n.q_e, # 1
+    ##  intro notes (bpm = 160)
+    ni = Snare(2, get_measure(160))
+    ci = Skirt(3, get_measure(160))
+    si = Skirt(4, get_measure(160))
+
+
+    #   (2) Intro ------------------------------------------------
+    m1 = build_measure(ni.q_e, # 1
                        rest(EIGHTH), # 1.5
-                       n.e_e, c.q_e, # 3
+                       ni.e_e, ci.q_e, # 3
                        rest(EIGHTH), # 3.5
-                       n.e_e, n.e_e, n.e_e, # 5
+                       ni.e_e, ni.e_e, ni.e_e, # 5
                        rest(EIGHTH), # 5.5
-                       n.e_e, c.q_e, # 7
-                       rest(EIGHTH), n.e_e # 8
+                       ni.e_e, ci.q_e, # 7
+                       rest(EIGHTH), ni.e_e # 8
                        )
     
-    m2 = build_measure(s.q_c, # 1
-                       s.q_c, # 2
-                       s.q_c, # 3
-                       s.q_c, # 4
-                       s.q_c, # 5
-                       s.q_c, # 6
-                       s.q_c, # 7
-                       s.q_c, # 8
+    m2 = build_measure(si.q_c, # 1
+                       si.q_c, # 2
+                       si.q_c, # 3
+                       si.q_c, # 4
+                       si.q_c, # 5
+                       si.q_c, # 6
+                       si.q_c, # 7
+                       si.q_c, # 8
                        ) * 0.1
 
     v1 = build_measure(m1, m1, m1, fade_out(m1, 2))
@@ -421,15 +393,14 @@ def drums(save = False):
     v2 = build_measure(m2, m2, m2, fade_out(m2, 2))
     v2_noFade = build_measure(m2, m2, m2, m2)
     
+    intro = combine(v1_noFade, v2_noFade)
 
 
-    #   (3) Verses
+    #   (3) Verses ------------------------------------------------
     m3 = build_measure(rest(QUARTER + EIGHTH), # 1.5
                        n.e_e, c.e_c, n.e_e, rest(QUARTER), # 3.
                        )
     
-    m4 = build_measure()
-
     v3 = build_measure(m3, m3, m3, m3,
                        m3, m3, m3, m3,) * 0.8
 
@@ -438,7 +409,7 @@ def drums(save = False):
 
     #   (5) Final effects and Returns
     if not save:
-        return v1
+        return intro, v3
     
     save(m3, "writealone", "one")
     save(v1, "writealone", "drums")
@@ -458,9 +429,12 @@ def skirts():
 def produce():
     """Produce the entire track without using an audio editing interface"""
     #   (1) The Drums
-    d = drums()
+    d, d1 = drums()
 
-    save(d, "writealone", "test_drums")
+    production = build_measure(d, d1)
+
+    save(d, "writealone", "intro_drums")
+    save(production, "writealone", "production")
 
 
 

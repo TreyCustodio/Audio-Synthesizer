@@ -124,13 +124,42 @@ B7 = 3951.0664
 C8 = 4186.0090
 
 """Auxillaury Functions ----------------------------------"""
+def get_measure(bpm):
+    return (1 / (bpm / 60)) * 4
+
 def ensure_1(number):
     """Ensures that an integer or float is at least 1"""
     if number < 1:
         return 1
     else:
         return number
+
+def combine(wave1, wave2):
+    """Combine 2 waves together even if they aren't the same length
+    by appending 0s to the end of the smaller wave.
+    This will work for now, but it will cause mistiming for longer waves."""
     
+    #   Copy the waves
+    wave1 = wave1.copy()
+    wave2 = wave2.copy()
+    
+    if len(wave1) > len(wave2):
+        end = len(wave1) - 1
+        num_zeros = end - (len(wave2) - 1)
+        zeros = [0 for i in range(num_zeros)]
+        wave2 = np.append(wave2, zeros)
+
+        return wave1 + wave2
+    
+    else:
+        end = len(wave2) - 1
+        num_zeros = end - (len(wave1) - 1)
+        print("difference", num_zeros)
+        zeros = [0 for i in range(num_zeros)]
+        wave1 = np.append(wave1, zeros)
+
+        return wave1 + wave2
+
 def save(effect, folder: str = "", name: str = ""):
     """Save a sound as a .wav file.
     Final step in the audio generation process.
