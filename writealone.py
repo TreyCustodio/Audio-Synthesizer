@@ -35,21 +35,71 @@ WHOLE = NOTE * 4
 def bass():
     n = Bass(2, WHOLE)
 
-    m1 = build_measure(n.q_e, 
-                       rest(EIGHTH), n.e_e,
-                       n.e_e, rest(EIGHTH),
-                       n.e_e, n.e_e,)
+    m1 = build_measure(n.q_e, # 1
+                       rest(EIGHTH), n.e_e, # 2
+                       n.e_e, # 2.5
+                       rest(QUARTER), # 3.5
+                       n.q_e, # 4.5
+                      )
     
-    m2 = build_measure(n.e_e, rest(EIGHTH),
-                       n.e_e, n.q_e, # 2.5
-                       rest(EIGHTH), n.e_e, n.e_e)
+    m2 = build_measure(n.e_e, n.e_e, # 5.5
+                       rest(EIGHTH), # 6
+                       n.e_e, n.q_e, # 7.5
+                       rest(EIGHTH)) # 8
+    
+    m3 = build_measure(n.e_e, n.e_e, # 1
+                       n.e_e, # 1.5
+                       rest(QUARTER), # 2.5
+                       n.e_e, # 3
+                       n.q_e, # 4
+                       )
+    
+    m4 = build_measure(rest(QUARTER),
+                       n.e_e, rest(EIGHTH),
+                       n.e_e, n.e_e,
+                       rest(QUARTER)
+                       )
+    
+    b1 = build_measure(n.e_b, n.e_a,
+                       n.e_g, rest(EIGHTH),
+                       n.e_g, n.e_fs, # 3
+                       n.e_g, # 3.5 
+                       )
+    
+    b2 = build_measure(n.q_b, # 1
+                       n.e_g, rest(EIGHTH), # 2
+                       n.e_g, # 2.5
+                       rest(EIGHTH), n.e_a,# 3.5
+                       n.e_g, n.e_g, # 4.5 as desired, par the lacking eigth note in m5
+    )
+
+    b3 = build_measure(n.e_g, rest(EIGHTH), # 1
+                       n.e_g, n.e_a, # 2
+                       rest(EIGHTH), n.e_g, # 3
+                       rest(EIGHTH), n.e_fs, # 4
+    )
+
+    b4 = build_measure(rest(EIGHTH), n.e_g,
+                       n.e_fs, rest(EIGHTH),
+                       n.s_fs, n.s_e, n.e_e,
+                       n.e_a, rest(EIGHTH))
+    
+    v0 = build_measure(rest(WHOLE*2),
+                       rest(WHOLE*4),
+                       rest(WHOLE*2),
+                       b1, b2, b3, b4,) * 0.01
     
     v1 = build_measure(m1, m2, m1, m2,
-                       m1, m2, m1, m2) * 0.4
+                       m3, m4, m3, m4) * 0.15
     
-    return v1
+    v2 = build_measure(m1, m2, m3, m4,
+                       m1, m2, m3, m4,) * 0.15
+    
+    
+    
+    return v0, v1, v2
 
-def piano2():
+def piano():
     #   Define our notes
     n4 = Pluck(4, WHOLE, "2")
     n3 = Pluck(3, WHOLE, "2")
@@ -187,7 +237,7 @@ def piano2():
 
 
 def plucks(save = False):
-    n1 = Pluck(3, WHOLE)
+    n1 = Pluck(2, WHOLE, "2")
 
 
     #   (V1) Verse 1 ---------------------------------
@@ -202,11 +252,12 @@ def plucks(save = False):
     m1 = fade_out(m1, 12)
 
 
-    m2 = build_measure(n1.q_g,
-                       n1.q_g,
-                       n1.q_g,
-                       n1.q_g)
-    m2 = fade_out(m2, 12)
+    # m2 = build_measure(n1.q_g,
+    #                    n1.q_g,
+    #                    n1.q_g,
+    #                    n1.q_g)
+    # m2 = fade_out(m2, 12)
+
 
     m3 = build_measure(n1.e_a, n1.e_a, 
                        n1.e_a, rest(EIGHTH),
@@ -218,6 +269,7 @@ def plucks(save = False):
 
 
     #   (V2) Verse 2 ---------------------------------
+    ##  (V2) Top Half
     m5 = build_measure(n1.e_g, rest(EIGHTH),
                        n1.e_g, rest(EIGHTH), 
                        n1.e_a, rest(EIGHTH), 
@@ -243,7 +295,8 @@ def plucks(save = False):
                        n1.e_fs, rest(EIGHTH)
                        )
 
-    m9 = build_measure(n1.q_b, 
+    ##  (V2) Bottom Half
+    m9 = build_measure(n1.e_b, n1.e_a,
                        n1.e_g, rest(EIGHTH),
                        n1.e_g, n1.e_fs, # 3
                        n1.e_g, # 3.5 
@@ -252,41 +305,86 @@ def plucks(save = False):
     m10 = build_measure(n1.q_b, # 1
                        n1.e_g, rest(EIGHTH), # 2
                        n1.e_g, # 2.5
-                       rest(QUARTER), # 3.5
+                       rest(EIGHTH), n1.e_a,# 3.5
                        n1.e_g, n1.e_g, # 4.5 as desired, par the lacking eigth note in m5
     )
     
+    m10a = build_measure(n1.q_b, # 1
+                       n1.e_g, rest(EIGHTH), # 2
+                       n1.e_g, # 2.5
+                       rest(QUARTER),# 3.5
+                       n1.e_g, n1.e_g, # 4.5 as desired, par the lacking eigth note in m5
+    )
+
     m11 = build_measure(n1.e_g, rest(EIGHTH), # 1
                        n1.e_g, n1.e_a, # 2
                        rest(EIGHTH), n1.e_g, # 3
                        rest(EIGHTH), n1.e_fs, # 4
     )
 
+
+
     m12 = build_measure(rest(EIGHTH), n1.e_g,
+                       n1.e_fs, rest(EIGHTH),
+                       n1.s_fs, n1.s_e, n1.e_e,
+                       n1.e_a, rest(EIGHTH))
+    
+    m13 = build_measure(rest(EIGHTH), n1.e_g,
                        n1.e_fs, rest(EIGHTH),
                        n1.e_fs, n1.e_e,
                        n1.e_a, rest(EIGHTH))
+
+    m14 = build_measure(n1.q_a,
+                       n1.q_a,
+                       n1.q_a, # 3
+                       n1.e_g, n1.q_a, # 4
+                       n1.q_a,
+                       n1.q_a,
+                       n1.e_g, n1.q_a,
+                       )
+    
+    m2 = build_measure(n1.e_g, n1.e_g,
+                       n1.e_g, rest(EIGHTH),
+                       n1.e_g, rest(EIGHTH),
+                       n1.e_g, n1.s_g, n1.s_g,
+
+                       n1.s_g, n1.s_g, n1.e_g,
+                       n1.q_g,
+                       n1.e_g, n1.e_g,
+                       n1.s_g, n1.s_g, n1.e_g,
+                       )
     
 
-
+    m15 = build_measure(rest(HALF), n1.e_fs, n1.e_e, n1.e_a)
 
     #   Combine and return
-    v1 = build_measure(m1, m2, m2,
-                       m3, m3, m2, m2) * 0.2
+    volume_reduction = 0.45
+
+    v1 = build_measure(rest(WHOLE * 2),
+                       #m14, 
+                       m2, m2,
+                       m9, m10, 
+                       m9 * 2.0, m10 * 2.0, m11 * 2.0, m12 * 2.0) * volume_reduction ## Plays first; alternate first loop
     
     v2 = build_measure(m5, m6, m7, m8,
-                       m9, m10, m11, m12) * 0.2
+                       m9, m10, m11, m13) * volume_reduction
     
     v3 = build_measure(rest(WHOLE * 4),
-                       m9, m10, m11, m12) * 0.2
+                       m9, m10, m11, m12) * volume_reduction
+    
+    v4 = build_measure(m14, m2,
+                       m9, m10, m11, m12) * volume_reduction ## Loop; doesn't follow xylos
+    
+    v5 = build_measure(rest(WHOLE*7), m15) * volume_reduction
+
     if not save:
-        return v1, v2, v3
+        return v1, v2, v3, v4, v5
     
 def xylos(save = False):
     """Piano melody incorporating XyloTech"""
     
     #   Define our notes
-    n6 = XyloTech(7, WHOLE)
+    n6 = XyloTech(4, WHOLE)
     n5 = XyloTech(7, get_measure(160), "2")
 
     fade_factor = 0.75
@@ -301,6 +399,7 @@ def xylos(save = False):
                        rest(EIGHTH), n5.e_f)
 
     i1 = build_measure(rest(WHOLE))
+
 
     ##  (V1) Top Half ver 1 ---------------------------------------------
     m1 = build_measure(n6.e_g, rest(EIGHTH),
@@ -441,6 +540,56 @@ def xylos(save = False):
     ##  (V3) Bottom Half ver 3
 
 
+    #   (v4) Dirtier Xylophone; Tone Shifted -2 full tones
+    m25 = build_measure(n6.e_e, rest(EIGHTH),
+                       n6.e_e, rest(EIGHTH), 
+                       n6.e_f, rest(EIGHTH), 
+                       n6.e_e, n6.e_f,
+                       )
+    
+    m26 = build_measure(rest(EIGHTH), n6.e_e,
+                       n6.e_f, rest(EIGHTH),
+                       n6.e_f, # 2.5
+                       n6.q_e, # 3.5
+                       rest(EIGHTH),
+                       )
+
+    m27 = build_measure(n6.s_e, n6.s_e, n6.e_e,
+                       n6.e_e, rest(EIGHTH),
+                       n6.e_f, rest(EIGHTH),
+                       n6.e_e, n6.e_d,
+                       )
+    
+    m28 = build_measure(rest(EIGHTH), n6.e_e,
+                       n6.e_d, rest(EIGHTH),
+                       n6.e_c, rest(EIGHTH), 
+                       n6.e_d, rest(EIGHTH)
+                       )
+    
+    ##  (V4) Bottom Half ver 4
+    m29 = build_measure(n6.q_g, 
+                       n6.e_e, rest(EIGHTH),
+                       n6.e_e, n6.e_ds, # 3
+                       n6.e_e, # 3.5 
+                       )
+    
+    m30 = build_measure(n6.q_g, # 1
+                       n6.e_e, rest(EIGHTH), # 2
+                       n6.e_e, # 2.5
+                       rest(QUARTER), # 3.5
+                       n6.e_e, n6.e_e, # 4.5 as desired, par the lacking eigth note in m5
+    )
+    
+    m31 = build_measure(n6.e_e, rest(EIGHTH), # 1
+                       n6.e_e, n6.e_f, # 2
+                       rest(EIGHTH), n6.e_e, # 3
+                       rest(EIGHTH), n6.e_ds, # 4
+    )
+
+    m32 = build_measure(rest(EIGHTH), n6.e_e,
+                       n6.e_ds, rest(EIGHTH),
+                       n6.e_ds, n6.e_c,
+                       n6.e_f, rest(EIGHTH))
 
     #   (FINAL) Combine measures into 32-beat verses
     final = build_measure(m1, m2, m3, m4,
@@ -451,8 +600,11 @@ def xylos(save = False):
     
     final3 = build_measure(m17, m18, m19, m20,
                            m5, m6, m7, m8) * 0.1
+    
+    final4 = build_measure(m25, m26, m27, m28,
+                           m29, m30, m31, m32) * 0.1
     if not save:
-        return i1, final, final2, final3
+        return i1, final, final2, final3, final4
     
     save(final, "writealone", "piano")
 
@@ -483,7 +635,19 @@ def drums(save = False):
                        ni.e_e, ni.e_e, ni.e_e, # 5
                        rest(intro_eighth), # 5.5
                        ni.e_e, ci.q_e, # 7
-                       rest(intro_eighth), ni.e_e # 8
+                       (si.s_d + si.s_c) * 0.4, (si.s_d + si.s_c) * 0.4,
+                       combine(ni.e_e, si.e_c) # 8
+                       )
+    
+    m1a = build_measure(ni.q_e, # 1
+                       rest(intro_eighth), # 1.5
+                       ni.e_e, ci.q_e, # 3
+                       rest(intro_eighth), # 3.5
+                       ni.e_e, ni.e_e, ni.e_e, # 5
+                       rest(intro_eighth), # 5.5
+                       ni.e_e, ci.q_e, # 7
+                       rest(intro_eighth),
+                       combine(ni.e_e, si.e_c) # 8
                        )
     
     m2 = build_measure(si.q_c, # 1
@@ -499,7 +663,7 @@ def drums(save = False):
     
     ##  40-beat Verses
     v1 = build_measure(m1, m1, m1, fade_out(m1, 2))
-    v1_noFade = build_measure(m1, m1, m1, m1)
+    v1_noFade = build_measure(m1, m1a, m1, m1a)
 
     v2 = build_measure(m2, m2, m2, fade_out(m2, 2))
     v2_noFade = build_measure(m2, m2, m2, m2)
@@ -551,12 +715,12 @@ def drums(save = False):
     #   Experiment with different loops here
     main_1 = combine(v3, v4)
     main_2 = combine(v3, v5)
-
+    brake = build_measure(rest(WHOLE * 11), m3)
 
 
     #   (4) Final effects and Returns ---------------------------------------
     if not save:
-        return intro, main_1, main_2
+        return intro, main_1, main_2, brake
     
     save(m3, "writealone", "one")
     save(v1, "writealone", "drums")
@@ -566,50 +730,59 @@ def drums(save = False):
     save(v3, "writealone", "drums2")
 
 
-    
 
 def skirts():
     n = Skirt2(3, WHOLE)
 
     save(n.q_c, "writealone", "skirt2")
 
+
 def produce():
     """Produce the entire track without using an audio editing interface"""
     #   (1) The Drums: d = 40 beats; dn = 32 beats;
-    d, d1, d2 = drums()
+    d, d1, d2, d3 = drums()
 
     #   (2) The Xylos: 32 beats
-    xi, x1, x2, x3 = xylos()
+    xi, x1, x2, x3, x4 = xylos()
 
     #   (3) The Plucks: 32 beats
-    p1, p2, p3 = plucks()
+    p1, p2, p3, p4, p5 = plucks()
     
     #   (4) The Bass Thuds: 32 beats
-    b1 = bass()
+    b0, b1, b2 = bass()
 
     #   Combine each verse
-    #d2 = combine(d2, b1)
+    d2a = combine(d2, b1)
+    d2b = combine(d2, b2)
 
     d = combine(d, xi) # intro
 
-    v1 = combine(d2, x2) # jiggy xylos
+    v1 = combine(d2a, x2) # jiggy xylos
+    v1 = combine(v1, p5)
 
-    v2 = combine(d2, x1) # snappy xylos
-    v2 = combine(v2, p1) # plunks longer, dont match xylos
+    v2 = combine(d2b, x1) # snappy xylos
+    v2 = combine(v2, p3) # plunks longer, dont match xylos
 
-    v3 = combine(d2, x2) # jiggier xylos
-    v3 = combine(v3, p2) # plucks match xylos
+    v3 = combine(d2a, x2) # jiggier xylos
+    v3 = combine(v3, p3) # plucks match xylos
 
-    v4 = combine(d2, x3) # jiggy top half
+    v4 = combine(d2a, x3) # jiggy top half
     v4 = combine(v4, p3) # Pause plucks until 2nd half
     
-    v5 = combine(v4, p3)
+    v5 = combine(combine(combine(combine(d2b, x1), p1), d3), b0)# The pause before the chorus
+    v6 = combine(d2, x2)
 
     #   Build the final production
     production = build_measure(d, d1, # Intro (Drums only)
-                               v1, v2,
-                               v3, v2, v4, v2,
-                               v3, v2, v3, v2)
+                               
+                               v1, v5, # Semi-intro
+
+                               v3, v2, v3, v2, # Verse 1
+
+                               v6, # Bridge
+
+                               v3, v2, v3, v2, # Verse 2
+                               )
 
     save(production, "writealone", "production")
 

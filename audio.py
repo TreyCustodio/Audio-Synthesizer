@@ -633,13 +633,11 @@ def pluck2(frequency: int = 250, duration: float = 0.3, attack = 0.02, decay=0.1
     """
     # (1) Generate a base tone
     base = sine_wave(frequency, duration)
-    a = sine_wave(shift_note(frequency, -4), duration)
+    a = sine_wave(shift_note(frequency, -6), duration)
 
     base = distort(base, 4)
-    a = distort(a, 4)
+    #a = distort(a, 4)
 
-    #low = sine_wave(frequency / 2, duration)
-    #base += low
     
 
     # (2) Modify the A, D, and R values to fit the duration

@@ -33,8 +33,8 @@ def generate_snares():
 def generate_strings():
     audio.sound_generator(envelope=audio.pluck, folder="string_gen", play_sounds=False)
 
-def generate(instrument, folder):
-    instr = instrument(4, 1/(160 / 60) * 4)
+def generate(instrument, folder, bpm = 160, octave = 4):
+    instr = instrument(octave, 1/(bpm / 60) * 4)
 
     audio.save(instr.q_c, folder, "c")
     audio.save(instr.q_cs, folder, "c#")
@@ -64,7 +64,7 @@ def main():
     writealone.main()
 
     #   (2) Run some generations
-    #generate(instruments.Skirt2, "dream_gen")
+    #generate(instruments.Skirt, "dream_gen", 160, 4)
 
 
 if __name__ == '__main__':
