@@ -34,7 +34,9 @@ WHOLE = NOTE * 4
 
 def bass():
     n = Bass(2, WHOLE)
+    n1 = Bass(1, WHOLE)
 
+    #   (V1)
     m1 = build_measure(n.q_e, # 1
                        rest(EIGHTH), n.e_e, # 2
                        n.e_e, # 2.5
@@ -44,14 +46,13 @@ def bass():
     
     m2 = build_measure(n.e_e, n.e_e, # 5.5
                        rest(EIGHTH), # 6
-                       n.e_e, n.q_e, # 7.5
-                       rest(EIGHTH)) # 8
+                       n.q_e, # 7
+                       rest(QUARTER)) # 8
     
     m3 = build_measure(n.e_e, n.e_e, # 1
-                       n.e_e, # 1.5
-                       rest(QUARTER), # 2.5
-                       n.e_e, # 3
-                       n.q_e, # 4
+                       n.e_e, rest(EIGHTH), # 2
+                       n.e_e, n.e_e,# 3
+                       n.e_e, n.e_e,# 4
                        )
     
     m4 = build_measure(rest(QUARTER),
@@ -60,6 +61,14 @@ def bass():
                        rest(QUARTER)
                        )
     
+    m5 = build_measure(rest(EIGHTH), n.e_e,
+                       n.e_e, rest(EIGHTH),
+                       n.e_e, n.e_e,
+                       rest(QUARTER)
+                       )
+    
+    
+    #   (V0) Bridge to match Plucks at
     b1 = build_measure(n.e_b, n.e_a,
                        n.e_g, rest(EIGHTH),
                        n.e_g, n.e_fs, # 3
@@ -84,16 +93,19 @@ def bass():
                        n.s_fs, n.s_e, n.e_e,
                        n.e_a, rest(EIGHTH))
     
+
+
+    #   Create the verses
     v0 = build_measure(rest(WHOLE*2),
                        rest(WHOLE*4),
                        rest(WHOLE*2),
                        b1, b2, b3, b4,) * 0.01
     
     v1 = build_measure(m1, m2, m1, m2,
-                       m3, m4, m3, m4) * 0.15
+                       m3, m4, m3, m5) * 0.15
     
     v2 = build_measure(m1, m2, m3, m4,
-                       m1, m2, m3, m4,) * 0.15
+                       m1, m2, m3, m5,) * 0.15
     
     
     
@@ -603,8 +615,11 @@ def xylos(save = False):
     
     final4 = build_measure(m25, m26, m27, m28,
                            m29, m30, m31, m32) * 0.1
+    
+    final5 = build_measure(m1, m2, m3, m4,
+                           m13, m14, m15, m16) * 0.2
     if not save:
-        return i1, final, final2, final3, final4
+        return i1, final, final2, final3, final4, final5
     
     save(final, "writealone", "piano")
 
@@ -712,15 +727,32 @@ def drums(save = False):
                        skirts_full, skirts_full, skirts_chimes, skirts_full,)
 
     
+    ##  Section (2)
+    m4 = build_measure( n.q_e,
+                       n.q_e,
+                       s.q_c,
+                       rest(EIGHTH), s.e_c, n.e_e, )
+    
+    m5 = build_measure(
+                       n.e_e, s.q_c, # 1.5
+                       s.e_c, n.s_e, # 2.75
+                       s.s_c, s.s_c, s.s_c, s.e_c, # 4
+                       rest(EIGHTH)
+
+    )
+
+    m6 = build_measure()
+
     #   Experiment with different loops here
     main_1 = combine(v3, v4)
     main_2 = combine(v3, v5)
     brake = build_measure(rest(WHOLE * 11), m3)
+    main_3 = build_measure(m4, m5, m4, m5)
 
 
     #   (4) Final effects and Returns ---------------------------------------
     if not save:
-        return intro, main_1, main_2, brake
+        return intro, main_1, main_2, brake, main_3
     
     save(m3, "writealone", "one")
     save(v1, "writealone", "drums")
@@ -740,10 +772,10 @@ def skirts():
 def produce():
     """Produce the entire track without using an audio editing interface"""
     #   (1) The Drums: d = 40 beats; dn = 32 beats;
-    d, d1, d2, d3 = drums()
+    d, d1, d2, d3, d4 = drums()
 
     #   (2) The Xylos: 32 beats
-    xi, x1, x2, x3, x4 = xylos()
+    xi, x1, x2, x3, x4, x5 = xylos()
 
     #   (3) The Plucks: 32 beats
     p1, p2, p3, p4, p5 = plucks()
@@ -752,6 +784,7 @@ def produce():
     b0, b1, b2 = bass()
 
     #   Combine each verse
+    ##  Section (1)
     d2a = combine(d2, b1)
     d2b = combine(d2, b2)
 
@@ -770,18 +803,30 @@ def produce():
     v4 = combine(v4, p3) # Pause plucks until 2nd half
     
     v5 = combine(combine(combine(combine(d2b, x1), p1), d3), b0)# The pause before the chorus
-    v6 = combine(d2, x2)
+    
+    v6 = combine(d2, x5)
+    v6 = combine(v6, p2)
+
+    v7 = combine(d2a, x3)
+    v7 = combine(v7, p2)
+
+
+    ##  Section (2)
+    v8 = d4
+
 
     #   Build the final production
     production = build_measure(d, d1, # Intro (Drums only)
                                
                                v1, v5, # Semi-intro
 
-                               v3, v2, v3, v2, # Verse 1
+                               v7, v2, v3, v2, # Verse 1
 
                                v6, # Bridge
 
-                               v3, v2, v3, v2, # Verse 2
+                               v7, v2, v3, v2, # Verse 2
+                               
+                               #v8
                                )
 
     save(production, "writealone", "production")
