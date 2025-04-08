@@ -2,7 +2,7 @@ from beat import *
 
 class Unknown(Song):
     def __init__(self):
-        super().__init__(160)
+        super().__init__(155)
 
     def drums(self):
         n = Snare(3, self.whole)
@@ -46,6 +46,15 @@ class Unknown(Song):
                            #rest(self.eighth),
                            ) * skamplifier
         
+        m2 = build_measure(s.q_c, # 1
+                           s.e_c, rest(self.eighth), # 2
+                           s.e_c, # 2.5
+                           s.q_c, # 3.5
+                           s.e_c, # 4
+                           #rest(self.eighth),
+                           ) * skamplifier
+        
+
         m1q = build_measure(s.q_c, # 1
                            s.e_c, rest(self.eighth), # 2
                            s.e_c, # 2.5
@@ -262,10 +271,11 @@ class Unknown(Song):
         x = XyloBass(3, self.whole,)
         x1 = XyloBass(2, self.whole,)
         x2 = XyloBass(1, self.whole,)
+
         x3 = XyloBass(5, self.whole,)
 
-        p = Piano(4, self.whole)
-        p1 = Piano(3, self.whole)
+        p = PianoTreble(3, self.whole)
+        p1 = PianoTreble(2, self.whole)
 
         amplifier = 3.3
         amplifier2 = 3.9
@@ -345,13 +355,17 @@ class Unknown(Song):
 
         v1 = build_measure(m1, m2, m3, m4,
                            m5, m6, m11, m4,)
-        return v0, v00, v1
+        
+        v2 = build_measure(m0, m0, m0, m0,
+                           m00, m00, m00, m00)
+        
+        return v0, v00, v1, v2
 
     
     def produce(self):
         #   Gather the instruments
         d0, d1, d1q = self.drums()
-        x0, x00, x1 = self.xylos()
+        x0, x00, x1, x2 = self.xylos()
         k0, k00, k1, k2, k3 = self.piano()
 
 
@@ -373,10 +387,18 @@ class Unknown(Song):
         
         v3 = combine(x1, k1)
         v3 = combine(v3, d1)
+        v3 = combine(v3, x2) # 
 
         v4 = combine(x1, d1)
         v4 = combine(v4, k3)
 
+        v5 = combine(x2, d1)
+
+        v6 = combine(v5, k2)
+
+        v7 = combine(d1,k3)#= combine(v5, k3)
+
+        v8 = combine(v3, k3 * 4.0)
         ##  Section 2
 
 
@@ -387,12 +409,16 @@ class Unknown(Song):
                                 
                                 #   Section 1
                                 v1, v1,
+
                                 v2, v4,
 
                                 v3, v3,
+
+                                v5, v6, v7,
+
                                 v2, v4,
 
-                                v3, v3
+                                v3, v8
                                 #   Section 2
                                    )
 
