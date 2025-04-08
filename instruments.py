@@ -110,15 +110,25 @@ class Instrument:
 
         
 class Piano(Instrument):
-    def __init__(self, octave, measure, type="single"):
-        if type == "single":
-            super().__init__(octave, measure, piano_single)
-
-        elif type == "double":
-            super().__init__(octave, measure, piano_double)
-            
+    def __init__(self, octave, measure, type=""):
+        if type == "2":
+            super().__init__(octave, measure, piano2)
         else:
             super().__init__(octave, measure, piano)
+
+class PianoBass(Instrument):
+    def __init__(self, octave, measure, type=""):
+        if type == "2":
+            super().__init__(octave, measure, pianobass2)
+        else:
+            super().__init__(octave, measure, pianobass)
+
+class PianoTreble(Instrument):
+    def __init__(self, octave, measure, type=""):
+        if type == "2":
+            super().__init__(octave, measure, pianotreble2)
+        else:
+            super().__init__(octave, measure, pianotreble)
 
 class Dreamy(Instrument):
     def __init__(self, octave, measure):
@@ -158,6 +168,13 @@ class XyloHorn(Instrument):
             super().__init__(octave, measure, xylohorn2)
         else:
             super().__init__(octave, measure, xylohorn)
+
+class XyloBass(Instrument):
+    def __init__(self, octave, measure, type=""):
+        if type == "2":
+            super().__init__(octave, measure, xylobass2)
+        else:
+            super().__init__(octave, measure, xylobass)
 
 class Bass(Instrument):
     def __init__(self, octave, measure):

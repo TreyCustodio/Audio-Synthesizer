@@ -2,7 +2,7 @@ from beat import *
 
 class BlessUp(Song):
     def __init__(self):
-        super().__init__(160)
+        super().__init__(150)
 
     def drums(self):
         n = Snare(3, self.whole)
@@ -128,8 +128,55 @@ class BlessUp(Song):
         return v1, v2
     
 
+    def piano(self):
+        p = PianoTreble(4, self.whole)
+        p1 = PianoTreble(5, self.whole)
+        amplifier = 4.0
+
+        m0 = build_measure(
+                           p.s_a, p.s_g, p.s_f, # 1.75
+                           p.e_a, rest(self.eighth), # 2.75
+                           p.e_b, p1.e_c, # 3.75
+                           rest(self.sixteenth), # 4
+                           ) * amplifier
+
+        m1 = build_measure(
+                           p.s_a, p.s_g, p.s_f, # 1.75
+                           p.e_a, rest(self.eighth), # 2.75
+                           p.e_b, p1.e_c, # 3.75
+                           rest(self.sixteenth), # 4
+                           ) * amplifier
+        
+        m2 = build_measure(rest(self.sixteenth),
+                           p.e_d, rest(self.eighth), # 1.25
+                           p.e_a, p.e_b, # 2.25
+                           p.e_c, p.e_a, # 3.25
+                           rest(self.sixteenth * 3)
+                           ) * amplifier
+        
+        m3 = build_measure( rest(self.sixteenth), 
+                            p.e_g, rest(self.eighth), # 1.25
+                           p.e_g, rest(self.eighth), # 2.25
+                           p.e_a, p.e_b, # 3.25
+                           p1.e_c, # 3.75
+                           ) * amplifier
+        
+        m4 = build_measure(
+                           p.e_d, rest(self.eighth), # 1
+                           p.e_a, p.e_b, # 2
+                           p.e_c, p.e_a, rest(self.eighth), # 3
+                           p.e_a, # 3.5
+                           rest(self.eighth + self.sixteenth)
+                           ) * amplifier
+        
+        v0 = build_measure(m0, m2, m3, m4)
+        v1 = build_measure(m1, m2, m3, m4,
+                           m1, m2, m3, m4)
+
+        return v0, v1
+    
     def plucks(self):
-        p = Pluck(2, self.whole, "2")
+        p = Piano(4, self.whole,)
         b = Bass(1, self.whole)
 
         amplifier = 4.0
@@ -184,19 +231,21 @@ class BlessUp(Song):
     
 
     def xylos(self):
-        x = XyloTech(4, self.whole, "2")
-        x1 = XyloTech(3, self.whole, "2")
-        x2 = XyloTech(2, self.whole, "2")
+        x = XyloBass(3, self.whole,)
+        x1 = XyloBass(2, self.whole,)
+        x2 = XyloBass(1, self.whole,)
+        x3 = XyloBass(5, self.whole,)
 
-        x3 = XyloHorn(5, self.whole, "2")
+        p = Piano(4, self.whole)
+        p1 = Piano(3, self.whole)
 
-        amplifier = 1.3
-        amplifier2 = 1.9
-        amplifier3 = 2.3
+        amplifier = 3.3
+        amplifier2 = 3.9
+        amplifier3 = 4.3
 
         m0 = build_measure(
                            rest(self.quarter + self.eighth),
-                           x.q_e,
+                           x1.q_e + p.q_e,
                            rest(self.whole - (self.quarter + self.quarter + self.eighth))) * amplifier
         
         #   (V1)    #
@@ -209,20 +258,31 @@ class BlessUp(Song):
         m3 = build_measure(x.q_a, x.e_g, rest(self.eighth),
                            x.q_a, x.e_g, # 3
                            rest(self.eighth))
+        m3a = build_measure(x1.q_a, x1.e_g, rest(self.eighth),
+                           x1.q_a, x1.e_g, # 3
+                           rest(self.eighth))
+        
         m3b = build_measure(x1.q_a, x1.e_g, rest(self.eighth),
                            x1.q_a, x1.e_g, # 3
                            rest(self.eighth))
         m3 += m3b
+        m3a += m3b
         
 
         ##  Cleaner for chorus
         m5 = build_measure(x.q_a, x.e_g,
                            rest(self.quarter),
                            rest(self.whole - (self.quarter + self.quarter + self.eighth)))
+        
+        m5a = build_measure(x1.q_a, x1.e_g,
+                           rest(self.quarter),
+                           rest(self.whole - (self.quarter + self.quarter + self.eighth)))
+        
         m5b = build_measure(x1.q_a, x1.e_g,
                            rest(self.quarter),
                            rest(self.whole - (self.quarter + self.quarter + self.eighth)))
         m5 += m5b
+        m5a += m5b
         
         ##  More Sounds; Deep
         m7 = build_measure(x1.q_a, x1.e_g,
@@ -239,17 +299,24 @@ class BlessUp(Song):
         m2 = build_measure(rest(self.quarter),
                            x1.s_b, rest(self.sixteenth), x.q_c,
                            rest(self.whole - (self.quarter + self.quarter + self.eighth))) * amplifier
-        
+        m2a = build_measure(rest(self.quarter),
+                           x2.s_b, rest(self.sixteenth), x2.q_a,
+                           rest(self.whole - (self.quarter + self.quarter + self.eighth))) * amplifier
         ##  More Sounds
         m4 = build_measure(rest(self.quarter),
                            x1.e_b,  x.q_c,
+                           rest(self.whole - (self.quarter + self.quarter + self.eighth))) * amplifier
+        m4a = build_measure(rest(self.quarter),
+                           x2.e_b + p1.e_b,  x1.q_c + p.q_c,
                            rest(self.whole - (self.quarter + self.quarter + self.eighth))) * amplifier
         
         ##  Cleaner for chorus
         m6 = build_measure(rest(self.quarter + self.eighth),
                            x.q_c,
                            rest(self.whole - (self.quarter + self.quarter + self.eighth))) * amplifier
-
+        m6a = build_measure(rest(self.quarter + self.eighth),
+                           x1.q_c,
+                           rest(self.whole - (self.quarter + self.quarter + self.eighth))) * amplifier
         ##  More Sounds; Deep
         m8 = build_measure(rest(self.quarter),
                            x2.s_b, rest(self.sixteenth), x1.q_c,
@@ -281,12 +348,18 @@ class BlessUp(Song):
 
         #   Verses
         v0 = build_measure(m0, m0, m0, m0,
-                           m4, m2, m4, m2, rest(self.whole * 5))
+                           m4a, m4a, m4a, m4a, rest(self.whole * 5))
         
-        v00 = build_measure(x.q_a, x.e_g, rest(self.eighth)) + build_measure(x1.q_a, x1.e_g, rest(self.eighth))
+        v00 = build_measure(x1.q_g, x1.e_f, rest(self.eighth)) + build_measure(x1.q_a, x1.e_g, rest(self.eighth))
 
         v1 = build_measure(m5, m5, m5, m3,
                            m6, m2, m6, m2)
+        
+        # v1a = build_measure(m5a, m5a, m5a, m3a,
+        #                    m6a, m2a, m6a, m2a)
+
+        v1a = build_measure(m0, m0, m0, m0,
+                            m4a, m4a, m4a, m4a)
         
         v2 = build_measure(m7, m7, m7, m9,
                            m10, m8, m10, m8)
@@ -298,25 +371,28 @@ class BlessUp(Song):
                            m11, m12, m13, rest(self.whole+ self.eighth),)
         
         v5 = combine(v2, v3) * 0.7
-        return v0, v00, v1, v2, v3, v4, v5
+        return v0, v00, v1, v1a, v2, v3, v4, v5
 
     def produce(self):
         #   Gather the instruments
         d1, d2 = self.drums()
         p0, p1 = self.plucks()
-        x0, x00, x1, x2, x3, x4, x5 = self.xylos()
+        x0, x00, x1, x1a, x2, x3, x4, x5 = self.xylos()
+        k0, k1 = self.piano()
 
 
         #   Create the Verses
         ##  Intro
         i0 = x0
-        i1 = combine(p0, x00)
+        i1 = k0
         intro = add_waves(i0, i1)
-        intro = lowpass(intro, 1275)
+        #intro = lowpass(intro, 1275)
 
         ##  Section 1
-        v1 = combine(d1, p1)
-        v1 = combine(v1, x1)
+        #v1 = combine(d1, p1)
+        v1 = combine(d1, x1a)
+        v1 = combine(v1, k1)
+
 
         v2 = combine(d1, x2)
 
@@ -347,7 +423,7 @@ class BlessUp(Song):
                                    v4
                                    )
 
-        production = lowpass(production, 13230)
+        #production = lowpass(production, 13230)
         #   Save the production
         save(production, "blessup", "production")
 

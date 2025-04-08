@@ -805,30 +805,55 @@ def xylohorn2(frequency, duration):
 
     #   First Harmonic
     base = sine_wave(frequency, duration)
-    a = sine_wave(frequency * 3, duration)
+    a = sine_wave(frequency * 2, duration)
     b = sine_wave(frequency / 4, duration)
     base += (a + b)
 
     #   Second Harmonic
     freq_2 = shift_note(frequency, -5)
     base2 = sine_wave(freq_2, duration)
-    a2 = sine_wave(freq_2 * 3, duration)
+    a2 = sine_wave(freq_2 * 6, duration)
     b2 = sine_wave(freq_2 / 4, duration)
     base2 += (a2 + b2)
     
     #   Combine the harmonics
-    base += base2
+    #base += base2
 
     #   Apply the envelope
-    a = 0.4 * duration
-    d = 0.0 * duration
-    s = 1.0
-    r = 0.4 * duration
+    a = 0.01 * duration
+    d = 0.2 * duration
+    s = 0.6
+    r = 0.01 * duration
     base = envelope(base, a, d, s, r)
 
     #   Fade and return
-    return fade_out(base, 2)
+    #base = lowpass(base, 11250)
+    return base #fade_out(base, 2)
 
+def xylobass(frequency, duration):
+
+    #   First Harmonic
+    base = sine_wave(frequency, duration)
+    a = sine_wave(frequency * 2, duration)
+    b = sine_wave(frequency / 4, duration)
+    c = sine_wave(frequency / 2, duration)
+    base += (a + b + c)
+
+    
+    
+    #   Combine the harmonics
+    #base += base2
+
+    #   Apply the envelope
+    a = 0.01 * duration
+    d = 0.2 * duration
+    s = 0.6
+    r = 0.01 * duration
+    base = envelope(base, a, d, s, r)
+
+    #   Fade and return
+    #base = lowpass(base, 11250)
+    return base #fade_out(base, 2)
 
 def snare(frequency = 140, duration = 0.17):
     """Generate a snare sound, following the percussion framework
@@ -997,62 +1022,92 @@ def bandpass(wave, lowcut, highcut, filter_length = 101):
 
 def piano(frequency, duration):
     #   (1) Get the wave
-    base = sine_wave16(frequency, duration)
-    bass = sine_wave16(frequency * 2, duration)
-    base += bass
-
-    #   (2) Apply the Envelope
-    a = 0.1 * duration
-    d = 0.4 * duration
-    s = 0.3
-    r = 0.4 * duration
-
-    base = envelope16(base, a, d, s, r)
-
-    #   Return the wave
-    return base
-
-def piano_single(frequency, duration):
-    #   (1) Get the wave
-    base = sine_wave16(frequency, duration)
-
-    #   (2) Apply the Envelope
-    a = 0.1 * duration
-    d = 0.4 * duration
-    s = 0.3
-    r = 0.4 * duration
-
-    base = envelope16(base, a, d, s, r)
-
-    #base = distort(base, 5.0)
-    #   Return the wave
-    return base
-
-def piano_double(frequency, duration):
-    """Adds a harmonic 2 full tones above the base frequency.
-    Note that you'll get the same effect regardless of whether you combine the notes
-    before/after the envelope."""
-
-    #harm = frequency * (2 ** ((2) / 12))
-    harm = shift_note(frequency, 4)
-
-    #   (1) Get the wave
     base = sine_wave(frequency, duration)
-    ha = sine_wave(harm, duration) * 0.6
-    base += ha
+    amplitude = 1.0
+    for i in range(1, 26):
+        base += sine_wave(frequency * i, duration) * amplitude
+        amplitude /= i
+    
+    #bass = sine_wave(frequency * 2, duration)
+    #base += (a)
 
     #   (2) Apply the Envelope
-    a = 0.1 * duration
-    d = 0.4 * duration
-    s = 0.3
-    r = 0.4 * duration
+    a = 0.005 * duration
+    d = 0.3 * duration
+    s = 0.1
+    r = 0.05 * duration
 
     base = envelope(base, a, d, s, r)
-    #ha = envelope(ha, a, d, s, r)
+    #   Return the wave
+    return base
+
+def piano2(frequency, duration):
+    #   First Key
+    base = sine_wave(frequency, duration)
+    amplitude = 1.0
+    for i in range(1, 11):
+        base += sine_wave(frequency * i, duration) * amplitude
+        amplitude /= i
+
+    #   Second Key
+    freq_2 = frequency / 2
+    a = sine_wave(freq_2, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        a += sine_wave(freq_2 * i, duration) * amplitude
+        amplitude /= i
+
+    
+    #   Combine the keys
+    base += a
+
+
+    #   Apply the Envelope
+    a = 0.005 * duration
+    d = 0.3 * duration
+    s = 0.1
+    r = 0.05 * duration
+
+    base = envelope(base, a, d, s, r)
 
     #   Return the wave
-    return base #+ ha
+    return base
 
+def pianobass(frequency, duration):
+    #   (1) Get the wave
+    base = sine_wave(frequency, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        base += sine_wave(frequency * i, duration) * amplitude
+        amplitude /= i
+    
+    #   (2) Apply the Envelope
+    a = 0.005 * duration
+    d = 0.3 * duration
+    s = 0.1
+    r = 0.05 * duration
+
+    base = envelope(base, a, d, s, r)
+    #   Return the wave
+    return base
+
+def pianotreble(frequency, duration):
+    #   (1) Get the wave
+    base = sine_wave(frequency, duration)
+    amplitude = 1.0
+    for i in range(1, 16):
+        base += sine_wave(frequency * i, duration) * amplitude
+        amplitude /= i
+
+    #   (2) Apply the Envelope
+    a = 0.005 * duration
+    d = 0.3 * duration
+    s = 0.1
+    r = 0.05 * duration
+
+    base = envelope(base, a, d, s, r)
+    #   Return the wave
+    return base
 def skirt(frequency, duration):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration))
     
