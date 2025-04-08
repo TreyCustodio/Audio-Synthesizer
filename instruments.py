@@ -134,6 +134,10 @@ class Pluck(Instrument):
             super().__init__(octave, measure, pluck2)
         elif type == "3":
             super().__init__(octave, measure, pluck3)
+
+        elif type == "4":
+            super().__init__(octave, measure, pluck4)
+            
         else:
             super().__init__(octave, measure, pluck)
 
@@ -147,7 +151,14 @@ class XyloTech(Instrument):
             super().__init__(octave, measure, xylotech2)
         else:
             super().__init__(octave, measure, xylotech)
-        
+
+class XyloHorn(Instrument):
+    def __init__(self, octave, measure, type=""):
+        if type == "2":
+            super().__init__(octave, measure, xylohorn2)
+        else:
+            super().__init__(octave, measure, xylohorn)
+
 class Bass(Instrument):
     def __init__(self, octave, measure):
         super().__init__(octave, measure, bass)

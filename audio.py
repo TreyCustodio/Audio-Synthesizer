@@ -540,6 +540,29 @@ def warp(wave, factor, wrap_around):
     return wave
 
 
+def lowpass(wave, cutoff):
+    """Expects a wave and a cutoff; returns the filtered wave"""
+    # frequency = 20 + 20000
+    # x = np.tan()
+    
+    
+    
+    fft_wave = np.fft.fft(wave) # Converts time signal to frequency-domain representation
+    frequencies = np.fft.fftfreq(len(wave), 1/SAMPLE_RATE)
+    fft_wave[np.abs(frequencies) > cutoff] = 0
+    final = np.fft.ifft(fft_wave)
+
+    return np.real(final)
+
+def highpass(wave, cutoff):
+    """Expects a wave and a cutoff; returns the filtered wave"""
+    fft_wave = np.fft.fft(wave) # Converts time signal to frequency-domain representation
+    frequencies = np.fft.fftfreq(len(wave), 1/SAMPLE_RATE)
+    fft_wave[np.abs(frequencies) < cutoff] = 0
+    final = np.fft.ifft(fft_wave)
+
+    return np.real(final)
+
 def dream(frequency, duration):
     """Add an envelope to the wave that makes it sound dreamy"""
     #   (1) Define the harmonics
@@ -635,7 +658,14 @@ def pluck2(frequency: int = 250, duration: float = 0.3, attack = 0.02, decay=0.1
     base = sine_wave(frequency, duration)
     a = sine_wave(shift_note(frequency, -6), duration)
 
+    low = sine_wave(frequency / 2, duration)
+    lowa = sine_wave(shift_note(frequency, -6) / 2, duration)
+
     base = distort(base, 4)
+    a = distort(a, 2)
+
+    base += low
+    a += lowa
     #a = distort(a, 4)
 
     
@@ -646,8 +676,8 @@ def pluck2(frequency: int = 250, duration: float = 0.3, attack = 0.02, decay=0.1
     release = duration * (0.1 / 0.3)
 
     # (3) Apply the envelope
-    base = fade_out(envelope(base, attack, decay, sustain, release), 5) * 0.6
-    a = fade_out(envelope(a, attack, decay, sustain, release), 5) * 0.6
+    base = fade_out(envelope(base, attack, decay, sustain, release), 5)
+    a = fade_out(envelope(a, attack, decay, sustain, release), 5)
     
     return base + a
 
@@ -679,6 +709,31 @@ def pluck3(frequency: int = 250, duration: float = 0.3, attack = 0.02, decay=0.1
     a = fade_out(envelope(a, attack, decay, sustain, release), 5) * 0.6
     
     return base + a
+
+def pluck4(frequency: int = 250, duration: float = 0.3, attack = 0.02, decay=0.1, sustain=0.3, release=0.1) -> np.ndarray:
+    """String Instruments
+    Attack: very fast
+    Decay: short
+    Sustain: low
+    Release: medium
+    """
+    # (1) Generate a base tone
+    base = sine_wave(frequency, duration)
+    base = distort(base, 12)
+
+    low = sine_wave(frequency / 2, duration)
+    base += low
+    
+
+    # (2) Modify the A, D, and R values to fit the duration
+    attack = duration * (0.02 / 0.3)
+    decay = duration * (0.1 / 0.3)
+    release = duration * (0.1 / 0.3)
+
+    # (3) Apply the envelope
+    return fade_out(envelope(base, attack, decay, sustain, release), 5) * 0.6
+
+
 
 def xylo(frequency, duration):
     volume_reduction = 0.4
@@ -718,19 +773,62 @@ def xylotech(frequency, duration):
 def xylotech2(frequency, duration):
     volume_reduction = 0.4
 
+    #   First Harmonic
     base = sine_wave(frequency, duration)
-    a = sine_wave(frequency * 3, duration) #* (volume_reduction / 2)
-    b = sine_wave(frequency / 2, duration) #* (volume_reduction)
-
+    a = sine_wave(frequency * 3, duration)
+    b = sine_wave(frequency / 2, duration)
     base += (a + b)
 
+    #   Second Harmonic
+    freq_2 = shift_note(frequency, -5)
+    base2 = sine_wave(freq_2, duration)
+    a2 = sine_wave(freq_2 * 3, duration)
+    b2 = sine_wave(freq_2 / 2, duration)
+    base2 += (a2 + b2)
+    
+    #   Combine the harmonics
+    base += base2
+
+    #   Apply the envelope
     a = 0.001 * duration
     d = 0.2 * duration
     s = 1.0
     r = 0.3 * duration
-
     base = envelope(base, a, d, s, r)
+
+    #   Fade and return
     return fade_out(base, 2)
+
+
+def xylohorn2(frequency, duration):
+    volume_reduction = 0.4
+
+    #   First Harmonic
+    base = sine_wave(frequency, duration)
+    a = sine_wave(frequency * 3, duration)
+    b = sine_wave(frequency / 4, duration)
+    base += (a + b)
+
+    #   Second Harmonic
+    freq_2 = shift_note(frequency, -5)
+    base2 = sine_wave(freq_2, duration)
+    a2 = sine_wave(freq_2 * 3, duration)
+    b2 = sine_wave(freq_2 / 4, duration)
+    base2 += (a2 + b2)
+    
+    #   Combine the harmonics
+    base += base2
+
+    #   Apply the envelope
+    a = 0.4 * duration
+    d = 0.0 * duration
+    s = 1.0
+    r = 0.4 * duration
+    base = envelope(base, a, d, s, r)
+
+    #   Fade and return
+    return fade_out(base, 2)
+
 
 def snare(frequency = 140, duration = 0.17):
     """Generate a snare sound, following the percussion framework

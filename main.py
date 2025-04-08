@@ -1,8 +1,10 @@
 import numpy as np
 import audio
 import hiphop
-import writealone
 import instruments
+
+#   Import the songs
+import writealone, blessup
 
 """
 Hier beginnt meine hören Projekt.
@@ -61,7 +63,7 @@ def main():
     """Main Function: Create any sounds you want"""
 
     #   (1) Components for Page One
-    writealone.main()
+    blessup.main()
 
     #   (2) Run some generations
     #generate(instruments.Skirt, "dream_gen", 160, 4)
