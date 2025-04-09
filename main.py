@@ -4,7 +4,7 @@ import hiphop
 import instruments
 
 #   Import the songs
-import writealone, blessup, unknown
+import writealone, blessup, unknown, rage
 
 """
 Hier beginnt meine hören Projekt.
@@ -35,8 +35,8 @@ def generate_snares():
 def generate_strings():
     audio.sound_generator(envelope=audio.pluck, folder="string_gen", play_sounds=False)
 
-def generate(instrument, folder, bpm = 160, octave = 4):
-    instr = instrument(octave, 1/(bpm / 60) * 4)
+def generate(instrument, folder, bpm = 160, octave = 4, typ=""):
+    instr = instrument(octave, 1/(bpm / 60) * 4, typ)
 
     audio.save(instr.q_c, folder, "c")
     audio.save(instr.q_cs, folder, "c#")
@@ -62,11 +62,11 @@ def generate(instrument, folder, bpm = 160, octave = 4):
 def main():
     """Main Function: Create any sounds you want"""
 
-    #   (1) Components for Page One
-    unknown.main()
+    #   (1) Produce a beat
+    rage.main()
 
     #   (2) Run some generations
-    #generate(instruments.Skirt, "dream_gen", 160, 4)
+    #generate(instruments.PianoBass, "dream_gen", 170, 6, "3")
 
 
 if __name__ == '__main__':

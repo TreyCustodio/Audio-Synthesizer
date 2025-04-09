@@ -1,6 +1,6 @@
 from beat import *
 
-class Unknown(Song):
+class Unknown(Beat):
     def __init__(self):
         super().__init__(155)
 
@@ -209,7 +209,8 @@ class Unknown(Song):
         v3 = build_measure(rest(self.whole), m18, m15, m16,
                            m13, m17, rest(self.whole), m18,)
         
-        return v0, v00, v1, v2, v3
+        v4 = add_waves(v3, b.q_g)
+        return v0, v00, v1, v2, v3, v4
     
     def plucks(self):
         p = Piano(4, self.whole,)
@@ -366,7 +367,7 @@ class Unknown(Song):
         #   Gather the instruments
         d0, d1, d1q = self.drums()
         x0, x00, x1, x2 = self.xylos()
-        k0, k00, k1, k2, k3 = self.piano()
+        k0, k00, k1, k2, k3, k4 = self.piano()
 
 
         #   Create the Verses
@@ -398,7 +399,12 @@ class Unknown(Song):
 
         v7 = combine(d1,k3)#= combine(v5, k3)
 
-        v8 = combine(v3, k3 * 4.0)
+        v8 = combine(v3, k2 * 4.0)
+
+        v9 = combine(v3, k3 * 4.0)
+
+        v10 = combine(v3, k4 * 4.0)
+
         ##  Section 2
 
 
@@ -418,7 +424,8 @@ class Unknown(Song):
 
                                 v2, v4,
 
-                                v3, v8
+                                v3,
+                                v8, v9, v10
                                 #   Section 2
                                    )
 

@@ -120,6 +120,8 @@ class PianoBass(Instrument):
     def __init__(self, octave, measure, type=""):
         if type == "2":
             super().__init__(octave, measure, pianobass2)
+        elif type == "3":
+            super().__init__(octave, measure, pianobass3)
         else:
             super().__init__(octave, measure, pianobass)
 

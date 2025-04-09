@@ -4,7 +4,7 @@ import wave
 from abc import abstractmethod
 
 
-class Song:
+class Beat:
     """Initializing Instance Variables"""
     def __init__(self, bpm):
         #   Bpm

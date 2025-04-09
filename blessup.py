@@ -1,6 +1,6 @@
 from beat import *
 
-class BlessUp(Song):
+class BlessUp(Beat):
     def __init__(self):
         super().__init__(150)
 

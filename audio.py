@@ -162,6 +162,10 @@ def combine(wave1, wave2):
 
         return wave1 + wave2
 
+def delaycombo(wave1, wave2, rest_time = 0.1):
+    return combine(wave1, combine(rest(rest_time), wave2))
+                            
+
 def save(effect, folder: str = "", name: str = ""):
     """Save a sound as a .wav file.
     Final step in the audio generation process.
@@ -1080,6 +1084,88 @@ def pianobass(frequency, duration):
     for i in range(1, 51):
         base += sine_wave(frequency * i, duration) * amplitude
         amplitude /= i
+    
+    #   (2) Apply the Envelope
+    a = 0.005 * duration
+    d = 0.3 * duration
+    s = 0.1
+    r = 0.05 * duration
+
+    base = envelope(base, a, d, s, r)
+    #   Return the wave
+    return base
+
+def pianobass(frequency, duration):
+    #   First Key
+    base = sine_wave(frequency, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        base += sine_wave(frequency * i, duration) * amplitude
+        amplitude /= i
+
+    #   (2) Apply the Envelope
+    a = 0.005 * duration
+    d = 0.3 * duration
+    s = 0.1
+    r = 0.05 * duration
+
+    base = envelope(base, a, d, s, r)
+    #   Return the wave
+    return base
+
+def pianobass2(frequency, duration):
+    #   First Key
+    base = sine_wave(frequency, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        base += sine_wave(frequency * i, duration) * amplitude
+        amplitude /= i
+    
+    #   Second Key
+    freq_a = frequency / 2
+    a = sine_wave(freq_a, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        a += sine_wave(freq_a * i, duration) * amplitude
+        amplitude /= i
+
+    base += a
+    
+    #   (2) Apply the Envelope
+    a = 0.005 * duration
+    d = 0.3 * duration
+    s = 0.1
+    r = 0.05 * duration
+
+    base = envelope(base, a, d, s, r)
+    #   Return the wave
+    return base
+
+def pianobass3(frequency, duration):
+    #   First Key
+    base = sine_wave(frequency, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        base += sine_wave(frequency * i, duration) * amplitude
+        amplitude /= i
+    
+    #   Second Key
+    freq_a = frequency / 2
+    a = sine_wave(freq_a, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        a += sine_wave(freq_a * i, duration) * amplitude
+        amplitude /= i
+
+    #   Third Key
+    freq_b = frequency / 4
+    b = sine_wave(freq_b, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        b += sine_wave(freq_b * i, duration) * amplitude
+        amplitude /= i
+
+    base += (a + b)
     
     #   (2) Apply the Envelope
     a = 0.005 * duration
