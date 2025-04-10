@@ -617,6 +617,17 @@ def white_noise(wave : np.ndarray, noise_amount : float = 0.1, cutoff = 0.0):
 
     return wave #+ noise
 
+def makeSilent(wave):
+    w = wave.copy()
+    for i in range(len(w) // 2):
+        w[i] = 0
+    
+    for i in range(len(w) // 2, len(w)):
+        w[i] *= 2.0
+    
+    return w
+
+
 def distort(wave : np.ndarray, distortion_amount : float =0.1):
     """Add a gritty effect to a sound"""
     return np.tanh(distortion_amount * wave) / np.tanh(distortion_amount)
@@ -884,45 +895,38 @@ def bass(frequency=330, duration=0.1):
 
     # 1. Frequency envelope (exponential decay)
     env = frequency * np.exp(-5 * t) + frequency_end
+    enva = (frequency * 2) * np.exp(-5 * t) + (frequency_end)
 
     # 2. Amplitude envelope (sharp attack, quick decay)
     amp = np.exp(-decay_rate * 5 * t)
 
     # 3. Generate modulated sine wave
     kick_wave = amp * np.sin(2 * np.pi * np.cumsum(env) / SAMPLE_RATE)
+    kick_wavea = amp * np.sin(2 * np.pi * np.cumsum(enva) / SAMPLE_RATE)
 
     # 4. Add subtle distortion
     kick_wave = np.tanh(kick_wave * 1.5)  # Soft clipping
-
+    kick_wavea = np.tanh(kick_wavea * 1.5)  # Soft clipping
+    
     # 5. Add a click sound
     click = np.random.randn(int(0.005 * SAMPLE_RATE)) * 0.1  # 5ms noise burst
     kick_wave[:len(click)] += click * np.linspace(1, 0, len(click))
-
+    kick_wavea[:len(click)] += click * np.linspace(1, 0, len(click))
     
 
     #pattern = [1, 0, 0.7, 0, 0.5, 0, 0.3]  # Beat accents
     #kick_wave = np.concatenate([kick_wave * p for p in pattern])
 
     kick_wave = np.arctan(kick_wave * 2) * 0.8
+    kick_wavea = np.arctan(kick_wavea * 2) * 0.8
     
     # Normalize and play
     kick_wave /= np.max(np.abs(kick_wave))
-    return kick_wave
+    kick_wavea /= np.max(np.abs(kick_wavea))
 
-    #   (1) Generate the base tone using a pitch envelope
-    base = pitch_envelope(start_frequency=frequency, end_frequency=1, duration=duration)
+    return kick_wave + kick_wavea
 
-
-    #   (2) Find A,D,S,R
-    a = 0.00 * duration
-    d = 0.1 * duration
-    s = 1.0
-    r = 0.1 * duration
-
-    #   (3) Apply the envelope and return the sound
-    base = envelope(base, a, d, s, r)
-    base = distort(base, 2.0)
-    return base * 0.7
+ 
 
 def percussify(frequency, duration, noise_factor):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration))
@@ -1165,17 +1169,26 @@ def pianobass3(frequency, duration):
         b += sine_wave(freq_b * i, duration) * amplitude
         amplitude /= i
 
-    base += (a + b)
+    #   Metallic Key
+    freq_m = frequency / 8
+    m = sine_wave(freq_m, duration)
+    amplitude = 1.0
+    for i in range(1, 51):
+        m += sine_wave(freq_m * i, duration) * amplitude
+        amplitude /= i
+
+
+    base += (a + b + m)
     
     #   (2) Apply the Envelope
     a = 0.005 * duration
-    d = 0.3 * duration
+    d = 0.8 * duration
     s = 0.1
     r = 0.05 * duration
 
     base = envelope(base, a, d, s, r)
     #   Return the wave
-    return base
+    return lowpass(fade_out(base, 8), 5000)
 
 def pianotreble(frequency, duration):
     #   (1) Get the wave

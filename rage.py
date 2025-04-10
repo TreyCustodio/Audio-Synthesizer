@@ -7,7 +7,7 @@ class Rage(Beat):
 
     def drumsB(self):
         b = Bass(1, self.whole)
-        b1 = Bass(0, self.whole)
+        #b1 = Bass(0, self.whole)
 
         amplifier = 16.0
 
@@ -29,11 +29,20 @@ class Rage(Beat):
         m6 = build_measure(rest(self.half),
                            b.e_a, b.e_a, b.e_a, b.e_a) * amplifier
         
+
+        m7 = build_measure(b.s_e, rest(self.sixteenth), b.e_e,
+                           rest(self.eighth), b.e_e,
+                           b.q_a,
+                           rest(self.eighth), b.e_e) * amplifier
+        
         v1 = build_measure(m1, m4, m1, m2,
                            m1, m2, m1, m6)
         
-        v1 = lowpass(v1, 13435)
-        return v1
+        v2 = build_measure(m7, m7, m7, m7,
+                           m7, m7, m7, m7)
+        
+        v1 = lowpass(v1, 15435)
+        return v1, v2
     
 
     def drums(self):
@@ -48,14 +57,19 @@ class Rage(Beat):
         
         m1 = build_measure(s.e_a, s.e_g,
                            s.e_f, rest(self.eighth),
-                           s.e_c, rest(self.eighth),
-                           s.e_c, s.e_c,
+                           s.e_a, rest(self.eighth),
+                           s.e_g, s.e_a,
                            ) * amplifier
         
         m2 = build_measure(s.e_c, 
                            rest(self.eighth), s.e_c,
                            rest(self.quarter),
                            rest(self.quarter + self.eighth)) * amplifier
+        
+        m3 = build_measure(rest(self.eighth), s.e_c, 
+                           rest(self.eighth), s.e_c,
+                           s.e_c, s.e_c,
+                           s.e_c, s.e_c,) * amplifier
         
         m4 = build_measure(rest(self.eighth), s.e_c, 
                            rest(self.eighth), s.e_c,
@@ -64,8 +78,8 @@ class Rage(Beat):
         #   (V1)
 
 
-        v1 = build_measure(m1, m4, m1, m2,
-                           m1, m2, m1, m4)
+        v1 = build_measure(m1, m3, m1, m4,
+                           m1, m2, m1, m3)
         return m0, v1
     
     def pianoB(self):
@@ -85,26 +99,29 @@ class Rage(Beat):
                            n.e_d, rest(self.eighth),
                            rest(self.quarter))
         
-        m3 = build_measure(combine(n.q_f, n.s_e), n.q_d,
+        ##
+        m3 = build_measure(combine(n.q_e, n.s_d), n.q_d,
                            rest(self.half),
                            )
         
-        m4 = build_measure(combine(n.q_g, n.s_f), n.q_d,
+        m4 = build_measure(combine(n.q_fs, n.s_e), n.q_d,
                            rest(self.half))
         
-        m5 = build_measure(combine(n.q_f, n.s_e), n.q_d,
+        m5 = build_measure(combine(n.q_f, n.s_ds), n.q_d,
                            rest(self.quarter + self.eighth),
                            )
         
         m6 = build_measure(n.e_d, n.e_c,
                            n.e_d, n.e_d,
+                           
                            rest(self.eighth), n.e_d,
                            rest(self.half - self.eighth))
         
-        m7 = build_measure(combine(n.q_f, n.s_e), n.q_d,
+        m7 = build_measure(combine(n.q_f, n.s_ds), n.q_d,
                            rest(self.eighth), n.q_d
                            )
-        
+        ##
+
         m8 = build_measure(n.e_c, n.e_d,
                            n.e_d, n.e_d, 
                            n.e_d, rest(self.eighth),
@@ -143,26 +160,36 @@ class Rage(Beat):
                            n.e_d, rest(self.eighth),
                            rest(self.quarter))
         
-        m3 = build_measure(delaycombo(n.q_f, n.s_e, self.sixteenth * 2), n.q_d,
+        ##
+        m3 = build_measure(n.q_d,
+                            #delaycombo(n.q_d, n.s_d, self.sixteenth),
+                            n.q_d,
                            rest(self.half),
                            )
         
-        m4 = build_measure(delaycombo(n.q_g, n.s_f, self.sixteenth*2), n.q_d,
+        m4 = build_measure(n.q_e,
+            #delaycombo(n.q_e, n.s_ds, self.sixteenth), 
+                           n.q_d,
                            rest(self.half))
         
-        m5 = build_measure(delaycombo(n.q_f, n.s_e, self.sixteenth * 2), n.q_d,
-                           rest(self.quarter + self.eighth),
+        m5 = build_measure(n.q_f,
+            #delaycombo(n.q_f, n.s_c, self.sixteenth),
+                           n.q_d,
+                           rest(self.eighth + self.quarter)
                            )
         
-        m6 = build_measure(n.e_d, n.e_c,
+        m6 = build_measure(combine(makeSilent(n.q_c), n.e_d),
+            #n.e_d, n.e_c,
                            n.e_d, n.e_d,
                            rest(self.eighth), n.e_d,
                            rest(self.half - self.eighth))
         
-        m7 = build_measure(delaycombo(n.q_f, n.s_e, self.sixteenth * 2), n.q_d,
+        m7 = build_measure(n.q_f,
+            #delaycombo(n.q_e, n.s_d, self.sixteenth),
+                           n.q_d,
                            rest(self.eighth), n.q_d
                            )
-        
+        ##
         m8 = build_measure(n.e_c, n.e_d,
                            n.e_d, n.e_d, 
                            n.e_d, rest(self.eighth),
@@ -186,17 +213,17 @@ class Rage(Beat):
 
     def produce(self):
         #   Gather Instruments
-        db1 = self.drumsB()
+        db1, db2 = self.drumsB()
         d0, d1 = self.drums()
         pb0, pb00, pb1, pb2 = self.pianoB()
         p0, p1, p2 = self.piano()
 
         ##  Harmonic Combinations
         p0 += pb0
-        p1 += pb1
+        p1 = combine(p1, pb1)#p1 += pb1
         p2 += pb2
 
-        d1 = combine(d1, db1)
+        d1 = combine(d1, db1)#combine(d1, db1)
 
         #   Combine the Instruments into Verses
         intro = build_measure(pb00, pb0, p0, p1)
@@ -216,7 +243,11 @@ class Rage(Beat):
                                 
                                 #   Switch up drum beat
                                    v1, v2,
-                                   v3, v4)
+                                   v3, v4,
+
+                                #   Quota
+                                   v1, v2,
+                                   d1 * 1.5)
 
         save(production, "rage", "production")
 
