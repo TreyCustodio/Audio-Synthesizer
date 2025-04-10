@@ -66,7 +66,7 @@ def main():
     rage.main()
 
     #   (2) Run some generations
-    #generate(instruments.PianoBass, "dream_gen", 170, 6, "3")
+    #generate(instruments.XyloHorn, "dream_gen", 170, 4, "2")
 
 
 if __name__ == '__main__':

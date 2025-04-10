@@ -178,7 +178,7 @@ class Rage(Beat):
                            rest(self.eighth + self.quarter)
                            )
         
-        m6 = build_measure(combine(makeSilent(n.q_c), n.e_d),
+        m6 = build_measure(slur(n.e_d, n.e_c, n),#combine(makeSilent(n.q_c), n.e_d),
             #n.e_d, n.e_c,
                            n.e_d, n.e_d,
                            rest(self.eighth), n.e_d,
@@ -210,6 +210,38 @@ class Rage(Beat):
 
         return v0, v1, v2
     
+    def xylos(self):
+        n = XyloHorn(5, self.whole, "2")
+        amplifier = 19.0
+
+
+        m1 = build_measure(n.e_a, n.e_f,
+                           n.e_d,
+                           n.q_g,
+                           n.q_a, rest(self.eighth)) * amplifier
+        
+        m2 = build_measure(n.e_d, n.e_c,
+                           n.e_d,
+                           n.q_f,
+                           n.q_d,
+                           rest(self.eighth)) * amplifier
+        
+        ##  Half a measure!
+        m3 = build_measure(n.e_d, n.e_c,
+                           n.e_d,
+                           n.q_f,
+                           n.q_d,
+                           n.e_d, n.e_d,
+                           n.e_d, n.e_d,
+                           n.e_d,
+                           ) * amplifier
+        
+        v1 = build_measure(rest(self.half), m1, rest(self.whole), m2, rest(self.half),
+                           rest(self.half), m1, rest(self.whole), m2, rest(self.half))
+
+        v2 = build_measure(rest(self.half), m1, rest(self.whole), m2, rest(self.half),
+                           rest(self.half), m1, rest(self.whole), m3)
+        return v1, v2
 
     def produce(self):
         #   Gather Instruments
@@ -217,8 +249,14 @@ class Rage(Beat):
         d0, d1 = self.drums()
         pb0, pb00, pb1, pb2 = self.pianoB()
         p0, p1, p2 = self.piano()
+        x1, x2 = self.xylos()
 
         ##  Harmonic Combinations
+        ##  Initial saving of piano before adding bass
+        save(p0, "rage", "piano0")
+        save(p1, "rage", "piano1")
+        save(p2, "rage", "piano2")
+
         p0 += pb0
         p1 = combine(p1, pb1)#p1 += pb1
         p2 += pb2
@@ -232,8 +270,10 @@ class Rage(Beat):
         v1 = combine(p1, d1)
         v2 = combine(p2, d1)
         
-        v3 = combine(pb1 * 2.0, d1)
-        v4 = combine(pb2 * 2.0, d1)
+        v3 = combine(pb1 * 3.0, d1)
+        v3 = combine(v3, x1)
+        v4 = combine(pb2 * 3.0, d1)
+        v4 = combine(v4, x2)
 
 
         #   Build the final production
@@ -250,6 +290,25 @@ class Rage(Beat):
                                    d1 * 1.5)
 
         save(production, "rage", "production")
+
+        #   Save all the instruments seperately
+        save(d0, "rage", "drums0")
+        save(d1, "rage", "drums1")
+
+        # save(p0, "rage", "piano0")
+        # save(p1, "rage", "piano1")
+        # save(p2, "rage", "piano2")
+
+        save(pb0, "rage", "bassPiano0")
+        save(pb00, "rage", "bassPiano00")
+        save(pb1, "rage", "bassPiano1")
+        save(pb2, "rage", "bassPiano2")
+
+        save(x1, "rage", "xylos1")
+        save(x2, "rage", "xylos2")
+        
+
+
 
 
 def main():

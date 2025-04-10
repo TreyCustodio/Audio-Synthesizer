@@ -4,7 +4,9 @@ from audio import *
 generate every possible note for each instrument."""
 
 class Instrument:
-    def __init__(self, octave, measure, func):
+    def __init__(self, octave, measure, func, type=""):
+        self.type = type
+
         coeff = 2 ** (octave - 1)
 
         #   (1) Sixteenth Notes
@@ -108,30 +110,37 @@ class Instrument:
         self.w_as = func(As1 * coeff, t)
         self.w_b = func(B1 * coeff, t)
 
+    def getADSR(self):
+        return
         
 class Piano(Instrument):
     def __init__(self, octave, measure, type=""):
         if type == "2":
-            super().__init__(octave, measure, piano2)
+            super().__init__(octave, measure, piano2, type)
         else:
-            super().__init__(octave, measure, piano)
+            super().__init__(octave, measure, piano, type)
 
 class PianoBass(Instrument):
     def __init__(self, octave, measure, type=""):
         if type == "2":
-            super().__init__(octave, measure, pianobass2)
+            super().__init__(octave, measure, pianobass2, type)
         elif type == "3":
-            super().__init__(octave, measure, pianobass3)
+            super().__init__(octave, measure, pianobass3, type)
         else:
-            super().__init__(octave, measure, pianobass)
+            super().__init__(octave, measure, pianobass, type)
 
+    def getADSR(self):
+            if self.type == "3":
+                return 0.005, 0.8, 0.1, 0.05
+            
 class PianoTreble(Instrument):
     def __init__(self, octave, measure, type=""):
         if type == "2":
             super().__init__(octave, measure, pianotreble2)
         else:
-            super().__init__(octave, measure, pianotreble)
+            super().__init__(octave, measure, pianotreble, type)
 
+    
 class Dreamy(Instrument):
     def __init__(self, octave, measure):
         super().__init__(octave, measure, dream)

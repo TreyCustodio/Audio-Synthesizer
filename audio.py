@@ -164,7 +164,22 @@ def combine(wave1, wave2):
 
 def delaycombo(wave1, wave2, rest_time = 0.1):
     return combine(wave1, combine(rest(rest_time), wave2))
-                            
+
+def slur(wave1, wave2, instrument):
+    slur = add_waves(wave1, wave2)
+    
+
+    duration = len(slur) / SAMPLE_RATE
+    
+    adsr = instrument.getADSR()
+    a = adsr[0] * duration
+    d = adsr[1] * duration
+    s = adsr[2]
+    r = adsr[3] * duration
+    
+    
+    slur = envelope(slur, a,d,s,r)
+    return slur               
 
 def save(effect, folder: str = "", name: str = ""):
     """Save a sound as a .wav file.
