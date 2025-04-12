@@ -4,7 +4,7 @@ import hiphop
 import instruments
 
 #   Import the songs
-import writealone, blessup, unknown, rage
+import writealone, blessup, unknown, rage, jiggy
 
 """
 Hier beginnt meine hören Projekt.
@@ -63,10 +63,11 @@ def main():
     """Main Function: Create any sounds you want"""
 
     #   (1) Produce a beat
-    rage.main()
+    #rage.main()
+    jiggy.main()
 
     #   (2) Run some generations
-    #generate(instruments.XyloHorn, "dream_gen", 170, 4, "2")
+    #generate(instruments.XyloHorn, "dream_gen", 180, 7, "2")
 
 
 if __name__ == '__main__':

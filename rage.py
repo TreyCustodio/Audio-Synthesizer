@@ -9,7 +9,7 @@ class Rage(Beat):
         b = Bass(1, self.whole)
         #b1 = Bass(0, self.whole)
 
-        amplifier = 16.0
+        amplifier = 1#6.0
 
 
         m1 = build_measure(b.q_a, b.q_a,
@@ -50,7 +50,7 @@ class Rage(Beat):
         b1 = Bass(0, self.whole)
         s = Skirt(3, self.whole)
 
-        amplifier = 16.0
+        amplifier = 1.0 #16.0
 
         m0 = build_measure(rest(self.whole * 20 - (self.quarter)),
                            s.e_a, s.e_d) * amplifier
@@ -261,6 +261,10 @@ class Rage(Beat):
         p1 = combine(p1, pb1)#p1 += pb1
         p2 += pb2
 
+        ##  Initial saving of drums before combining bass
+        save(db1, "rage", "bass1")
+        save(d1, "rage", "skirt1")
+
         d1 = combine(d1, db1)#combine(d1, db1)
 
         #   Combine the Instruments into Verses
@@ -292,8 +296,8 @@ class Rage(Beat):
         save(production, "rage", "production")
 
         #   Save all the instruments seperately
-        save(d0, "rage", "drums0")
-        save(d1, "rage", "drums1")
+        # save(d0, "rage", "drums0")
+        # save(d1, "rage", "drums1")
 
         # save(p0, "rage", "piano0")
         # save(p1, "rage", "piano1")
