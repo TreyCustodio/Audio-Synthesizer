@@ -363,7 +363,7 @@ class Unknown(Beat):
         return v0, v00, v1, v2
 
     
-    def produce(self):
+    def produce(self, amplitude=1.0, noIntro=False):
         #   Gather the instruments
         d0, d1, d1q = self.drums()
         x0, x00, x1, x2 = self.xylos()
@@ -409,9 +409,8 @@ class Unknown(Beat):
 
 
         #   Create the final production
-        production = build_measure(
-                                #   Intro
-                                   intro,
+        if noIntro:
+            production = build_measure(
                                 
                                 #   Section 1
                                 v1, v1,
@@ -428,11 +427,32 @@ class Unknown(Beat):
                                 v8, v9, v10
                                 #   Section 2
                                    )
+        else:
+            production = build_measure(
+                                    #   Intro
+                                    intro,
+                                    
+                                    #   Section 1
+                                    v1, v1,
 
+                                    v2, v4,
+
+                                    v3, v3,
+
+                                    v5, v6, v7,
+
+                                    v2, v4,
+
+                                    v3,
+                                    v8, v9, v10
+                                    #   Section 2
+                                    )
+
+        production *= amplitude
         #production = lowpass(production, 13230)
         #   Save the production
-        save(production, "unknown", "production")
+        save(production, "unknown", "unknown")
 
 
-def main():
-    Unknown().produce()
+def main(amplitude, noIntro=False):
+    Unknown().produce(amplitude, noIntro)

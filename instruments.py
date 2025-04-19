@@ -110,6 +110,22 @@ class Instrument:
         self.w_as = func(As1 * coeff, t)
         self.w_b = func(B1 * coeff, t)
 
+        #   (7) Double Whole Notes
+        t = measure * 2
+
+        self.w2_c = func(C1 * coeff, t)
+        self.w2_cs = func(Cs1 * coeff, t)
+        self.w2_d = func(D1 * coeff, t)
+        self.w2_ds = func(Ds1 * coeff, t)
+        self.w2_e = func(E1 * coeff, t)
+        self.w2_f = func(F1 * coeff, t)
+        self.w2_fs = func(Fs1 * coeff, t)
+        self.w2_g = func(G1 * coeff, t)
+        self.w2_gs = func(Gs1 * coeff, t)
+        self.w2_a = func(A1 * coeff, t)
+        self.w2_as = func(As1 * coeff, t)
+        self.w2_b = func(B1 * coeff, t)
+
     def getADSR(self):
         return
         
@@ -126,6 +142,8 @@ class PianoBass(Instrument):
             super().__init__(octave, measure, pianobass2, type)
         elif type == "3":
             super().__init__(octave, measure, pianobass3, type)
+        elif type == "4":
+            super().__init__(octave, measure, pianobass4, type)
         else:
             super().__init__(octave, measure, pianobass, type)
 
@@ -146,8 +164,11 @@ class Dreamy(Instrument):
         super().__init__(octave, measure, dream)
 
 class Snare(Instrument):
-    def __init__(self, octave, measure):
-        super().__init__(octave, measure, snare)
+    def __init__(self, octave, measure, typ=""):
+        if typ == "2":
+            super().__init__(octave, measure, snare2)
+        else:
+            super().__init__(octave, measure, snare)
 
 class Pluck(Instrument):
     def __init__(self, octave, measure, type="base"):
@@ -192,7 +213,7 @@ class Bass(Instrument):
         super().__init__(octave, measure, bass)
 
 class Symbol(Instrument):
-    def __init__(self, octave, measure):
+    def __init__(self, octave, measure, type = ""):
         super().__init__(octave, measure, symbol)
 
 class Skirt(Instrument):

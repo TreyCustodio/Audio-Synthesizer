@@ -163,7 +163,8 @@ def combine(wave1, wave2):
         return wave1 + wave2
 
 def delaycombo(wave1, wave2, rest_time = 0.1):
-    return combine(wave1, combine(rest(rest_time), wave2))
+    """Combines 2 waves but adds the rest time to the beginning of wave2"""
+    return combine(wave1, add_waves(rest(rest_time), wave2))
 
 def slur(wave1, wave2, instrument):
     slur = add_waves(wave1, wave2)
@@ -900,6 +901,23 @@ def snare(frequency = 140, duration = 0.17):
     
     return swoop
 
+def snare2(frequency, duration):
+    #   (1) Create the initial swoop
+    swoop = sine_wave(frequency, duration)
+
+    amp = 1.0
+    for i in range(1, 100):
+        amp *= i
+        s = sine_wave(frequency / i, duration) / amp
+        swoop += s
+
+    #   (2) Add some effects
+    swoop = distort(swoop, 1.0)
+    swoop = white_noise(swoop, 0.007, 0.1)
+    swoop = snare_envelope(swoop)
+    
+    return swoop
+
 def bass(frequency=330, duration=0.1):
     """A bass drum sound"""
     frequency_end = 30
@@ -1205,6 +1223,43 @@ def pianobass3(frequency, duration):
     #   Return the wave
     return lowpass(fade_out(base, 8), 5000)
 
+def pianobass4(frequency, duration):
+    """pianobass2 but distorted"""
+
+    base = pianobass2(frequency, duration)
+    base = distort(base, 2.0)
+
+    # #   First Key
+    # base = sine_wave(frequency, duration)
+    # amplitude = 1.0
+    # for i in range(1, 51):
+    #     base += sine_wave(frequency * i, duration) * amplitude
+    #     amplitude /= i
+    # base = distort(base, 8.0)
+    
+
+    # #   Second Key
+    # freq_a = frequency / 2
+    # a = sine_wave(freq_a, duration)
+    # amplitude = 1.0
+    # for i in range(1, 51):
+    #     a += sine_wave(freq_a * i, duration) * amplitude
+    #     amplitude /= i
+    # a = distort(a, 4.0)
+    # base += a
+    
+    # #   (2) Apply the Envelope
+    # a = 0.005 * duration
+    # d = 0.3 * duration
+    # s = 0.1
+    # r = 0.05 * duration
+
+    # base = envelope(base, a, d, s, r)
+
+
+    #   Return the wave
+    return base
+
 def pianotreble(frequency, duration):
     #   (1) Get the wave
     base = sine_wave(frequency, duration)
@@ -1308,15 +1363,45 @@ def interact(frequency = 400, duration = 0.3, sample_rate = SAMPLE_RATE):
     wave_2 = percussion(frequency=frequency-100, duration=duration, sample_rate=sample_rate + 1000)
     return distort(join_waves(wave, wave_2), 2.0)
 
+def text_next():
+    return envelope(interact(400), 0.3 * 0.01, 0.3 * 0.2, 0.4, 0.3 * 0.1)
+
+
 def text_close():
+    duration = 0.3
+
     #   Wave 1 - High
-    wave_1 = interact(670)
+    wave_1 = interact(400)
 
     #   Wave 2 - Low
-    wave_2 = interact(400)
+    wave_2 = interact(350)
 
     #   Wave 3 - Mid
-    wave_3 = interact(500)
+    wave_3 = interact(300)
+    wave_3a = interact(500)
+    
+    #   Shorten Wave 2 and 3
+    wave_4 = wave_2[:-8000]
+    wave_5 = wave_3[:-9000]
+
+    #   Combine Wave 4 and 5
+    wave_6 = add_waves(wave_4, wave_5, position=0)
+
+    #   Combine Wave 1 and 3; Combine Wave 6 with the new wave
+    final = add_waves(wave_6, (wave_3a + wave_1) * 0.5)
+    
+    return envelope(final, 0.01 * duration, 0.1 * duration, 1.0, 0.8 * duration)
+
+def text_done():
+    duration = 0.3
+    #   Wave 1 - High
+    wave_1 = interact(300)
+
+    #   Wave 2 - Low
+    wave_2 = interact(300)
+
+    #   Wave 3 - Mid
+    wave_3 = interact(400 / 2)
     
     #   Shorten Wave 2 and 3
     wave_4 = wave_2[:-8000]
@@ -1328,27 +1413,7 @@ def text_close():
     #   Combine Wave 1 and 3; Combine Wave 6 with the new wave
     final = add_waves(wave_6, (wave_1  + wave_3) * 0.5, -1)
     
-    return final
-
-def text_done():
-    #   Wave 1
-    wave_1 = interact(400)
-    wave_1 = wave_1[:-8000]
-
-    #   Wave 2
-    wave_2 = interact(300)
-
-    #   Wave 3
-    wave_3 = interact(300, 0.3, SAMPLE_RATE+100)
-    wave_3 = wave_3[:-8000]
-
-    #   Combine Wave 2 and 3
-    wave_4 = add_waves(wave_2, wave_3, 0)
-
-    #   Combine Wave 1 and 4
-    wave_5 = add_waves(wave_4, wave_1, 0)
-
-    return wave_5
+    return envelope(final, 0.01 * duration, 0.1 * duration, 1.0, 0.1 * duration)
 
 
 def text(frequency = 400, duration = 0.25, decrement = 200, amp_factor = 0.8):
@@ -1356,18 +1421,53 @@ def text(frequency = 400, duration = 0.25, decrement = 200, amp_factor = 0.8):
 
     #   (1) Create a string tone
     base = pluck(frequency, 0.25)
-    base = distort(base, 4.0)
+    #base = distort(base, 4.0)
 
 
     #   (2) Create a lower string tone
     base_2 = pluck(ensure_1(frequency-decrement), 0.25)
-    base_2 = distort(base_2, 4.0)
+    #base_2 = distort(base_2, 4.0)
 
 
     #   (3) Combine the tones and wrap them in a snare envelope
-    final = snare_envelope((base_2 + base)) * amp_factor
+    final = base + base_2
+    final = envelope(final, 0.01 * 0.25, 0.2 * 0.25, 0.5, 0.01 * 0.25) * amp_factor
+
     return final
 
+def text_sad(frequency = 300, decrement = 200, amp_factor = 1.2):
+    #   (1) Create a string tone
+    base = pluck(frequency, 0.25)
+    #base = distort(base, 4.0)
+
+
+    #   (2) Create a lower string tone
+    base_2 = pluck(ensure_1(frequency-decrement), 0.25)
+    #base_2 = distort(base_2, 4.0)
+
+
+    #   (3) Combine the tones and wrap them in a snare envelope
+    final = base + base_2
+    final = envelope(final, 0.01 * 0.25, 0.2 * 0.25, 0.5, 0.01 * 0.25) * amp_factor
+
+    return final
+
+def text_angry(frequency = 400, decrement = 200, amp_factor = 1.2):
+    #   (1) Create a string tone
+    base = pluck(frequency, 0.25)
+    #base = distort(base, 4.0)
+
+
+    #   (2) Create a lower string tone
+    base_2 = pluck(ensure_1(600-decrement), 0.25) * 1.3
+    #base_2 = distort(base_2, 4.0)
+
+
+    #   (3) Combine the tones and wrap them in a snare envelope
+    final = base + base_2
+    final = envelope(final, 0.01 * 0.25, 0.2 * 0.25, 0.5, 0.01 * 0.25) * amp_factor
+
+    return distort(final, 1.0)
 
 def sound_generator(base_frequency: int = 100, max_frequency: int = 900, increment : int = 50, envelope : any = pluck, folder : str ="", play_sounds : bool = False) -> None:
     """Writes a series of .wav files to a directory. Produce sounds in bulk.
