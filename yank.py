@@ -13,6 +13,7 @@ class Yank(Beat):
     def piano(self):
         b = XyloTech(3, self.whole)
 
+        #   This ain't a bad rhythm but I'm changing it #
         m2 = build_measure(b.q_e, # 1
                            b.e_d, b.e_d, # 2
                            b.q_e, rest(self.eighth), #3.5
@@ -134,6 +135,7 @@ class Yank(Beat):
         d = Snare(2, self.whole, "2")
         p = Pluck(3, self.whole, "2")
         c = Symbol(3, self.whole)
+        b = Bass(1, self.whole, "h")
 
         
 
@@ -168,6 +170,11 @@ class Yank(Beat):
         m6 = build_measure(c.q_c, c.q_c,)
 
 
+        #   For Intro pt 2
+        #m7 = flatten(build_measure(b.q_e, b.q_e, b.q_e, b.q_e), 6.0) * 0.2
+        m7 = build_measure(b.q_e, b.q_e, b.q_e, b.q_e) * 0.075
+
+
         v2 = build_measure(m3, m3, m3, m3,
                            m3, m3, m3, m3,)
         
@@ -177,20 +184,42 @@ class Yank(Beat):
         v4 = build_measure(m3, m3, m3, m3,
                            m3, m3, m3, m5)
         
-        return m1, m1a, m2, v2, v3, v4
+        i2 = build_measure(m7, m7
+                           )
+        h1 = m7
+        
+        return m1, m1a, m2, v2, v3, v4, h1, i2
     
+    def intro(self):
+        b0, _, b2, _ = self.bass()
+        d0, d0a, _, _, _, _, _, d6 = self.drums()
+
+
+        #   Intro Sections
+        v0 = combine(b0, d0)
+        v0 = combine(v0, b2)
+        v0b = combine(v0, d6) ## Bass added
+
+        v0a = combine(b0, d0a)
+        v0a = combine(v0a, b2)
+        v0ab = combine(v0a, d6) ##  Bass added
+
+
     def produce(self):
-        d0, d0a, d1, d2, d3, d4 = self.drums()
+        d0, d0a, d1, d2, d3, d4, d5, d6 = self.drums()
         x1, x2, x3, x4, x5 = self.xylos()
         b0, b1, b2, b3 = self.bass()
         p = self.piano()
 
 
-        #b += p
+        #   Intro Sections
         v0 = combine(b0, d0)
         v0 = combine(v0, b2)
+        v0b = combine(v0, d6) ## Bass added
+
         v0a = combine(b0, d0a)
         v0a = combine(v0a, b2)
+        v0ab = combine(v0a, d6) ##  Bass added
 
         v1 = combine(b1, x1)
 
@@ -207,10 +236,19 @@ class Yank(Beat):
 
 
 
-        intro = build_measure(v0,v0,v0a,v0)
+        intro1 = build_measure(v0,v0,v0a,v0)
+        intro2 = build_measure(v0b,v0b,v0ab,v0b,v0ab, rest(self.whole*2 + self.half))
+
+        hook1 = build_measure(v0, v0, v0a, v0)
+        hook1 = combine(hook1, d5)
+
 
         production = build_measure(
-                        intro, # Chorus / swirrrrrrrrrrrve
+                        intro1,
+                        intro2,
+
+                        hook1,
+
                         v1, v2, # She a vengeful girl
                         bridge1, x5, v4, v4, v4  # Main 
                         )
@@ -219,4 +257,7 @@ class Yank(Beat):
 
 
 def main():
+    #b = Bass(1, get_measure(165), "h")
+    #save(shrink((build_measure(b.q_e, b.q_e, b.q_e, b.q_e)), 7.0, 0.0), "yank", "bass")
+
     Yank(165).produce()

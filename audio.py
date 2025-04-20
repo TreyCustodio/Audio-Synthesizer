@@ -4,6 +4,7 @@ import os
 # import soundfile as sf
 # import sounddevice as sd
 import wave
+import dynamics
 
 """
 Audio Module
@@ -127,8 +128,20 @@ C8 = 4186.0090
 def get_measure(bpm):
     return (1 / (bpm / 60)) * 4
 
+def get_sixteenth(bpm):
+    return (1 / (bpm / 60)) / 4
+
 def get_eighth(bpm):
     return (1 / (bpm / 60)) / 2
+
+def get_quarter(bpm):
+    return (1 / (bpm / 60))
+
+def get_half(bpm):
+    return (1 / (bpm / 60)) * 2
+
+def get_trey(bpm):
+    return (1 / (bpm / 60)) * 3
 
 def ensure_1(number):
     """Ensures that an integer or float is at least 1"""
@@ -166,23 +179,28 @@ def delaycombo(wave1, wave2, rest_time = 0.1):
     """Combines 2 waves but adds the rest time to the beginning of wave2"""
     return combine(wave1, add_waves(rest(rest_time), wave2))
 
-def slur(wave1, wave2, instrument):
-    slur = add_waves(wave1, wave2)
+# def slur(wave1, wave2, instrument):
+#     slur = add_waves(wave1, wave2)
     
 
-    duration = len(slur) / SAMPLE_RATE
+#     duration = len(slur) / SAMPLE_RATE
     
-    adsr = instrument.getADSR()
-    a = adsr[0] * duration
-    d = adsr[1] * duration
-    s = adsr[2]
-    r = adsr[3] * duration
+#     adsr = instrument.getADSR()
+#     a = adsr[0] * duration
+#     d = adsr[1] * duration
+#     s = adsr[2]
+#     r = adsr[3] * duration
     
     
-    slur = envelope(slur, a,d,s,r)
-    return slur               
+#     slur = envelope(slur, a,d,s,r)
+#     return slur               
 
-def save(effect, folder: str = "", name: str = ""):
+def slur(note1, note2, duration, dynamic = False):
+    """Slur a note"""
+
+    return dynamics.routine(note1, note2, duration, dynamic)
+
+def save(effect, folder: str = "", name: str = "", stereo=True):
     """Save a sound as a .wav file.
     Final step in the audio generation process.
     (1) Generate and manipulate sine waves in float64 format
@@ -202,10 +220,14 @@ def save(effect, folder: str = "", name: str = ""):
     else:
         file = name
 
-    #   (3) Write the file based on the object type
+    #   (3) Convert to Stereo?
+    # if stereo:
+    #     effect = np.column_stack([effect, effect])
+
+    #   (4) Write the file based on the object type
     with wave.open(file, 'w') as wf:
         ## Set the channels and framerate
-        wf.setnchannels(1)
+        wf.setnchannels(2)
         wf.setframerate(SAMPLE_RATE)
 
         ##  Convert to PCM format and find sample width
@@ -401,7 +423,7 @@ def scale_amplitude(wav):
     return (wav * factor).astype(np.int16)
 
 """Sound Effect Functions --------------------------------"""
-def sine_wave(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0.5, verticalShift=0):
+def sine_wave(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0.5, verticalShift=0, stereo = False):
     """Generates a sine wave"""
 
     #   (1) Create discrete time points over the duration of the sound. Generate (sampleRate * duration) numbers over the duration.
@@ -412,8 +434,36 @@ def sine_wave(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0
     #   (2) Return the sin wave: y = |a|sin(bx - c) + d
     ##  Recall that Amplitude = a, Period = 2pi/b, Phase Shift = c/b, Vertical shift = d
     ##  2*np.pi = period; so period * frequency * t gives us the correct period based on the frequency over time
-    return amplitude * np.sin(2 * np.pi * frequency * t) + verticalShift
+    wave = amplitude * np.sin(2 * np.pi * frequency * t) + verticalShift
 
+    #   Return a stereo wave    #
+    if stereo:
+        return np.column_stack([wave, wave])
+
+    #   Return a mono wave  #
+    else:
+        return wave
+
+def sine_wave_t(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0.5, verticalShift=0, stereo = False):
+    """Generates a sine wave by specifying t"""
+
+    #   (1) Create discrete time points over the duration of the sound. Generate (sampleRate * duration) numbers over the duration.
+    samples = int(sampleRate * duration)
+    t = np.linspace(0, duration, samples, endpoint=False)
+
+
+    #   (2) Return the sin wave: y = |a|sin(bx - c) + d
+    ##  Recall that Amplitude = a, Period = 2pi/b, Phase Shift = c/b, Vertical shift = d
+    ##  2*np.pi = period; so period * frequency * t gives us the correct period based on the frequency over time
+    wave = amplitude * np.sin(2 * np.pi * frequency * t) + verticalShift
+
+    #   Return a stereo wave    #
+    if stereo:
+        return np.column_stack([wave, wave])
+
+    #   Return a mono wave  #
+    else:
+        return wave
 def sine_wave16(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0.5, verticalShift=0):
     """Generates a sine wave in Pulse Code Modulation format.
     wav files store raw data along with metadata including sample rate, bit depth, and # channels."""
@@ -928,6 +978,8 @@ def bass(frequency=330, duration=0.1):
 
     # 1. Frequency envelope (exponential decay)
     env = frequency * np.exp(-5 * t) + frequency_end
+
+    # 1a. Add some harmonics
     enva = (frequency * 2) * np.exp(-5 * t) + (frequency_end)
 
     # 2. Amplitude envelope (sharp attack, quick decay)
@@ -957,9 +1009,68 @@ def bass(frequency=330, duration=0.1):
     kick_wave /= np.max(np.abs(kick_wave))
     kick_wavea /= np.max(np.abs(kick_wavea))
 
+
+    #   Add Harmonics
     return kick_wave + kick_wavea
 
- 
+def flatten(wave, cutoff=0.5):
+    
+    #   np.where can do this in 1 line  #
+    # np.where(np.abs(sine_wave) > cutoff, 
+    #                np.sign(sine_wave) * cutoff, 
+    #                sine_wave)
+    
+    #   Begin with a wave of the same length that contains all 0s   #
+    flat = np.zeros_like(wave)
+
+    for i in range(len(wave)):
+        
+        #   Cap the positive values to the cutoff   #
+        if wave[i] > cutoff:
+            flat[i] = cutoff
+
+        #   Cap the negative values to the cutoff   #
+        elif wave[i] < -cutoff:
+            flat[i] = -cutoff
+        
+        #   Otherwise just keep the same value  #
+        else:
+            flat[i] = wave[i]
+
+    return flat
+
+
+def shrink(wave, cutoff=0.5, factor=0.5):
+    """Shrink parts of the wave that are greater than the cutoff"""
+    #   Begin with a wave of the same length that contains all 0s   #
+    flat = np.zeros_like(wave)
+
+    for i in range(len(wave)):
+        
+        #   Cap the positive values to the cutoff   #
+        if wave[i] > cutoff:
+            flat[i] = wave[i] * factor
+
+        #   Cap the negative values to the cutoff   #
+        elif wave[i] < -cutoff:
+            flat[i] = wave[i] * factor
+        
+        #   Otherwise just keep the same value  #
+        else:
+            flat[i] = wave[i]
+
+    return flat
+
+
+
+def bassh(frequency=330, duration=0.1):
+    """Bass with some sexy harmonics"""
+    base = bass(frequency, duration)
+
+    for i in range(1, 11):
+        base += bass(frequency / i, duration)
+    
+    return base
 
 def percussify(frequency, duration, noise_factor):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration))

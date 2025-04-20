@@ -209,8 +209,12 @@ class XyloBass(Instrument):
             super().__init__(octave, measure, xylobass)
 
 class Bass(Instrument):
-    def __init__(self, octave, measure):
-        super().__init__(octave, measure, bass)
+    def __init__(self, octave, measure, type=""):
+        if type == "h":
+            super().__init__(octave, measure, bassh)
+        else:
+            super().__init__(octave, measure, bass)
+
 
 class Symbol(Instrument):
     def __init__(self, octave, measure, type = ""):
