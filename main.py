@@ -75,10 +75,10 @@ def main():
     #unknown.main(20, noIntro=True)
     #rage.main()
     #jiggy.main()
-    #yank.main()
-    test.main()
+    yank.main()
+    #test.main()
 
-    
+
     #   (2) Run some generations
     # generate(instruments.PianoBass, "dream_gen", 170, 2, "4")
     #generate(instruments.Symbol, "bass_1", 165, 4)
