@@ -1,2 +1,1 @@
-from .beat import *
-from .test import *
+from modules.beat import *

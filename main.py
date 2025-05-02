@@ -1,12 +1,14 @@
-import numpy as np
-import audio
-import hiphop
-import instruments
+from modules import audio
+from beats import yank, bnw
 
-#   Import the songs
-import writealone, blessup, unknown, rage, jiggy, yank
 
-from beats import test
+# #import audio
+# import hiphop
+# import instruments
+
+# #   Import the songs
+# import writealone, blessup, unknown, rage, jiggy, yank
+
 
 """
 Hier beginnt meine hören Projekt.
@@ -26,12 +28,12 @@ def text_sounds():
 
 
     #   (2) Save the sounds
-    audio.save(close, "game" ,"text_close1")
-    audio.save(interact, "game", "text_next1" )
-    audio.save(text, "game", "text_2" )
-    audio.save(done, "game", "text_done1" )
-    audio.save(sad, "game", "text_sad1" )
-    audio.save(angry, "game", "text_angry1" )
+    audio.write(close, "game" ,"text_close1")
+    audio.write(interact, "game", "text_next1" )
+    audio.write(text, "game", "text_2" )
+    audio.write(done, "game", "text_done1" )
+    audio.write(sad, "game", "text_sad1" )
+    audio.write(angry, "game", "text_angry1" )
 
 
 
@@ -47,24 +49,24 @@ def generate_strings():
 def generate(instrument, folder, bpm = 160, octave = 4, typ=""):
     instr = instrument(octave, 1/(bpm / 60) * 4, typ)
 
-    audio.save(instr.q_c, folder, "c")
-    audio.save(instr.q_cs, folder, "c#")
+    audio.write(instr.q_c, folder, "c")
+    audio.write(instr.q_cs, folder, "c#")
 
-    audio.save(instr.q_d, folder, "d")
-    audio.save(instr.q_ds, folder, "d#")
+    audio.write(instr.q_d, folder, "d")
+    audio.write(instr.q_ds, folder, "d#")
 
-    audio.save(instr.q_e, folder, "e")
+    audio.write(instr.q_e, folder, "e")
 
-    audio.save(instr.q_f, folder, "f")
-    audio.save(instr.q_fs, folder, "f#")
+    audio.write(instr.q_f, folder, "f")
+    audio.write(instr.q_fs, folder, "f#")
 
-    audio.save(instr.q_g, folder, "g")
-    audio.save(instr.q_gs, folder, "g#")
+    audio.write(instr.q_g, folder, "g")
+    audio.write(instr.q_gs, folder, "g#")
 
-    audio.save(instr.q_a, folder, "a")
-    audio.save(instr.q_as, folder, "a#")
+    audio.write(instr.q_a, folder, "a")
+    audio.write(instr.q_as, folder, "a#")
 
-    audio.save(instr.q_b, folder, "b")
+    audio.write(instr.q_b, folder, "b")
 
 
 
@@ -75,8 +77,9 @@ def main():
     #unknown.main(20, noIntro=True)
     #rage.main()
     #jiggy.main()
-    yank.main()
+    #yank.main()
     #test.main()
+    bnw.main()
 
 
     #   (2) Run some generations
