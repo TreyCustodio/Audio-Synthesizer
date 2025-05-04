@@ -1,5 +1,6 @@
 from modules import audio
-from beats import yank, bnw
+from beats import bnw
+#from UI import interface
 
 
 # #import audio
@@ -91,6 +92,10 @@ def main():
     
     #   (3) Produce VG SFX
     #text_sounds()
+
+
+    #   (4) Run the Interface
+    #interface.main()
 
 if __name__ == '__main__':
     main()

@@ -1,10 +1,17 @@
-from beat import *
+from modules.beat import *
+from modules.instruments import *
+from modules.audio import *
 
 class BNW(Beat):
     def __init__(self, bpm):
         super().__init__(bpm)
 
     
+    def save(self, sound, name = ""):
+        """Save the sound to the desired folder"""
+
+        write(sound, "bnw", name)
+
 
     def drums(self):
         """8 Beats per measure"""
@@ -171,9 +178,9 @@ class BNW(Beat):
     def keys(self):
         """8 Beats per measure"""
 
-        k1 = SpaceSynth(3, self.whole)
-        k2 = SpaceSynth(2, self.whole)
-        k3 = SpaceSynth(4, self.whole)
+        k1 = Synth(3, self.whole)
+        k2 = Synth(2, self.whole)
+        k3 = Synth(4, self.whole)
 
         # D, E, F, G, A
 
@@ -387,8 +394,8 @@ class BNW(Beat):
 
                                    v1, v1
                                     )
-
-        save(production, "bnw", "Black and White")
+        write(production, "bnw", "Black and White")
+        #self.save(production, "Black and White")
 
 
 

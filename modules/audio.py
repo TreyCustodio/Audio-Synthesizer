@@ -285,6 +285,7 @@ def synth(frequency, duration):
 
     return sound
 
+
 def foo(d):
 
     sound = slur(F3, A3, d) * 2
@@ -1649,6 +1650,10 @@ def pianotreble(frequency, duration):
     base = envelope(base, a, d, s, r)
     #   Return the wave
     return base
+
+
+
+
 def skirt(frequency, duration):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration))
     

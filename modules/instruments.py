@@ -1,6 +1,8 @@
 """Given an octave and a measure length,
 generate every possible note for each instrument."""
 
+from .audio import *
+
 class Instrument:
     def __init__(self, octave, measure, func, type=""):
         self.func = func
