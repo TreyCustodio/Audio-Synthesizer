@@ -286,6 +286,34 @@ def synth(frequency, duration):
     return sound
 
 
+def weeknd(frequency, duration, bpm=70):
+    #   Set the base    #
+    fundamental = sine_wave(frequency, duration)
+
+    # fundamental += sine_wave(frequency - (frequency / 4), duration) * 0.5
+    # fundamental += sine_wave(frequency + (frequency / 2), duration) * 0.2
+    # fundamental += sine_wave(frequency*9, duration) * 0.1
+    # for i in range(1,20):
+    #     fundamental += sine_wave(frequency * (np.sqrt(i)), duration) / i
+
+    #   Add harmonics   #
+    # amp = 1.0
+    # for i in range(1,6):
+    #     fundamental += (sine_wave(frequency * (i*4), duration)) / (i**4)
+    
+    
+    #   Apply the Envelope  #
+    a = 0.01 * duration
+    d = 0.2 * duration
+    s = 0.5
+    r = 0.7 * duration
+    sound = envelope(fundamental, a,d,s,r)
+ 
+
+
+
+    return sound
+
 def foo(d):
 
     sound = slur(F3, A3, d) * 2

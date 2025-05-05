@@ -138,7 +138,13 @@ class Instrument:
 
         sound = slur(pitch1, pitch2, duration)
         return envelope(sound, *self.getADSR())
-    
+
+
+class Weeknd(Instrument):
+    def __init__(self, octave, measure, type=""):
+        super().__init__(octave, measure, weeknd, type)
+
+
 class Piano(Instrument):
     def __init__(self, octave, measure, type=""):
         if type == "2":

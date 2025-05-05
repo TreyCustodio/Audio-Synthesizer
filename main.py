@@ -1,5 +1,5 @@
 from modules import audio
-from beats import bnw
+from beats import digital_storytelling
 #from UI import interface
 
 
@@ -80,7 +80,8 @@ def main():
     #jiggy.main()
     #yank.main()
     #test.main()
-    bnw.main()
+    #bnw.main()
+    digital_storytelling.main()
 
 
     #   (2) Run some generations
