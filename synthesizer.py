@@ -23,6 +23,8 @@ def stochastic(x):
     """Unpredictable, noisy modulation"""
     return random() * x
 
+def inv(x):
+    return 1/x
 
 
 """   Synthesizing Process    """
@@ -80,7 +82,7 @@ def add_harmonics(wav: np.ndarray, freq: float = 100.0, duration: float = 0.3,
 
         #   Use the frequency function  #
         if freq_func:
-            wav += sine_wave(freq * const * (coeff * freq_func(i)), duration)
+            wav += sine_wave(freq * (coeff * freq_func(i)), duration)
 
             #   Use the amplitude function to modulate the amplitude    #
             if amp_func:
@@ -94,17 +96,16 @@ def add_harmonics(wav: np.ndarray, freq: float = 100.0, duration: float = 0.3,
 
         #   Apply no function to i; just multiply by the coefficient   #
         else:
-            wav += sine_wave(freq * const * (coeff * i), duration)
+            wav += sine_wave(freq * (coeff * i), duration)
 
             #   Use the amplitude function to modulate the amplitude    #
             if amp_func:
                 a = amp_func(i)
-                print(a)
                 wav /= a
 
             #   Linearly attenuate the amplitude    #
             else:
-                #wav /= i
+                wav /= i
                 pass
 
 
@@ -123,10 +124,10 @@ def main():
     bpm=80
 
     harmonics = 5
-    const = 1
-    coeff = 2.0
+    const = 2
+    coeff = 1
     freq_func = None
-    amp_func = exp(2)
+    amp_func = None
 
 
     #   Function Call   #
