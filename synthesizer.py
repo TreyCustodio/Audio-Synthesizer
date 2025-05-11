@@ -30,7 +30,8 @@ def inv(x):
 """   Synthesizing Process    """
 def synthesize(freq: float = 100.0, duration: float = 0.3, bpm=80, # Data for the fundamental sine wave
                harmonics: int = 2, const: int = 1, coeff: float = 1.0, # Data for additive synthesis and frequency adjustments
-               freq_func = None, amp_func = None # Data for Frequency and Amplitude Modulation
+               freq_func = None, amp_func = None, # Data for Frequency and Amplitude Modulation
+               a: float = 0.01, d: float = 0.2, s: float = 0.5, r: float = 0.7
                ):
     
     #   Given the bpm, frequency, and duration ... #
@@ -48,10 +49,10 @@ def synthesize(freq: float = 100.0, duration: float = 0.3, bpm=80, # Data for th
     
 
     #   (2) Add an envelope #
-    a = 0.01 * duration
-    d = 0.2 * duration
-    s = 0.5
-    r = 0.7 * duration
+    a = a * duration
+    d = d * duration
+    s = s
+    r = r * duration
     sound = envelope(fundamental, a,d,s,r)
 
     return sound
@@ -119,15 +120,15 @@ def add_harmonics(wav: np.ndarray, freq: float = 100.0, duration: float = 0.3,
 
 def main():
     #   Params  #
-    freq = C3
+    freq = G3
     duration = get_quarter(80)
     bpm=80
 
     harmonics = 5
     const = 2
     coeff = 1
-    freq_func = None
-    amp_func = None
+    freq_func = exp(2)
+    amp_func = log
 
 
     #   Function Call   #

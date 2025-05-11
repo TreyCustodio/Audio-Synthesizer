@@ -2,6 +2,7 @@
 generate every possible note for each instrument."""
 
 from .audio import *
+from synthesizer import synthesize, log, exp
 
 class Instrument:
     def __init__(self, octave, measure, func, type=""):
@@ -134,10 +135,63 @@ class Instrument:
         """Specify a brand new note with a pitch and duration"""
         return self.func(frequency, duration)
     
-    def create_slur(self, pitch1, pitch2, duration):
+    def create_slur(self, pitch1, pitch2, duration, wait):
 
-        sound = slur(pitch1, pitch2, duration)
-        return envelope(sound, *self.getADSR())
+        sound = slur(pitch1, pitch2, duration, wait)
+        a,d,s,r = self.getADSR()
+
+        a *= duration
+        d *= duration
+        r *= duration
+
+        return envelope(sound, a,d,s,r)
+
+
+
+class Dress(Instrument):
+    def __init__(self, octave, measure, type=""):
+        def dress(frequency, duration):
+
+            #   Synthesizer Parameters  #
+            harmonics = 2
+            const = 2
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+
+            #   Function Call   #
+            return synthesize(frequency, duration, 80,
+                            harmonics, const, coeff,
+                            freq_func, amp_func
+                            ) + synthesize(frequency / 4, duration, 80,
+                            harmonics, const, coeff,
+                            freq_func, amp_func
+                            ) * 0.2
+    
+        super().__init__(octave, measure, dress, type)
+
+
+    def getADSR(self):
+        return 0.01, 0.2, 0.5, 0.7
+
+
+class Chime(Instrument):
+    def __init__(self, octave, measure, type=""):
+        def chime(frequency, duration):
+            
+            harmonics = 5
+            const = 2
+            coeff = 1
+            freq_func = exp(2)
+            amp_func = log
+
+            return synthesize(frequency, duration, 80,
+                            harmonics, const, coeff,
+                            freq_func, amp_func
+                            )
+
+        super().__init__(octave, measure, chime, type)
 
 
 class Weeknd(Instrument):

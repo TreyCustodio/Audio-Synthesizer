@@ -2,6 +2,8 @@ import numpy as np
 import os
 import wave
 
+#from synthesizer import synthesize
+
 """
 Audio Module
 
@@ -139,6 +141,7 @@ class Dynamics:
             return Dynamics.SSG(initial_freq, end_freq, t, dt, samples)
         
 
+
     def SSG(start_freq, end_freq, t, dt, samples):
         """Scripted Sine wave Generation:\n
         Construct the wave based on a start and end frequency.\n
@@ -250,27 +253,46 @@ def delaycombo(wave1, wave2, rest_time = 0.1):
     wave1[index:] = 0
 
     return combine(wave1, second)
+            
 
-# def slur(wave1, wave2, instrument):
-#     slur = add_waves(wave1, wave2)
-    
-
-#     duration = len(slur) / SAMPLE_RATE
-    
-#     adsr = instrument.getADSR()
-#     a = adsr[0] * duration
-#     d = adsr[1] * duration
-#     s = adsr[2]
-#     r = adsr[3] * duration
-    
-    
-#     slur = envelope(slur, a,d,s,r)
-#     return slur               
-
-def slur(note1, note2, duration, dynamic = False):
+def swell(note1, note2, duration, dynamic = False):
     """Slur a note"""
 
     return Dynamics.routine(note1, note2, duration, dynamic)
+
+def slur(freq1, freq2, duration, wait):
+        """Slur from freq1 to freq2 after wait"""
+        #   The number of samples we'll use for the wave
+        
+        sample1 = int(44100 * wait) # Note1
+        t1 = np.linspace(0, duration, sample1, endpoint=False)
+        wave1 = np.sin(2 * np.pi * freq1 * t1)
+
+        
+        sample2 = int(44100 * (duration - wait)) # Note 2
+        t2 = np.linspace(0, duration, sample2, endpoint=False)
+        wave2 = np.sin(2 * np.pi * freq2 * t2)
+
+        return add_waves(wave1, wave2)
+
+def slur(wave1, wave2, duration, wait):
+        """Slur from freq1 to freq2 after wait"""
+        #   The number of samples we'll use for the wave
+        
+        sample1 = int(44100 * wait) # Note1
+    
+        wave1 = wave1[:sample1]
+        return add_waves(wave1, wave2)
+
+        t1 = np.linspace(0, duration, sample1, endpoint=False)
+        wave1 = np.sin(2 * np.pi * freq1 * t1)
+
+        
+        sample2 = int(44100 * (duration - wait)) # Note 2
+        t2 = np.linspace(0, duration, sample2, endpoint=False)
+        wave2 = np.sin(2 * np.pi * freq2 * t2)
+
+        return add_waves(wave1, wave2)
 
 def synth(frequency, duration):
     #   Define fundamental wave
@@ -290,17 +312,6 @@ def weeknd(frequency, duration, bpm=70):
     #   Set the base    #
     fundamental = sine_wave(frequency, duration)
 
-    # fundamental += sine_wave(frequency - (frequency / 4), duration) * 0.5
-    # fundamental += sine_wave(frequency + (frequency / 2), duration) * 0.2
-    # fundamental += sine_wave(frequency*9, duration) * 0.1
-    # for i in range(1,20):
-    #     fundamental += sine_wave(frequency * (np.sqrt(i)), duration) / i
-
-    #   Add harmonics   #
-    # amp = 1.0
-    # for i in range(1,6):
-    #     fundamental += (sine_wave(frequency * (i*4), duration)) / (i**4)
-    
     
     #   Apply the Envelope  #
     a = 0.01 * duration
@@ -313,6 +324,10 @@ def weeknd(frequency, duration, bpm=70):
 
 
     return sound
+
+
+    
+
 
 def foo(d):
 

@@ -1,5 +1,7 @@
-from modules import audio
-from beats import digital_storytelling
+from modules import audio, instruments
+from beats import digital_storytelling, dress
+
+from os import path
 
 #from UI import interface
 
@@ -75,20 +77,17 @@ def generate(instrument, folder, bpm = 160, octave = 4, typ=""):
 def main():
     """Main Function: Create any sounds you want"""
 
-    #   (1) Produce a beat
-    #unknown.main(20, noIntro=True)
-    #rage.main()
-    #jiggy.main()
-    #yank.main()
-    #test.main()
-    #bnw.main()
-    #digital_storytelling.main()
+    #   (1) Produce a beat 
+    dress.main()
 
 
     #   (2) Run some generations
     # generate(instruments.PianoBass, "dream_gen", 170, 2, "4")
     #generate(instruments.Symbol, "bass_1", 165, 4)
     #generate(instruments.Bass, "bass_1", 165, 1, "h")
+    
+    #generate(instruments.Dress, path.join("beats", "dressy"), 70, 3)
+
 
 
     
