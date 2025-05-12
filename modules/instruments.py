@@ -182,6 +182,42 @@ class Dress(Instrument):
         return self.a, self.d, self.s, self.r
     
 
+class DressD(Instrument):
+    def __init__(self, octave, measure, type=""):
+        # 0, 0.5, 0.0, 0.0
+        self.a = 0.001
+        self.d = 0.5
+        self.s = 0.0
+        self.r = 0.0
+        
+        def dress(frequency, duration):
+
+            #   Synthesizer Parameters  #
+            harmonics = 5
+            coeff = 1
+            freq_func = None #exp(2)
+            amp_func = exp(6) #log
+            
+
+            #   Function Call   #
+            return synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            ) \
+                            + synthesize(frequency / 4, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            ) * 0.2
+    
+        super().__init__(octave, measure, dress, type)
+
+
+    def getADSR(self):
+        return self.a, self.d, self.s, self.r
+    
+
 class DressP(Instrument):
     def __init__(self, octave, measure, type=""):
         self.a = 0.01
@@ -219,8 +255,9 @@ class DressB(Instrument):
         self.r = 0.2
         
         def dress(frequency, duration):
-
-            #   Synthesizer Parameters  #
+            
+            """Synth 1"""
+            #   Synthesizer 1 Parameters  #
             harmonics = 60
             coeff = 2
             freq_func = None #exp(2)
@@ -228,11 +265,14 @@ class DressB(Instrument):
             
 
             #   Function Call   #
-            return synthesize(frequency, duration, 80,
+            synth1 = synthesize(frequency, duration, 80,
                             harmonics, coeff,
                             freq_func, amp_func,
                             self.a, self.d, self.s, self.r
                             )
+            
+
+            return synth1
         
         super().__init__(octave, measure, dress, type)
 
@@ -241,6 +281,64 @@ class DressB(Instrument):
         return self.a, self.d, self.s, self.r
     
 
+class DressDB(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.01
+        self.d = 0.7
+        self.s = 0.75
+        self.r = 0.2
+        
+        def dress(frequency, duration):
+            
+            """Synth 1"""
+            #   Synthesizer 1 Parameters  #
+            harmonics = 60
+            coeff = 2
+            freq_func = None #exp(2)
+            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+            
+
+            #   Function Call   #
+            synth1 = synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            )
+            
+
+            """Synth2"""
+            #   Synthesizer 2 Parameters  #
+            harmonics = 5
+            coeff = 1
+            freq_func = None #exp(2)
+            amp_func = exp(6) #log
+            a = 0.001
+            d = 0.5
+            s = 0.0
+            r = 0.0
+
+            #   Function Call   #
+            synth2 = synthesize(frequency * 4, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            ) \
+                            + synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            a, d, s, r
+                            ) * 0.2
+
+
+            """Combine em   """
+            return synth1 + synth2
+        
+        super().__init__(octave, measure, dress, type)
+
+
+    def getADSR(self):
+        return self.a, self.d, self.s, self.r
+    
 class Chime(Instrument):
     def __init__(self, octave, measure, type=""):
         def chime(frequency, duration):
