@@ -26,6 +26,11 @@ def stochastic(x):
 def inv(x):
     return 1/x
 
+def lin(b):
+    def adjust(x):
+        return (x ** b)
+    return adjust
+
 
 """   Synthesizing Process    """
 def synthesize(freq: float = 100.0, duration: float = 0.3, bpm=80, # Data for the fundamental sine wave

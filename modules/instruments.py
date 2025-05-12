@@ -2,7 +2,7 @@
 generate every possible note for each instrument."""
 
 from .audio import *
-from synthesizer import synthesize, log, exp
+from synthesizer import synthesize, log, exp, lin
 
 class Instrument:
     def __init__(self, octave, measure, func, type=""):
@@ -192,18 +192,47 @@ class DressP(Instrument):
         def dress(frequency, duration):
 
             #   Synthesizer Parameters  #
-            harmonics = 20
+            harmonics = 60
             coeff = 2
             freq_func = None #exp(2)
-            amp_func = exp(6) #log #exp(80) #log
+            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
             
 
             #   Function Call   #
-            return distort(synthesize(frequency, duration, 80,
+            return synthesize(frequency, duration, 80,
                             harmonics, coeff,
                             freq_func, amp_func,
                             self.a, self.d, self.s, self.r
-                            ), 1.0) * 2.0
+                            )
+        
+        super().__init__(octave, measure, dress, type)
+
+
+    def getADSR(self):
+        return self.a, self.d, self.s, self.r
+    
+class DressB(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.01
+        self.d = 0.7
+        self.s = 0.75
+        self.r = 0.2
+        
+        def dress(frequency, duration):
+
+            #   Synthesizer Parameters  #
+            harmonics = 60
+            coeff = 2
+            freq_func = None #exp(2)
+            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+            
+
+            #   Function Call   #
+            return synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            )
         
         super().__init__(octave, measure, dress, type)
 

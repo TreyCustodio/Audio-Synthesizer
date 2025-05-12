@@ -86,7 +86,7 @@ def main():
     #generate(instruments.Symbol, "bass_1", 165, 4)
     #generate(instruments.Bass, "bass_1", 165, 1, "h")
     
-    generate(instruments.DressP, path.join("beats", "dressy"), 70, 3)
+    #generate(instruments.DressB, path.join("beats", "dressy"), 70, 1)
 
 
 
