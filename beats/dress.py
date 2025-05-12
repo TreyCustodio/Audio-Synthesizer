@@ -24,14 +24,17 @@ class Dressy(Beat):
 
 
         m1 = build_measure(rest(self.half),
-                           n4.q_c, rest(self.eighth), n4.q_c,
-                           rest(self.whole + self.quarter),
-                           n4.q_c, rest(self.eighth), n4.q_c,
-                           rest(self.whole + self.quarter),
-                           n3.q_b, rest(self.eighth), n3.q_b,
-                           rest(self.whole + self.quarter),
-                           n3.q_b, rest(self.eighth), n3.q_b,
-                           rest(self.half + self.eighth), n3.q_b, n4.q_c
+                           n4.q_c, rest(self.eighth), n4.q_c, rest(self.quarter + self.eighth),
+                           rest(self.trey + self.quarter),
+
+                           n4.q_c, rest(self.eighth), n4.q_c, rest(self.quarter + self.eighth),
+                           rest(self.trey + self.quarter),
+
+                           n3.q_b, rest(self.eighth), n3.q_b, rest(self.quarter + self.eighth),
+                           rest(self.trey + self.quarter),
+
+                           n3.q_b, rest(self.eighth), n3.q_b, rest(self.quarter + self.eighth),
+                           rest(self.quarter), n3.q_b, n4.q_c
                            )
         
         m2 = build_measure(n3.w_c, rest(self.quarter),
@@ -62,16 +65,16 @@ class Dressy(Beat):
 
         #wait = self.quarter - (self.sixteenth / 2)
         
-        m1 = build_measure(n4.w_c, rest(self.quarter),
+        m1 = build_measure(n4.w_c, rest(self.quarter + self.eighth),
                            n3.e_g, n3.e_a, rest(self.eighth),
                            n3.q_b,
                            #delaycombo(delaycombo(n3.q_g, n3.q_a, wait), n3.q_b, self.half - self.sixteenth / 2),
-                           n4.w_c, rest(self.quarter),
+                           n4.w_c, rest(self.quarter + self.eighth),
 
                            n3.e_g, n3.e_a, rest(self.eighth),
                            #delaycombo(n3.q_g, n3.q_a, wait),
                            n4.q_d,
-                           n3.w_b, rest(self.quarter),
+                           n3.w_b, rest(self.quarter + self.eighth),
 
                            n3.e_g, n3.e_a, rest(self.eighth),
                            n3.q_f,
@@ -124,7 +127,7 @@ class Dressy(Beat):
         n1 = DressB(1, self.whole)
 
         m1 = build_measure(rest(self.half),
-                           n1.q_c, rest(self.eighth), n1.q_c, rest(self.half - self.eighth),
+                           n1.q_c, rest(self.eighth), n1.q_c, rest(self.quarter + self.eighth),
                            n1.create_note(B0, self.quarter), rest(self.trey),
 
                            n1.q_c, rest(self.eighth), n1.q_c, rest(self.half - self.eighth),
@@ -134,24 +137,12 @@ class Dressy(Beat):
                            n1.create_note(A0, self.quarter), rest(self.trey),
 
                            n1.create_note(B0, self.quarter), rest(self.eighth), n1.create_note(B0, self.quarter), rest(self.half - self.eighth),
-                           n1.create_note(A0, self.quarter), rest(self.quarter),
+                           n1.create_note(A0, self.quarter), n1.create_note(B0, self.quarter), n1.q_c
 
                            ) * 3.0  
         
-        m2 = build_measure(rest(self.half),
-                           n1.q_c, rest(self.eighth), n1.q_c, rest(self.half - self.eighth),
-                           n1.create_note(B0, self.quarter), rest(self.trey - self.eighth),
-
-                           n1.q_c, rest(self.eighth), n1.q_c, rest(self.half - self.eighth),
-                           n1.create_note(B0, self.quarter), rest(self.trey - self.eighth),
-
-                           n1.create_note(B0, self.quarter), rest(self.eighth), n1.create_note(B0, self.quarter), rest(self.half - self.eighth),
-                           n1.create_note(A0, self.quarter), rest(self.trey - self.eighth),
-
-                           n1.create_note(B0, self.quarter), rest(self.eighth), n1.create_note(B0, self.quarter), rest(self.half - self.eighth),
-                           n1.create_note(A0, self.quarter),
-
-                           ) * 2.0
+        m2 = m1 * 0.75
+        
         return m1, m2
 
     def produce(self):
@@ -159,7 +150,7 @@ class Dressy(Beat):
         k1 = self.keys()
         c1, c2 = self.chimes() # c1 -> singled out chimes; c2 -> bass tones for k1
         p1, p2 = self.piano() # p1 -> bass tones / keeping beat; p2 -> bass tones for k1
-        b1, b2 = self.bass() # b1 -> introductory bass; b2 -> bass with less rest
+        b1, b2 = self.bass() # b1 -> bass; b2 -> quieter bass
 
         #   Adjustments to instruments / Combinations   #
         ##  Exoeriment with c2 vs p2 here
@@ -169,7 +160,7 @@ class Dressy(Beat):
         # #   Sections    #
         v1 = combine(k1, b2)
         v2 = combine(v1, c1 * 0.65)
-        v3 = combine(b2, c1)
+        v3 = combine(b1, c1)
 
         # #   Final Product   #
         production = build_measure(b1,
@@ -183,12 +174,13 @@ class Dressy(Beat):
 
 
     def test(self):
-        p1, p2 = self.piano() # p1 -> bass tones / keeping beat; p2 -> bass tones for k1
+        k1 = self.keys()
         b1, b2 = self.bass() # b1 -> introductory bass; b2 -> bass with less rest
         
-        p2 = combine(p2, b2)
-
-        test = build_measure(p2, p2)
+        v1 = combine(k1, b1)
+        v2 = combine(k1, b2)
+        
+        test = build_measure(v1, v2)
 
         self.save(test, "dressy")
         
