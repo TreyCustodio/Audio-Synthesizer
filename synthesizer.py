@@ -29,7 +29,7 @@ def inv(x):
 
 """   Synthesizing Process    """
 def synthesize(freq: float = 100.0, duration: float = 0.3, bpm=80, # Data for the fundamental sine wave
-               harmonics: int = 2, const: int = 1, coeff: float = 1.0, # Data for additive synthesis and frequency adjustments
+               harmonics: int = 2, coeff: float = 1.0, # Data for additive synthesis and frequency adjustments
                freq_func = None, amp_func = None, # Data for Frequency and Amplitude Modulation
                a: float = 0.01, d: float = 0.2, s: float = 0.5, r: float = 0.7
                ):
@@ -44,7 +44,7 @@ def synthesize(freq: float = 100.0, duration: float = 0.3, bpm=80, # Data for th
     #   (1) Add some Harmonics  #
     if harmonics > 0:
         add_harmonics(fundamental, freq, duration,
-                    harmonics, const, coeff,
+                    harmonics, coeff,
                     freq_func, amp_func)
     
 
@@ -62,7 +62,6 @@ def synthesize(freq: float = 100.0, duration: float = 0.3, bpm=80, # Data for th
 """   Process for Additive Synthesis    """
 def add_harmonics(wav: np.ndarray, freq: float = 100.0, duration: float = 0.3,
                     harmonics: int = 2,
-                    const: int = 1,
                     coeff: float = 1.0,
                     freq_func = None,
                     amp_func = None):
@@ -83,32 +82,33 @@ def add_harmonics(wav: np.ndarray, freq: float = 100.0, duration: float = 0.3,
 
         #   Use the frequency function  #
         if freq_func:
-            wav += sine_wave(freq * (coeff * freq_func(i)), duration)
+            harm = sine_wave(freq * (coeff * freq_func(i)), duration)
 
             #   Use the amplitude function to modulate the amplitude    #
             if amp_func:
                 a = amp_func(i)
-                wav /= a
+                harm /= a
 
             #   Linearly attenuate the amplitude    #
             else:
-                wav /= i
+                harm /= i + 1
 
 
         #   Apply no function to i; just multiply by the coefficient   #
         else:
-            wav += sine_wave(freq * (coeff * i), duration)
+            harm = sine_wave(freq * (coeff * i), duration)
 
             #   Use the amplitude function to modulate the amplitude    #
             if amp_func:
                 a = amp_func(i)
-                wav /= a
+                harm /= a
 
             #   Linearly attenuate the amplitude    #
             else:
-                wav /= i
+                harm /= i + 1
                 pass
-
+    
+        wav += harm
 
 
     

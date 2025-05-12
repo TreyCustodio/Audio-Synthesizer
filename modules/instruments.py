@@ -147,47 +147,82 @@ class Instrument:
         return envelope(sound, a,d,s,r)
 
 
-
 class Dress(Instrument):
     def __init__(self, octave, measure, type=""):
+        self.a = 0.01
+        self.d = 0.7
+        self.s = 0.2
+        self.r = 0.2
+        
         def dress(frequency, duration):
 
             #   Synthesizer Parameters  #
-            harmonics = 2
-            const = 2
+            harmonics = 5
             coeff = 1
-            freq_func = None
-            amp_func = None
-
+            freq_func = None #exp(2)
+            amp_func = exp(6) #log
+            
 
             #   Function Call   #
             return synthesize(frequency, duration, 80,
-                            harmonics, const, coeff,
-                            freq_func, amp_func
-                            ) + synthesize(frequency / 4, duration, 80,
-                            harmonics, const, coeff,
-                            freq_func, amp_func
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            ) \
+                            + synthesize(frequency / 4, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
                             ) * 0.2
     
         super().__init__(octave, measure, dress, type)
 
 
     def getADSR(self):
-        return 0.01, 0.2, 0.5, 0.7
+        return self.a, self.d, self.s, self.r
+    
 
+class DressP(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.01
+        self.d = 0.7
+        self.s = 0.75
+        self.r = 0.2
+        
+        def dress(frequency, duration):
+
+            #   Synthesizer Parameters  #
+            harmonics = 20
+            coeff = 2
+            freq_func = None #exp(2)
+            amp_func = exp(6) #log #exp(80) #log
+            
+
+            #   Function Call   #
+            return distort(synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            ), 1.0) * 2.0
+        
+        super().__init__(octave, measure, dress, type)
+
+
+    def getADSR(self):
+        return self.a, self.d, self.s, self.r
+    
 
 class Chime(Instrument):
     def __init__(self, octave, measure, type=""):
         def chime(frequency, duration):
             
             harmonics = 5
-            const = 2
             coeff = 1
             freq_func = exp(2)
             amp_func = log
 
             return synthesize(frequency, duration, 80,
-                            harmonics, const, coeff,
+                            harmonics, coeff,
                             freq_func, amp_func
                             )
 
