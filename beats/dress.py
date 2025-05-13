@@ -60,13 +60,13 @@ class Dressy(Beat):
 
 
     def keys(self):
-        n4 = Dress(5, self.whole)
-        n3 = Dress(4, self.whole)
+        n4 = DressP(4, self.whole)
+        n3 = DressP(3, self.whole)
 
         #wait = self.quarter - (self.sixteenth / 2)
         
         m1 = build_measure(n4.w_c, rest(self.quarter + self.eighth),
-                           n3.e_g, n3.e_a, rest(self.eighth),
+                           n3.e_g, n3.e_a, rest(self.quarter),
                            n3.q_b,
                            #delaycombo(delaycombo(n3.q_g, n3.q_a, wait), n3.q_b, self.half - self.sixteenth / 2),
                            n4.w_c, rest(self.quarter + self.eighth),
@@ -82,8 +82,26 @@ class Dressy(Beat):
                            n3.w_e,
                            n3.w_d,
                            )
+
+        m2 = build_measure(n3.w_g, rest(self.quarter + self.eighth),
+                           n3.e_d, n3.e_e, rest(self.quarter),
+                           n3.q_fs,
+                           #delaycombo(delaycombo(n3.q_g, n3.q_a, wait), n3.q_b, self.half - self.sixteenth / 2),
+                           n3.w_g, rest(self.quarter + self.eighth),
+
+                           n3.e_d, n3.e_e, rest(self.eighth),
+                           #delaycombo(n3.q_g, n3.q_a, wait),
+                           n3.q_a,
+                           n3.w_fs, rest(self.quarter + self.eighth),
+
+                           n3.e_d, n3.e_e, rest(self.eighth),
+                           n3.q_c,
+                           #delaycombo(delaycombo(n3.q_g, n3.q_a, wait), n3.q_f, self.half - self.sixteenth / 2),
+                           n3.create_note(B2, self.whole),
+                           n3.create_note(A2, self.whole)
+                           )
         
-        return m1
+        return combine(m1, m2)
 
     def piano(self):
         n4 = DressP(2, self.whole)
@@ -246,7 +264,7 @@ class Dressy(Beat):
 
 
     def test(self):
-        # k1 = self.keys()
+        k1 = self.keys()
         # b1, b2 = self.bass() # b1 -> introductory bass; b2 -> bass with less rest
         
         # v1 = combine(k1, b1)
@@ -254,9 +272,9 @@ class Dressy(Beat):
         
         # test = build_measure(v1, v2)
 
-        d1 = self.drums()
+        # d1 = self.drums()
 
-        self.save(d1, "dressy")
+        self.save(k1, "dressy")
         
 
 

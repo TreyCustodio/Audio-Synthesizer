@@ -1,14 +1,17 @@
-m4 = build_measure(rest(self.half),
-                           d1.q_c, rest(self.eighth), d1.q_c, rest(self.quarter + self.eighth),
-                           d2.q_b, rest(self.trey),
+m2 = build_measure(n3.w_a, rest(self.quarter + self.eighth),
+                           n3.e_e, n3.e_f, rest(self.eighth),
+                           n3.q_g,
+                           #delaycombo(delaycombo(n3.q_g, n3.q_a, wait), n3.q_b, self.half - self.sixteenth / 2),
+                           n3.w_b, rest(self.quarter + self.eighth),
 
-                           d1.q_c, rest(self.eighth), d1.q_c, rest(self.half - self.eighth),
-                           d2.q_b, rest(self.trey),
+                           n3.e_e, n3.e_f, rest(self.eighth),
+                           #delaycombo(n3.q_g, n3.q_a, wait),
+                           n3.q_b,
+                           n3.w_g, rest(self.quarter + self.eighth),
 
-                           d2.q_b, rest(self.eighth), d2.q_b, rest(self.half - self.eighth),
-                           d2.q_a, rest(self.trey),
-
-                           d2.q_b, rest(self.eighth), d2.q_b, rest(self.half - self.eighth),
-                           d2.q_a, d2.q_b, d1.q_c, rest(self.quarter)
-
+                           n3.e_e, n3.e_f, rest(self.eighth),
+                           n3.q_d,
+                           #delaycombo(delaycombo(n3.q_g, n3.q_a, wait), n3.q_f, self.half - self.sixteenth / 2),
+                           n3.w_c,
+                           n3.create_note(D2, self.whole)
                            )

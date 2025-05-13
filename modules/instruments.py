@@ -220,26 +220,31 @@ class DressD(Instrument):
 
 class DressP(Instrument):
     def __init__(self, octave, measure, type=""):
-        self.a = 0.01
-        self.d = 0.7
+        self.a = 0.1
+        self.d = 0.2
         self.s = 0.75
-        self.r = 0.2
+        self.r = 0.1
         
         def dress(frequency, duration):
 
             #   Synthesizer Parameters  #
-            harmonics = 60
-            coeff = 2
-            freq_func = None #exp(2)
-            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+            harmonics = 0
+            coeff = 6
+            freq_func = None
+            amp_func = exp(4)# None #lin(2.5) #None #exp(6) #log #exp(80) #log
             
 
             #   Function Call   #
             return synthesize(frequency, duration, 80,
-                            harmonics, coeff,
+                            1, coeff,
                             freq_func, amp_func,
                             self.a, self.d, self.s, self.r
-                            )
+                            ) + \
+                            synthesize(frequency / 3, duration, 80,
+                                                20, coeff,
+                                                None, lin(4),
+                                                0.01, 0.2, self.s, 0.7
+                                                )
         
         super().__init__(octave, measure, dress, type)
 
