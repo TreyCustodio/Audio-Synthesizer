@@ -129,7 +129,7 @@ class Instrument:
         self.w2_b = func(B1 * coeff, t)
 
     def getADSR(self):
-        return
+        return self.a, self.d, self.s, self.r
     
     def create_note(self, frequency, duration):
         """Specify a brand new note with a pitch and duration"""
@@ -146,6 +146,73 @@ class Instrument:
 
         return envelope(sound, a,d,s,r)
 
+
+class DressF(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.0001
+        self.d = 0.3
+        self.s = 0.0
+        self.r = 0.05
+
+        def dress(frequency, duration):
+            return synthesize(frequency, duration, 80, 0, 1, None, lin(2), self.a, self.d, self.s, self.r)
+        
+        super().__init__(octave, measure, dress, type)
+
+
+class DressH(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.05
+        self.d = 0.1
+        self.s = 0.8
+        self.r = 0.2
+
+        def dress(frequency, duration):
+            return synthesize(frequency, duration, 80, 0, 1, None, lin(2), self.a, self.d, self.s, self.r)
+        
+        super().__init__(octave, measure, dress, type)
+
+class DressP2(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.001
+        self.d = 0.2
+        self.s = 0.7
+        self.r = 0.01
+
+        
+        
+        def dressD(frequency, duration):
+            # 0, 0.5, 0.0, 0.0
+            a = 0.001
+            d = 0.5
+            s = 0.0
+            r = 0.0
+
+            #   Synthesizer Parameters  #
+            harmonics = 5
+            coeff = 1
+            freq_func = None #exp(2)
+            amp_func = exp(6) #log
+            
+
+            #   Function Call   #
+            return synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            a, d, s, r
+                            ) *0.1\
+                            + synthesize(frequency / 4, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            a, d, s, r
+                            ) * 0.2
+        
+        def dress(frequency, duration):
+            return synthesize(frequency, duration, 80, 0, 1, None, None, self.a, self.d, self.s, self.r) #+ dressD(frequency, duration)
+        
+        
+        
+        super().__init__(octave, measure, dress, type)
 
 class Dress(Instrument):
     def __init__(self, octave, measure, type=""):
