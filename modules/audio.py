@@ -275,14 +275,14 @@ def slur(freq1, freq2, duration, wait):
 
         return add_waves(wave1, wave2)
 
-def slur(wave1, wave2, duration, wait):
-        """Slur from freq1 to freq2 after wait"""
-        #   The number of samples we'll use for the wave
+# def slur(wave1, wave2, duration, wait):
+#         """Slur from freq1 to freq2 after wait"""
+#         #   The number of samples we'll use for the wave
         
-        sample1 = int(44100 * wait) # Note1
+#         sample1 = int(44100 * wait) # Note1
     
-        wave1 = wave1[:sample1]
-        return add_waves(wave1, wave2)
+#         wave1 = wave1[:sample1]
+#         return add_waves(wave1, wave2)
 
         t1 = np.linspace(0, duration, sample1, endpoint=False)
         wave1 = np.sin(2 * np.pi * freq1 * t1)

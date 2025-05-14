@@ -146,6 +146,52 @@ class Instrument:
 
         return envelope(sound, a,d,s,r)
 
+class Tank(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.0
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.05
+
+        def dress(frequency, duration):
+            # return add_waves(envelope(swell(frequency + 300, frequency, duration / 2), 0.0, 0.3, 1.0, 0.2),
+            #                  envelope(swell(frequency, frequency + 300, duration / 2), 0.0, 0.3, 1.0, 0.2)
+            #                  ) + \
+            # return  synthesize(frequency, 
+            #                    duration,
+            #                    harmonics = 5, freq_func=lin(1), amp_func=lin(2), a=self.a, d=self.d, s=self.s, r=self.r
+            #                    ) + \
+            base = sine_wave(frequency-200, duration)
+            base = envelope(base, 0.0, 0.3 * duration, 0.0, 0.0)
+
+            a = synthesize((frequency - 200), 
+                               duration,
+                               harmonics = 2, freq_func=lin(2), amp_func=exp(1.5), a=0.0, d=0.3, s=0.0, r=0.0
+                               )
+            a = distort(a, 2.0)
+
+            b = white_noise(sine_wave(1, duration),0.05)
+            b = envelope(b, 0.0, 0.3, 0.0, 0.0)
+
+            a = combine(a, b)
+            #a = distort(a, 1.0)
+            return a + base
+            
+            #+ \
+                            # synthesize((frequency - 200) * 2, 
+                            #    duration,
+                            #    harmonics = 0, freq_func=lin(1), amp_func=lin(1), a=0.0, d=0.3, s=0.0, r=0.0
+                            #    )
+        
+                #    synthesize(frequency /4,
+                #               duration, 80,
+                #               harmonics=40,
+                #               coeff=1, freq_func=None, amp_func=lin(2), a=self.a, d=self.d, s=self.s, r=self.r)
+        
+        super().__init__(octave, measure, dress, type)
+
+
+
 
 class DressF(Instrument):
     def __init__(self, octave, measure, type=""):

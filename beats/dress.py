@@ -171,6 +171,8 @@ class Dressy(Beat):
         d1 = DressD(3, self.whole)
         d2 = DressD(2, self.whole)
 
+        t1 = Tank(2, self.whole)
+
 
         m1 = build_measure(n1.s_c, n1.s_c, n1.s_c, n1.s_c, 
                            n1.s_c, n1.s_c, n1.s_c, n1.s_c,
@@ -211,7 +213,13 @@ class Dressy(Beat):
         
 
         v1 = build_measure(m1, m1, m2, m2)
-        return v1
+
+
+        m3 = build_measure(rest(self.quarter), t1.q_c, rest(self.eighth), t1.q_c, rest(self.eighth))
+        m4 = build_measure(rest(self.quarter), t1.create_note(A1, self.quarter), rest(self.eighth), t1.create_note(A1, self.quarter), rest(self.eighth))
+        v2 = build_measure(m3, m3, m4, m4)
+
+        return v1, v2
         # m1 = build_measure(rest(self.half),
         #                    n1.q_c, rest(self.eighth), n1.q_c, rest(self.quarter + self.eighth),
         #                    n1.create_note(B0, self.quarter), rest(self.trey),
@@ -346,16 +354,17 @@ class Dressy(Beat):
     def test(self):
         k1, k2, k3 = self.keys()
         d1, d2 = self.drums()
-        b1 = self.bass()
-        h1 = self.horns()
+        b1, b2 = self.bass()
+       # h1 = self.horns()
 
 
 
         v1 = combine(k1, k2) # Base ending
+        v1 = combine(v1, b2)
         v2 = combine(k1, k3) # Higher ending
+        v2 = combine(v2, b2)
 
         v3 = combine(v1, b1)
-        v3 = combine(v3, h1)
         v3 = combine(v3, d1) # Drums and Bass added
 
         v4 = combine(v2, b1)
