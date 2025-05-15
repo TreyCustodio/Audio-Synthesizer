@@ -256,15 +256,15 @@ class First(Beat):
 
         #   Instras #
         f1, f2 = self.funk()
-        b1, b2 = self.bass2()
+        #b1, b2 = self.bass2()
 
         
         #   Verses  #
-        v1 = combine(f1, b1)
-        v1 = combine(v1, self.metronome(4))
+        #v1 = combine(f1, b1)
+        v1 = combine(f1, self.metronome(4))
 
         v2 = combine(f2, self.metronome(4))
-        v2 = combine(v2, b2)
+        #v2 = combine(v2, b2)
 
         #   Prod    #
         p = build_measure(v1, v2, v1, v2)

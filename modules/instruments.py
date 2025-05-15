@@ -297,8 +297,57 @@ class First3(Instrument):
                                 0.0, 0.2, 0.0, 0.01)
 
             #   Bass Tones  #
+            def dress(frequency, duration):
+                a = 0.01
+                d = 0.5
+                s = 0.75
+                r = 0.2
+                """DressB"""
+                #   Synthesizer 1 Parameters  #
+                harmonics = 60
+                coeff = 2
+                freq_func = None #exp(2)
+                amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+                
+
+                #   Function Call   #
+                synth1 = synthesize(frequency, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                a, d, s, r
+                                )
             
-            return synth1 + synth2
+
+                """DressD 2 Octaves Higher"""
+                
+                #   Synthesizer 2 Parameters  #
+                harmonics = 5
+                coeff = 1
+                freq_func = None #exp(2)
+                amp_func = exp(6) #log
+                a = 0.001
+                d = 0.5
+                s = 0.0
+                r = 0.0
+
+                #   Function Call   #
+                synth2 = synthesize(frequency * 1.5, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                a, d, s, r
+                                ) \
+                                + synthesize((frequency / 4) * 1.5, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                a, d, s, r
+                                ) * 0.2
+
+
+                """Combine em   """
+                return synth1 + synth2
+            
+            synth3 = dress(freq, dur)
+            return synth1 + synth2 + synth3
         
         super().__init__(octave, measure, func, type)
 
