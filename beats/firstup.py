@@ -22,7 +22,7 @@ class First(Beat):
         
 
         f = First1(3, self.whole)
-        #f2 = First1(3, self.whole)
+        #f = First1(3, self.whole)
 
         m1 = build_measure(f.q_a, rest(self.quarter), f.e_gs, f.q_a, rest(self.eighth))
 
@@ -68,10 +68,106 @@ class First(Beat):
         
         return v1, v2, v3
     
+    def bass2(self):
+        b = DressDB(1, self.whole)
+
+        #m1 = fade_out(build_measure(b.q_c, b.q_c, b.q_c, b.q_c), 4)
+        m1 = build_measure(b.q_d,
+                           rest(self.eighth), b.s_d,
+                           b.e_d, b.s_d,
+                           rest(self.eighth), b.e_d, rest(self.eighth))
+        
+        ne = b.create_note(B0, self.eighth)
+        ns = b.create_note(B0, self.sixteenth)
+
+        m2 = build_measure(b.e_c, rest(self.half + self.sixteenth), # 2.75
+                           b.s_c, b.e_c, b.s_c, rest(self.sixteenth) # 4
+                           )
+        
+        m3 = build_measure(ne, rest(self.half + self.sixteenth), # 2.5
+                           ns, ne, ns, rest(self.sixteenth)
+                           )
+
+        
+
+        v1 = build_measure(m2, m2, m3, m3)
+        v2 = build_measure(m2, m2, m3, m3)
+        
+        return v1, v2
+    
 
     def funk(self):
-        return rest(self.whole * 4)
+        #f = FirstF(2, self.whole)
+        f = First3(2, self.whole)
+
+        m1 = build_measure(f.q_d, # 1
+                           f.e_d, f.s_e, # 1.75
+                           f.e_f, f.e_g, # 2.75
+                           f.e_a, # 3.25
+                           rest(self.sixteenth * 3),
+                           )
+        
+        m2 = build_measure(f.e_d, f.s_e, # .75
+                           f.e_f, f.e_g, # 1.75
+                           f.e_a, # 2.25
+                           f.q_g, # 3.25
+                           rest(self.sixteenth *3)
+                           )
+        
+        m2b = build_measure(f.e_d, f.s_e,
+                           f.e_f, f.e_g,
+                           f.q_a,
+                           f.q_g, rest(self.sixteenth)
+                           )
+        
+        m3 = build_measure(rest(self.quarter),
+                           f.e_c, f.s_d,
+                           f.e_e, f.e_f,
+                           f.e_g, rest(self.sixteenth * 2), f.s_c
+                           )
+        
+        m4 = build_measure(f.e_c, f.s_d,
+                           f.e_e, f.e_f,
+                           f.e_g,
+                           f.q_f, rest(self.sixteenth * 3)
+                           )
+        
+
+        #   V 2 #
+        m5 = build_measure(rest(self.sixteenth * 3), f.s_d, # 1
+                            f.e_d, f.s_e, # 2
+                            f.e_f, f.e_g, # 3
+                            f.e_a, 
+                            rest(self.sixteenth * 2),
+                            )
+
+        m6 = build_measure(f.s_d, f.e_d, f.s_e, # 1
+                           f.e_f, f.e_g,  #2
+                           f.q_a, # 3
+                           f.q_g, #4
+                           )
+        
+        m7 = build_measure(rest(self.sixteenth * 4), f.s_c, # 1
+                            f.e_c, f.s_d, # 2
+                            f.e_e, f.e_f, # 3
+                            f.e_g, 
+                            rest(self.sixteenth * 2),
+                            )
+
+        m8 = build_measure(rest(self.sixteenth), f.e_c, f.s_d,
+                           f.e_e, f.e_f,
+                           f.q_g,
+                           f.q_f)
+       
+       
+        
+        v1 = build_measure(m1, m2, m3, m4)
+
+        v2 = build_measure(m5, m6, m7, m8)
+
+        return v1, v2
     
+
     def drums(self):
         v1 = rest(self.whole * 3) # Lead into the melody
         v2 = rest(self.whole * 4) # Main beat
@@ -79,6 +175,22 @@ class First(Beat):
         return v1, v2
     
     def produce(self):
+        #   Produce ya beat !!  #
+        p = build_measure(
+            #   Intro   #
+            self.intro(),
+
+            #   Melody  #
+            self.melody()
+
+                          )
+
+
+        #   Save ya beat.    #
+        self.save(p, "First Up")
+
+
+    def intro(self):
         #   Get ya instruments !    #
         m1 = self.metronome()
         m1 = build_measure(m1, m1, m1, m1)
@@ -89,7 +201,6 @@ class First(Beat):
 
         d0, d1 = self.drums()
 
-        f1 = self.funk()
 
         #   Get ya verses!  #
         #   Intro
@@ -115,7 +226,54 @@ class First(Beat):
 
 
         #   Save ya beat.    #
-        self.save(p, "First Up")
+        self.save(p, "intro")
+
+        return p
+
+
+
+    def melody(self):
+        """
+        It's the first one up!
+        Plenty more to gooooo!
+        Bless the first one up!
+        Ya got to feel the groooove!
+
+        I write to sing along
+        To catchy beats I maaaaaaake!
+        I sing to get you out
+        That nasty mood you haaaaaate!
+
+
+
+        Man I said goodbye to my tv,
+        I can't make money watching kids be dreary,
+        The rich get richer so the poor keep dreaming,
+        The man with the money doesn't hear you screaming.
+
+
+        """
+
+        #   Instras #
+        f1, f2 = self.funk()
+        b1, b2 = self.bass2()
+
+        
+        #   Verses  #
+        v1 = combine(f1, b1)
+        v1 = combine(v1, self.metronome(4))
+
+        v2 = combine(f2, self.metronome(4))
+        v2 = combine(v2, b2)
+
+        #   Prod    #
+        p = build_measure(v1, v2, v1, v2)
+
+
+        #   Sav #
+        self.save(p, "melody")
+
+        return p
 
     def test(self):
         a, b, c = self.synth()
@@ -126,4 +284,5 @@ class First(Beat):
 
 def main():
     #First(60).test()
-    First(60).produce()
+    First(62).produce()
+    #First(62).melody()

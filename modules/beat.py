@@ -38,13 +38,17 @@ class Beat:
     def save(self):
         write(self.fileName)
 
-    def metronome(self):
+    def metronome(self, bars=1):
         """Return a measure of a metronome"""
         n = Skirt(4, self.whole)
 
         m1 = build_measure(n.q_c, n.q_c, n.q_c, n.q_c)
+        v1 = m1
 
-        return m1
+        for i in range(bars-1):
+            v1 = add_waves(v1, m1)
+            
+        return v1
     
     def tempo(self, sound):
         """Return 4 measures of an instrument keeping tempo"""

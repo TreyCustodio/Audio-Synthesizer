@@ -169,6 +169,53 @@ class Template(Instrument):
         super().__init__(octave, measure, func, type)
 
 
+class FirstP(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.0
+        self.d = 0.2
+        self.s = 0.0
+        self.r = 0.01
+
+        def func(freq, dur):
+            return synthesize(freq * 3, dur, 0,
+                            10, 1, None, None,
+                            0.0, 0.2, 0.0, 0.01)
+        
+
+        super().__init__(octave, measure, func, type)
+
+
+
+
+    
+    
+
+class FirstF(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.5
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.5
+
+        def func(freq, dur):
+            
+            harmonics = 0
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+            synth1 = synthesize(freq, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) + \
+                     synthesize(freq / 2, dur, 0,
+                                35, 1, None, None,
+                                self.a, self.d, self.s, self.r)
+                           
+
+            return synth1
+        
+        super().__init__(octave, measure, func, type)
+
 class First1(Instrument):
     def __init__(self, octave, measure, type=""):
         self.a = 0.9
@@ -210,11 +257,51 @@ class First2(Instrument):
 
             synth1 = synthesize(freq, dur, 0,
                                 harmonics, coeff, freq_func, amp_func,
-                                self.a, self.d, self.s, self.r) * 0.5
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq, dur, 0,
+                                10, 1, None, None,
+                                0.0, 0.2, 0.0, 0.01)
 
             return synth1
         
         super().__init__(octave, measure, func, type)
+
+class First3(Instrument):
+    def __init__(self, octave, measure, type=""):
+        self.a = 0.0
+        self.d = 0.2
+        self.s = 0.5
+        self.r = 0.4
+
+        def func(freq, dur):
+            
+            harmonics = 20
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+            #   First2  #
+            synth1 = synthesize(freq, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq, dur, 0,
+                                10, 1, None, None,
+                                0.0, 0.2, 0.0, 0.01)
+            
+            #   First2, Octave Higher   #
+            synth2 = synthesize(freq*2, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, 0.0, 1.0, 0.15) * 0.5 + \
+                     synthesize(freq*2, dur, 0,
+                                10, 1, None, None,
+                                0.0, 0.2, 0.0, 0.01)
+
+            #   Bass Tones  #
+            
+            return synth1 + synth2
+        
+        super().__init__(octave, measure, func, type)
+
 class Tank(Instrument):
     def __init__(self, octave, measure, type=""):
         self.a = 0.0
