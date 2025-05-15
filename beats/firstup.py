@@ -41,12 +41,48 @@ class First(Beat):
         
 
 
-        v1 = build_measure(rest(self.whole), rest(self.whole), rest(self.whole), m2)
-        v2 = build_measure(m3, m2, m3) # Last verse of the intro !
+        #   Chord Progression during section 2 of the melody   #
+        m9 = build_measure(s.e_f, s.s_a,
+                           s.e_b, s2.e_c,
+                           s2.e_d, s2.s_c,
+                           s.e_b, s.q_a,
+                           )
+        
+        m10 = build_measure(s.e_e, s.s_g,
+                           s.e_a, s.e_b,
+                           s2.e_c, s.s_b,
+                           s.e_a, s.q_g,
+                           )
+        
+        v1 = build_measure(m2, m3, m2, m3) # Last verse of the intro !
 
-        v3 = build_measure(m1, m1, m1, m1)
+        v2 = build_measure(m1, m1, m1, m1)
+
+        v3 = build_measure(m9, m9, m10, m10)
 
         return v1, v2, v3
+    
+    def synth2(self):
+        s = First2(3, self.whole)
+        s2 = First2(4, self.whole)
+
+        #   Chord Progression during section 2 of the melody   #
+        m9 = build_measure(s.e_f, s.s_a,
+                           s.e_b, s2.e_c,
+                           s2.e_d, s2.s_c,
+                           s.e_b, s.q_a,
+                           )
+        
+        m10 = build_measure(s.e_e, s.s_g,
+                           s.e_a, s.e_b,
+                           s2.e_c, s.s_b,
+                           s.e_a, s.q_g,
+                           )
+        
+
+        v1 = build_measure(m9, m9, m10, m10) * 1.4
+
+        return v1
     
 
     def bass(self):
@@ -63,10 +99,10 @@ class First(Beat):
                            )
 
         v1 = build_measure(m1, m1, m1, m1)
-        v2 = build_measure(m1, m1, m1, m2)
-        v3 = build_measure(m2, m2, m2)
+        v2 = build_measure(m2, m2, m2, m2)
+
         
-        return v1, v2, v3
+        return v1, v2
     
     def bass2(self):
         b = DressDB(1, self.whole)
@@ -90,6 +126,8 @@ class First(Beat):
     def funk(self):
         #f = FirstF(2, self.whole)
         f = First3(2, self.whole)
+        #f2 = First3(3, self.whole)
+
 
         m1 = build_measure(f.q_d, # 1
                            f.e_d, f.s_e, # 1.75
@@ -101,8 +139,9 @@ class First(Beat):
         m2 = build_measure(f.e_d, f.s_e, # .75
                            f.e_f, f.e_g, # 1.75
                            f.e_a, # 2.25
-                           f.q_g, # 3.25
-                           rest(self.sixteenth *3)
+                           f.create_note(G2, self.quarter + self.sixteenth*3)
+                           #f.q_g, # 3.25
+                           #rest(self.sixteenth *3)
                            )
         
         m2b = build_measure(f.e_d, f.s_e,
@@ -120,7 +159,7 @@ class First(Beat):
         m4 = build_measure(f.e_c, f.s_d,
                            f.e_e, f.e_f,
                            f.e_g,
-                           f.q_f, rest(self.sixteenth * 3)
+                           f.create_note(F2, self.quarter + self.sixteenth*3)
                            )
         
 
@@ -135,14 +174,16 @@ class First(Beat):
         m6 = build_measure(f.s_d, f.e_d, f.s_e, # 1
                            f.e_f, f.e_g,  #2
                            f.q_a, # 3
-                           f.q_g, #4
+                           f.create_note(G2, self.quarter + self.sixteenth*3) # 3 sixteenth notes carry into the second measure
+                           # 4.75
                            )
         
-        m7 = build_measure(rest(self.sixteenth * 4), f.s_c, # 1
-                            f.e_c, f.s_d, # 2
-                            f.e_e, f.e_f, # 3
-                            f.e_g, 
-                            rest(self.sixteenth * 2),
+        m7 = build_measure(rest(self.sixteenth * 1), # 5 / 8
+                           f.s_c,
+                            f.e_c, f.s_d, # 6/ 8
+                            f.e_e, f.e_f, # 7 / 8
+                            f.e_g,
+                            rest(self.sixteenth * 2), # 8 / 8
                             )
 
         m8 = build_measure(rest(self.sixteenth), f.e_c, f.s_d,
@@ -151,12 +192,44 @@ class First(Beat):
                            f.q_f)
        
        
+
+        #   Considering making this section just Synth2 #
+        #   Leave the bass tones to Synth3  #
+        # m9 = build_measure(f.e_f, f.s_a,
+        #                    f.e_b, f2.e_c,
+        #                    f2.e_d, f2.s_c,
+        #                    f.e_b, f.q_a,
+        #                    )
         
+        # m10 = build_measure(f.e_e, f.s_g,
+        #                    f.e_a, f.e_b,
+        #                    f2.e_c, f.s_b,
+        #                    f.e_a, f.q_g,
+        #                    )
+        
+        m11 = build_measure(f.q_f, rest(self.half),
+                            f.q_f)
+        
+        m12 = build_measure(f.q_f, rest(self.half), f.q_f)
+
+        m13 = build_measure(f.q_e, rest(self.half), f.q_e)
+
+        
+        m14 = build_measure(f.q_e, rest(self.half),
+                            f.q_e)
+
+
+
+
+
         v1 = build_measure(m1, m2, m3, m4)
 
         v2 = build_measure(m5, m6, m7, m8)
 
-        return v1, v2
+       # v3 = build_measure(m9, m9, m10, m10)
+        v3 = build_measure(m11, m12, m13, m14)
+
+        return v1, v2, v3
     
 
     def drums(self):
@@ -186,7 +259,7 @@ class First(Beat):
         m1 = self.metronome()
         m1 = build_measure(m1, m1, m1, m1)
 
-        b1, b2, b3 = self.bass()
+        b1, b2 = self.bass()
 
         s1, s2, s3 = self.synth()
 
@@ -199,20 +272,12 @@ class First(Beat):
 
         v2 = combine(m1, b2) # end of intro
         v2 = combine(v2, s1)
-
-        v3 = combine(b3, s2) # ONLY 3 MEASURES LONG! SETS UP THE MELODY
-        v3 = combine(v3, d0) # add the drum intro to v3
-
-        #   Melody Kicks in
-        v4 = combine(v1, d1) # make d4 out of v3
-        
+        v2 = combine(v2, d0) # add the drums
 
         #   Produce ya beat !!  #
         p = build_measure(
-            #   Intro   #
-            v1, v2, v3,
+            v1, v2,
 
-            #   Melody  #
                           )
 
 
@@ -249,19 +314,27 @@ class First(Beat):
         """
 
         #   Instras #
-        f1, f2 = self.funk()
-        b1, b2 = self.bass2()
+        f1, f2, f3 = self.funk()
+        s1 = self.synth2()
 
         
         #   Verses  #
-        v1 = combine(f1, b1)
-        v1 = combine(v1, self.metronome(4))
+        v1 = combine(f1, self.metronome(4))
 
         v2 = combine(f2, self.metronome(4))
-        v2 = combine(v2, b1)
+
+        v3 = combine(f3, self.metronome(4))
+        v3 = combine(v3, s1) # Add synth2
+
+        v4 = None   # V4 is V3 1 or 2 pitches lower
 
         #   Prod    #
-        p = build_measure(v1, v2, v1, v2)
+        p = build_measure(v1, v2,
+                          v3, v3,
+                          v1, v2,
+                          v3, v3,
+                          # Here, go down 1 or 2 pitches on V3   #
+                          )
 
 
         #   Sav #
@@ -277,6 +350,6 @@ class First(Beat):
         self.save(p, "Test")
 
 def main():
-    #First(60).test()
-    #First(62).produce()
-    First(62).melody()
+    #First(62).intro()
+    First(62).produce()
+    #First(62).melody()
