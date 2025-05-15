@@ -72,25 +72,16 @@ class First(Beat):
         b = DressDB(1, self.whole)
 
         #m1 = fade_out(build_measure(b.q_c, b.q_c, b.q_c, b.q_c), 4)
-        m1 = build_measure(b.q_d,
-                           rest(self.eighth), b.s_d,
-                           b.e_d, b.s_d,
-                           rest(self.eighth), b.e_d, rest(self.eighth))
-        
-        ne = b.create_note(B0, self.eighth)
-        ns = b.create_note(B0, self.sixteenth)
+        notew = b.create_note(B0, self.whole)
+        noteh = b.create_note(B0, self.half)
 
-        m2 = build_measure(b.e_c, rest(self.half + self.sixteenth), # 2.75
-                           b.s_c, b.e_c, b.s_c, rest(self.sixteenth) # 4
-                           )
-        
-        m3 = build_measure(ne, rest(self.half + self.sixteenth), # 2.5
-                           ns, ne, ns, rest(self.sixteenth)
-                           )
+        m1 = build_measure(b.w_c)
+        m2 = build_measure(notew)
+        m3 = build_measure(noteh, b.create_note(B0, self.quarter), b.q_c)
 
         
 
-        v1 = build_measure(m2, m2, m3, m3)
+        v1 = build_measure(m1, m1, m2)
         v2 = build_measure(m2, m2, m3, m3)
         
         return v1, v2
@@ -251,20 +242,23 @@ class First(Beat):
         The rich get richer so the poor keep dreaming,
         The man with the money doesn't hear you screaming.
 
+        Please let me just make art alone,
+
+
 
         """
 
         #   Instras #
         f1, f2 = self.funk()
-        #b1, b2 = self.bass2()
+        b1, b2 = self.bass2()
 
         
         #   Verses  #
-        #v1 = combine(f1, b1)
-        v1 = combine(f1, self.metronome(4))
+        v1 = combine(f1, b1)
+        v1 = combine(v1, self.metronome(4))
 
         v2 = combine(f2, self.metronome(4))
-        #v2 = combine(v2, b2)
+        v2 = combine(v2, b1)
 
         #   Prod    #
         p = build_measure(v1, v2, v1, v2)
@@ -284,5 +278,5 @@ class First(Beat):
 
 def main():
     #First(60).test()
-    First(62).produce()
-    #First(62).melody()
+    #First(62).produce()
+    First(62).melody()
