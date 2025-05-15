@@ -329,13 +329,13 @@ class Dressy(Beat):
         #k1 = combine(k1, p2)
         k1 = combine(k1, k2)
 
-        # #   Sections    #
+        # #   Sections    # #
         v1 = combine(k1, b2) # Keys and bass
         v2 = combine(v1, c1 * 0.65) # Keys, Bass, and Chimes
         #v3 = combine(v2, d1) # Keys, Bass, Chimes, and Drums
         v4 = combine(b3, c1) # Bass and Chimes
 
-        # #   Final Product   #
+        # #   Final Product   # #
         production = build_measure(v1, v2, # Intro / Build-up
                                    
                                    v2, v2, # Add Drums (V3)
@@ -360,9 +360,9 @@ class Dressy(Beat):
 
 
         v1 = combine(k1, k2) # Base ending
-        v1 = combine(v1, b2)
+        #v1 = combine(v1, b2)
         v2 = combine(k1, k3) # Higher ending
-        v2 = combine(v2, b2)
+        #v2 = combine(v2, b2)
 
         v3 = combine(v1, b1)
         v3 = combine(v3, d1) # Drums and Bass added

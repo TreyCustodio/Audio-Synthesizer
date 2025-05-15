@@ -1,4 +1,5 @@
 from .audio import *
+from .instruments import *
 from abc import abstractmethod
 
 
@@ -36,3 +37,18 @@ class Beat:
     
     def save(self):
         write(self.fileName)
+
+    def metronome(self):
+        """Return a measure of a metronome"""
+        n = Skirt(4, self.whole)
+
+        m1 = build_measure(n.q_c, n.q_c, n.q_c, n.q_c)
+
+        return m1
+    
+    def tempo(self, sound):
+        """Return 4 measures of an instrument keeping tempo"""
+        m1 = build_measure(sound, sound, sound, sound,)
+        v1 = build_measure(m1, m1, m1, m1)
+
+        return v1
