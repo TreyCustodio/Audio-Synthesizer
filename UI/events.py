@@ -1,4 +1,5 @@
 import pygame
+from modules.audio import *
 
 class EventManager(object):
     """Originally developed for my typing game, War and Keys.
@@ -30,70 +31,83 @@ class EventManager(object):
         EventManager.backspace_ready = False
 
 
-    """
-    Affect the engine
-    based on input from the user.
-    """
     def handleEvents(engine):
+        """Handle events in the event queue"""
 
         for event in pygame.event.get():
-
-            if not engine.getReady():
-                return
             
+            #   Pause event handling if the mouse is out of focus   #
             if event.type == pygame.WINDOWMOVED or event.type == pygame.WINDOWLEAVE or not pygame.mouse.get_focused():
-                if not EventManager.startup:
-                    EventManager.ready = False
                 return
-            
-            elif not EventManager.ready:
-                EventManager.ready = True
 
+            #   Key Down    #
             if event.type == pygame.KEYDOWN:
                 
-                #  High priority events
-
-                
-                ##  Escape - Quit
+                #  Escape - Quit    #
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     return
-                
-                ##  Startup - Logo
-                if EventManager.startup:
-                    return
-                
-                ##  Any - Start Game
-                if engine.inTitle:
-                    engine.startGame()
-                
-                ##  Enter - Pause Game
-                elif event.key == pygame.K_RETURN:
-                    if engine.paused:
-                        engine.resume()
-                    else:
-                        engine.pause()
 
-                #  Core game controls
-                elif not engine.paused:
-                    if event.key == pygame.K_SPACE:
-                        engine.submitString()
+                #   Octave Down #
+                elif event.key == pygame.K_LSHIFT:
+                    pass
 
-                    elif event.key == pygame.K_BACKSPACE:
-                        EventManager.backspace = True
-                        EventManager.backspace_ready = True
-                    else:
-                        if event.key in EventManager.actions:
-                            EventManager.queue.append(event.key)
-                            #engine.handleKey(event)
+                #   Octave Up   #
+                elif event.key == pygame.K_RSHIFT:
+                    pass
 
+                #   C1  #
+                elif event.key == pygame.K_a:
+                    engine.play(A3)
+                
+                #   C#  #
+                elif event.key == pygame.K_w:
+                    pass
+                
+                #   D   #
+                elif event.key == pygame.K_s:
+                    pass
+                
+                #   D#  #
+                elif event.key == pygame.K_e:
+                    pass
+                
+                #   E   #
+                elif event.key == pygame.K_d:
+                    pass
+                
+                #   F   #
+                elif event.key == pygame.K_f:
+                    pass
+                
+                #   F#  #
+                elif event.key == pygame.K_t:
+                    pass
+                
+                #   G   #
+                elif event.key == pygame.K_g:
+                    pass
+
+                #   G#  #
+                elif event.key == pygame.K_y:
+                    pass
+
+                #   A   #
+                elif event.key == pygame.K_h:
+                    pass
+                
+                #   A#  #
+                elif event.key == pygame.K_u:
+                    pass
+                
+                #   B   #
+                elif event.key == pygame.K_j:
+                    pass
+
+            #   Key Up  #
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_BACKSPACE:
-                    EventManager.backspace = False
-                    EventManager.backspace_ready = False
-                    EventManager.backspace_timer = 0.0
-                
-        engine.handleKey()
+                pass
+
 
     def readyToUpdate():
         return True

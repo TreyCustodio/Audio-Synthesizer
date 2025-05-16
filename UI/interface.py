@@ -1,19 +1,19 @@
 import pygame
-from events import EventManager
-from engine import Engine
+from .engine import Engine
+from .events import EventManager
 
 """
 This file contains the main routine to pass
 for each frame of the GUI.
 """
 
-
 """
 (1) - Setup
 """
 
 #   Constants   #
-RESOLUTION = (640 // 1.2, 360 // 1.2)
+RESOLUTION = (776, 302)
+
 SCALE = 1
 UPSCALED = RESOLUTION * SCALE
 
@@ -22,12 +22,15 @@ def main():
     #   Initialize modules  #
     pygame.init()
     pygame.font.init()
+    pygame.mixer.pre_init(44100, size=-16, channels = 1, allowedchanges=0)
+    pygame.mixer.init()
 
 
     #   Set the screen up   #
     flags = pygame.SCALED #| pygame.NOFRAME | pygame.FULLSCREEN
     screen = pygame.display.set_mode(list(map(int, UPSCALED)), flags=flags)
     drawSurface = pygame.Surface(list(map(int, RESOLUTION)))
+    drawSurface.fill((255,255,255))
 
 
     #   Set mouse visible   #
@@ -42,8 +45,7 @@ def main():
 
     #   Initialize the engine and eventManager  #
     engine = Engine()
-
-    #eventManager = EventManager()
+    eventManager = EventManager()
 
 
 
@@ -72,7 +74,7 @@ def main():
         
 
         #   (2) Handle events   #
-        #EventManager.handleEvents(gameEngine)
+        EventManager.handleEvents(engine)
 
 
         #   (3) Update  #
@@ -100,5 +102,5 @@ def main():
             
 
 
-        #   Quit if not running
-        pygame.quit()
+    #   Quit if not running
+    pygame.quit()

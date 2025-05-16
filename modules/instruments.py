@@ -146,6 +146,24 @@ class Instrument:
 
         return envelope(sound, a,d,s,r)
 
+class Tester(Instrument):
+    """Do not initialize all the notes upfront"""
+    def __init__(self, measure):
+        def func(freq, dur):
+            self.a = 0.01
+            self.d = 0.2
+            self.s = 0.5
+            self.r = 0.7
+
+            sound = sine_wave(freq, dur)
+            sound = envelope(sound, self.a, self.d, self.s, self.r)
+
+            return sound
+
+        self.func = func
+
+
+
 class Template(Instrument):
     def __init__(self, octave, measure, type=""):
         self.a = 0.2

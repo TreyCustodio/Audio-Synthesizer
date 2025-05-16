@@ -1,5 +1,6 @@
 from modules import audio, instruments
 from beats import digital_storytelling, dress, firstup
+from UI import interface
 
 from os import path
 
@@ -78,7 +79,7 @@ def main():
     """Main Function: Create any sounds you want"""
 
     #   (1) Produce a beat 
-    firstup.main()
+    #firstup.main()
 
 
     #   (2) Run some generations
@@ -96,7 +97,7 @@ def main():
 
 
     #   (4) Run the Interface
-    #interface.main()
+    interface.main()
 
 
 if __name__ == '__main__':
