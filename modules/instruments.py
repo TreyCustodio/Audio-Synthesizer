@@ -287,10 +287,11 @@ class First2(Instrument):
 
             return synth1
         
-        super().__init__(octave, measure, func, type)
+        self.func = func
+        #super().__init__(octave, measure, func, type)
 
 class First3(Instrument):
-    def __init__(self, octave, measure, type=""):
+    def __init__(self, octave, measure=80, type=""):
         self.a = 0.0
         self.d = 0.2
         self.s = 0.5
@@ -371,8 +372,9 @@ class First3(Instrument):
             
             synth3 = dress(freq, dur)
             return synth1 + synth2 + synth3
-        
-        super().__init__(octave, measure, func, type)
+
+        self.func = func
+        #super().__init__(octave, measure, func, type)
 
 class Tank(Instrument):
     def __init__(self, octave, measure, type=""):
