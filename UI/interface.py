@@ -1,6 +1,7 @@
 import pygame
 from .engine import Engine
 from .events import EventManager
+from .globals import WIDTH, HEIGHT
 
 """
 This file contains the main routine to pass
@@ -12,7 +13,7 @@ for each frame of the GUI.
 """
 
 #   Constants   #
-RESOLUTION = (776, 302)
+RESOLUTION = (WIDTH, HEIGHT)
 
 SCALE = 1
 UPSCALED = RESOLUTION * SCALE
@@ -22,7 +23,7 @@ def main():
     #   Initialize modules  #
     pygame.init()
     pygame.font.init()
-    pygame.mixer.pre_init(44100, size=-16, channels = 1, allowedchanges=0)
+    pygame.mixer.pre_init(44100, size=-16, channels = 2)
     pygame.mixer.init()
 
 
@@ -35,7 +36,7 @@ def main():
 
     #   Set mouse visible   #
     pygame.mouse.set_visible(True)
-
+    
     #   Set application icon    #
     # iconSurf = pygame.Surface((32,32))
     # image = pygame.image.load("displayIcon.png").convert()

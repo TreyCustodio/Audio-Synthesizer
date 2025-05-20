@@ -6,6 +6,7 @@ from synthesizer import synthesize, log, exp, lin
 
 class Instrument:
     def __init__(self, octave, measure, func, type=""):
+        
         self.func = func
         self.type = type
 
@@ -135,6 +136,10 @@ class Instrument:
         """Specify a brand new note with a pitch and duration"""
         return self.func(frequency, duration)
     
+    def create_note_octave(self, note, duration, octave):
+        coeff = 2 ** (octave - 1)
+        return self.func(note * coeff, duration)
+
     def create_slur(self, pitch1, pitch2, duration, wait):
 
         sound = slur(pitch1, pitch2, duration, wait)

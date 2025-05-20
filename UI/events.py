@@ -38,7 +38,8 @@ class EventManager(object):
             
             #   Pause event handling if the mouse is out of focus   #
             if event.type == pygame.WINDOWMOVED or event.type == pygame.WINDOWLEAVE or not pygame.mouse.get_focused():
-                return
+                pass
+                # return if you dont want to handle events when mouse out of focus
 
             #   Key Down    #
             if event.type == pygame.KEYDOWN:
@@ -50,63 +51,134 @@ class EventManager(object):
 
                 #   Octave Down #
                 elif event.key == pygame.K_LSHIFT:
-                    pass
+                    engine.decrementOctave()
 
                 #   Octave Up   #
                 elif event.key == pygame.K_RSHIFT:
-                    pass
+                    engine.incrementOctave()
+
 
                 #   C1  #
                 elif event.key == pygame.K_a:
-                    engine.play(A3)
+                    engine.play(C1)
+                    engine.set_held("c")
                 
                 #   C#  #
                 elif event.key == pygame.K_w:
-                    pass
+                    engine.play(Cs1)
+                    engine.set_held("c#")
+
                 
                 #   D   #
                 elif event.key == pygame.K_s:
-                    pass
+                    engine.play(D1)
+                    engine.set_held("d")
+                    
                 
                 #   D#  #
                 elif event.key == pygame.K_e:
-                    pass
+                    engine.play(Ds1)
+                    engine.set_held("d#")
                 
                 #   E   #
                 elif event.key == pygame.K_d:
-                    pass
+                    engine.play(E1)
+                    engine.set_held("e")
+                    
                 
                 #   F   #
                 elif event.key == pygame.K_f:
-                    pass
+                    engine.play(F1)
+                    engine.set_held("f")
+                    
                 
                 #   F#  #
                 elif event.key == pygame.K_t:
-                    pass
-                
+                    engine.play(Fs1)
+                    engine.set_held("f#")
+                    
+    
                 #   G   #
                 elif event.key == pygame.K_g:
-                    pass
+                    engine.play(G1)
+                    engine.set_held("g")
+                    
 
                 #   G#  #
                 elif event.key == pygame.K_y:
-                    pass
+                    engine.play(Gs1)
+                    engine.set_held("g#")
+
 
                 #   A   #
                 elif event.key == pygame.K_h:
-                    pass
+                    engine.play(A1)
+                    engine.set_held("a")
+                    
                 
                 #   A#  #
                 elif event.key == pygame.K_u:
-                    pass
+                    engine.play(As1)
+                    engine.set_held("a#")
+                    
                 
                 #   B   #
                 elif event.key == pygame.K_j:
-                    pass
+                    engine.play(B1)
+                    engine.set_held("b")
+
 
             #   Key Up  #
             elif event.type == pygame.KEYUP:
-                pass
+
+                #   C1  #
+                if event.key == pygame.K_a:
+                    engine.unset_held("c")
+                    
+                
+                #   C#  #
+                elif event.key == pygame.K_w:
+                    engine.unset_held("c#")
+                
+                #   D   #
+                elif event.key == pygame.K_s:
+                    engine.unset_held("d")
+                
+                #   D#  #
+                elif event.key == pygame.K_e:
+                    engine.unset_held("d#")
+                
+                #   E   #
+                elif event.key == pygame.K_d:
+                    engine.unset_held("e")
+                
+                #   F   #
+                elif event.key == pygame.K_f:
+                    engine.unset_held("f")
+                
+                #   F#  #
+                elif event.key == pygame.K_t:
+                    engine.unset_held("f#")
+                
+                #   G   #
+                elif event.key == pygame.K_g:
+                    engine.unset_held("g")
+                
+                #   G#  #
+                elif event.key == pygame.K_y:
+                    engine.unset_held("g#")
+                
+                #   A   #
+                elif event.key == pygame.K_h:
+                    engine.unset_held("a")
+                
+                #   A#  #
+                elif event.key == pygame.K_u:
+                    engine.unset_held("a#")
+                
+                #   B   #
+                elif event.key == pygame.K_j:
+                    engine.unset_held("b")
 
 
     def readyToUpdate():

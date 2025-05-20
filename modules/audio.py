@@ -122,6 +122,10 @@ B7 = 3951.0664
 # Octave 8
 C8 = 4186.0090
 
+
+
+
+
 """#--------------- Static Dynamics Class -------------#"""
 class Dynamics:
     def routine(initial_freq, end_freq, duration, dynamic = False):

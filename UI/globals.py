@@ -1,0 +1,4 @@
+WIDTH = 776
+HEIGHT = 422
+FPS = 60
+
