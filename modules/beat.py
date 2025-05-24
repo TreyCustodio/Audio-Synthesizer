@@ -21,6 +21,14 @@ class Beat:
         self.trey = self.quarter * 3
         self.whole = self.quarter * 4
 
+        #   Note Lengths ver 2
+        self.s = beat / 4
+        self.e = beat / 2
+        self.q = beat
+        self.h = self.quarter * 2
+        self.t = self.quarter * 3
+        self.w = self.quarter * 4
+
         #   File Name
         self.fileName = name
 

@@ -54,7 +54,20 @@ class Engine:
             "g#": 0,
             "a": 0,
             "a#": 0,
-            "b": 0,            
+            "b": 0,
+
+            "c2": 0,
+            "c#2": 0,
+            "d2": 0,
+            "d#2": 0,
+            "e2": 0,
+            "f2": 0,
+            "f#2": 0,
+            "g2": 0,
+            "g#2": 0,
+            "a2": 0,
+            "a#2": 0,
+            "b2": 0,    
         }
 
 
@@ -93,8 +106,6 @@ class Engine:
         octave_bg = octave.get_rect(topleft=(10, 10))
         instrument_bg = instrument.get_rect(topleft=(10, 50))
 
-             
-        #   Blit the text to the surface    #
         pygame.draw.rect(surf, (255, 255, 255), octave_bg)
         pygame.draw.rect(surf, (255, 255, 255), instrument_bg)
         surf.blit(octave, (10, 10))
@@ -110,12 +121,13 @@ class Engine:
                     surf.blit(self.held_black, (((index_b+1) * 34), 120))
 
                 else:
+                    delta = 54
                     if index == 1 or index == 4 or index == 5:
-                        surf.blit(self.held_white2, ((index * 56), 120))
+                        surf.blit(self.held_white2, ((index * delta), 120))
                     elif index == 2 or index == 6:
-                        surf.blit(self.held_white3, ((index * 56), 120))
+                        surf.blit(self.held_white3, ((index * delta), 120))
                     else:
-                        surf.blit(self.held_white, ((index * 56), 120))
+                        surf.blit(self.held_white, ((index * delta), 120))
 
             if "#" not in i:
                 index += 1
@@ -124,7 +136,6 @@ class Engine:
 
         
     def play(self, note):
-        #   self.held[]
         note = self.instrument.create_note_octave(note, get_quarter(self.bpm), self.octave)
 
         

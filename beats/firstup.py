@@ -286,6 +286,40 @@ class First(Beat):
 
         return p
 
+    def intro(self):
+        """Using this function to test runtime efficiency"""
+        #   Get ya instruments !    #
+        # m1 = self.metronome()
+        # m1 = build_measure(m1, m1, m1, m1)
+
+        b1, b2 = self.bass()
+
+        # s1, s2, s3 = self.synth()
+
+        # d0, d1 = self.drums()
+
+
+        #   Get ya verses!  #
+        #   Intro
+        # v1 = combine(m1, b1)
+
+        # v2 = combine(m1, b2) # end of intro
+        # v2 = combine(v2, s1)
+        # v2 = combine(v2, d0) # add the drums
+        v1 = b1
+        v2 = b2
+
+        #   Produce ya beat !!  #
+        p = build_measure(
+            v1, v2,
+
+                          )
+
+
+        #   Save ya beat.    #
+        self.save(p, "intro")
+
+        return p
 
 
     def melody(self):
@@ -350,6 +384,6 @@ class First(Beat):
         self.save(p, "Test")
 
 def main():
-    #First(62).intro()
-    First(62).produce()
+    First(62).intro()
+    #First(62).produce()
     #First(62).melody()

@@ -151,6 +151,67 @@ class Instrument:
 
         return envelope(sound, a,d,s,r)
 
+    
+    def note(self, pitch: str, dur: float):
+        """Get a note based on a pitch and a duration"""
+
+        return self.func(pitch, dur)
+
+class Bass(Instrument):
+    def __init__(self, octave=0, measure=0, type=""):
+        self.a = 0.01
+        self.d = 0.7
+        self.s = 0.75
+        self.r = 0.2
+        
+        def dress(frequency, duration):
+            """DressB"""
+            #   Synthesizer 1 Parameters  #
+            harmonics = 60
+            coeff = 2
+            freq_func = None #exp(2)
+            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+            
+
+            #   Function Call   #
+            synth1 = synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            )
+            
+
+            """DressD 2 Octaves Higher"""
+            #   Synthesizer 2 Parameters  #
+            harmonics = 5
+            coeff = 1
+            freq_func = None #exp(2)
+            amp_func = exp(6) #log
+            a = 0.001
+            d = 0.5
+            s = 0.0
+            r = 0.0
+
+            #   Function Call   #
+            synth2 = synthesize(frequency * 3, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            a, d, s, r
+                            ) \
+                            + synthesize((frequency / 4) * 3, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            a, d, s, r
+                            ) * 0.2
+
+
+            """Combine em   """
+            return synth1 + synth2
+        
+        self.func = dress
+        
+
+
 class Tester(Instrument):
     """Do not initialize all the notes upfront"""
     def __init__(self, measure):
@@ -167,7 +228,7 @@ class Tester(Instrument):
 
         self.func = func
 
-
+    #   Don't call super().__init__
 
 class Template(Instrument):
     def __init__(self, octave, measure, type=""):
@@ -374,7 +435,7 @@ class First3(Instrument):
             return synth1 + synth2 + synth3
 
         self.func = func
-        #super().__init__(octave, measure, func, type)
+        super().__init__(octave, measure, func, type)
 
 class Tank(Instrument):
     def __init__(self, octave, measure, type=""):
@@ -813,12 +874,12 @@ class XyloBass(Instrument):
         else:
             super().__init__(octave, measure, xylobass)
 
-class Bass(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "h":
-            super().__init__(octave, measure, bassh)
-        else:
-            super().__init__(octave, measure, bass)
+# class Bass(Instrument):
+#     def __init__(self, octave, measure, type=""):
+#         if type == "h":
+#             super().__init__(octave, measure, bassh)
+#         else:
+#             super().__init__(octave, measure, bass)
 
 
 class Symbol(Instrument):

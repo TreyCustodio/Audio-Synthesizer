@@ -126,6 +126,66 @@ class EventManager(object):
                 elif event.key == pygame.K_j:
                     engine.play(B1)
                     engine.set_held("b")
+                
+                #  C    #
+                elif event.key == pygame.K_k:
+                    engine.play(C2)
+                    engine.set_held("c2")
+
+                #  C#   #
+                elif event.key == pygame.K_o:
+                    engine.play(Cs2)
+                    engine.set_held("c#2")
+
+                #  D   #
+                elif event.key == pygame.K_l:
+                    engine.play(D2)
+                    engine.set_held("d2")
+
+                #  D#  #
+                elif event.key == pygame.K_p:
+                    engine.play(Ds2)
+                    engine.set_held("d#2")
+
+                #  E   #
+                elif event.key == pygame.K_SEMICOLON:
+                    engine.play(E2)
+                    engine.set_held("e2")
+
+                #  F   #
+                elif event.key == pygame.K_QUOTE:
+                    engine.play(F2)
+                    engine.set_held("f2")
+
+                #  F#  #
+                elif event.key == pygame.K_RIGHTBRACKET:
+                    engine.play(Fs2)
+                    engine.set_held("f#2")
+                
+                #  G   #
+                elif event.key == pygame.K_RETURN:
+                    engine.play(G2)
+                    engine.set_held("g2")
+                
+                #  G#  #
+                elif event.key == pygame.K_BACKSLASH:
+                    engine.play(Gs2)
+                    engine.set_held("g#2")
+                
+                #  A   #
+                elif event.key == pygame.K_KP4:
+                    engine.play(A2)
+                    engine.set_held("a2")
+                
+                #  A#  #
+                elif event.key == pygame.K_KP8:
+                    engine.play(As2)
+                    engine.set_held("a#2")
+
+                #  B   #
+                elif event.key == pygame.K_KP6 or event.key == pygame.K_5:
+                    engine.play(B2)
+                    engine.set_held("b2")
 
 
             #   Key Up  #
@@ -180,6 +240,53 @@ class EventManager(object):
                 elif event.key == pygame.K_j:
                     engine.unset_held("b")
 
+                #   C2  #
+                elif event.key == pygame.K_k:
+                    engine.unset_held("c2")
+                
+                #   C#2  #
+                elif event.key == pygame.K_o:
+                    engine.unset_held("c#2")
+                
+                #   D2  #
+                elif event.key == pygame.K_l:
+                    engine.unset_held("d2")
+
+                #   D#2  #
+                elif event.key == pygame.K_p:
+                    engine.unset_held("d#2")
+                
+                #   E2  #
+                elif event.key == pygame.K_SEMICOLON:
+                    engine.unset_held("e2")
+                
+                #   F2  #
+                elif event.key == pygame.K_QUOTE:
+                    engine.unset_held("f2")
+                
+                #   F#2  #
+                elif event.key == pygame.K_RIGHTBRACKET:
+                    engine.unset_held("f#2")
+                
+                #   G2  #
+                elif event.key == pygame.K_RETURN:
+                    engine.unset_held("g2")
+                
+                #   G#2  #
+                elif event.key == pygame.K_BACKSLASH:
+                    engine.unset_held("g#2")
+                
+                #   A2  #
+                elif event.key == pygame.K_KP4:
+                    engine.unset_held("a2")
+                
+                #   A#2  #
+                elif event.key == pygame.K_KP8:
+                    engine.unset_held("a#2")
+                
+                #   B2  #
+                elif event.key == pygame.K_KP6 or event.key == pygame.K_5:
+                    engine.unset_held("b2")
 
     def readyToUpdate():
         return True
