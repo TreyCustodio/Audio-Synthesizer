@@ -209,8 +209,69 @@ class Bass(Instrument):
             return synth1 + synth2
         
         self.func = dress
-        
 
+class Skirt(Instrument):
+    def __init__(self):
+        self.a = 0.01
+        self.d = 0.0
+        self.s = 0.75
+        self.r = 0.01
+        
+        def func(frequency, duration):
+            """Create a skirt sound by combining a metallic, modulated wave with noise"""
+            
+            #   Generate a time array for the duration of the sound    #
+            t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
+
+            #   Create a modulated sine wave and noise   #
+            base = frequency * 112
+            mod = 120
+            mod_index = 0.5
+
+            wave = np.sin(2 * np.pi * base * t + 
+                        mod_index * np.sin(2 * np.pi * mod * t))
+            
+            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
+            
+
+            #   Apply an exponential decay to the wave and noise    #
+            wave *= np.exp(-t * 50)
+            noise *= np.exp(-t * 50)
+            wave += noise
+
+
+            #   Wrap the wave in an envelope    #
+            wave = envelope(wave, self.a, self.d, self.s, self.r)
+
+            return wave
+        
+        self.func = func
+
+
+class Funk(Instrument):
+    def __init__(self):
+        self.a = 0.0
+        self.d = 0.2
+        self.s = 0.5
+        self.r = 0.4
+
+        def func(freq, dur):
+            
+            harmonics = 20
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+            synth1 = synthesize(freq, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq, dur, 0,
+                                10, 1, None, None,
+                                0.0, 0.2, 0.0, 0.01)
+
+            return synth1
+        
+        self.func = func
 
 class Tester(Instrument):
     """Do not initialize all the notes upfront"""
@@ -886,10 +947,10 @@ class Symbol(Instrument):
     def __init__(self, octave, measure, type = ""):
         super().__init__(octave, measure, symbol)
 
-class Skirt(Instrument):
-    def __init__(self, octave, measure):
-        super().__init__(octave, measure, skirt)
+# class Skirt(Instrument):
+#     def __init__(self, octave, measure):
+#         super().__init__(octave, measure, skirt)
 
-class Skirt2(Instrument):
-    def __init__(self, octave, measure):
-        super().__init__(octave, measure, skirt2)
+# class Skirt2(Instrument):
+#     def __init__(self, octave, measure):
+#         super().__init__(octave, measure, skirt2)

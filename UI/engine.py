@@ -20,9 +20,13 @@ class Engine:
         self.piano_black = pygame.image.load(os.path.join("UI","images", "piano_black.png"))
         self.piano_black.set_colorkey(self.piano_black.get_at((0,0)))
         
-        #   Playback Data   #
+        #   Bpm   #
         self.bpm = 60
-        self.instrument = First2(3, get_measure(self.bpm))
+
+        #   Instrument   #
+        self.instrument = Funk()
+
+        #   Octave   #
         self.octave = 4
 
         #   Background Images   #
