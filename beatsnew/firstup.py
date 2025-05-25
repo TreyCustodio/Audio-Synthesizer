@@ -41,31 +41,33 @@ class First(Beat):
         # A2, B2, C3
 
         m1 = build_measure(
-        f.note(C3, self.e), # .5
-        f.note(B2, self.s), # .75
-        f.note(A2, self.s), # 1
-        f.note(C3, self.q), # 2
+        f.note(C4, self.e), # .5
+        f.note(B3, self.s), # .75
+        f.note(A3, self.s), # 1
+        f.note(C4, self.q), # 2
         rest(self.s), # 2.25
-        f.note(A2, self.s), # 2.5
-        f.note(B2, self.e), # 3
-        f.note(C3, self.q), # 4
+        f.note(A3, self.s), # 2.5
+        f.note(B3, self.e), # 3
+        f.note(C4, self.q), # 4
         )
 
         m2 = build_measure( # Tone shift -2 full tones
-        f.note(A2, self.e), # .5
-        f.note(G2, self.s), # .75
-        f.note(F2, self.s), # 1
-        f.note(A2, self.q), # 2
+        f.note(A3, self.e), # .5
+        f.note(G3, self.s), # .75
+        f.note(F3, self.s), # 1
+        f.note(A3, self.q), # 2
         rest(self.s), # 2.25
-        f.note(F2, self.s), # 2.5
-        f.note(G2, self.e), # 3
-        f.note(A2, self.q), # 4
+        f.note(F3, self.s), # 2.5
+        f.note(G3, self.e), # 3
+        f.note(A3, self.q), # 4
         )
 
 
+        amp = 0.5
+        v1 = build_measure(m1, m1, m2, m2) * amp
+        
 
-        v1 = build_measure(m1, m1, m2, m2)
-        v2 = build_measure(m2, m2, m2, m2)
+        v2 = build_measure(m2, m2, m2, m2) * amp
 
         return v1, v2
     
@@ -89,39 +91,50 @@ class First(Beat):
 
         v1 = build_measure(m1, m1, m1, m1)
 
-
         return v1
 
     def intro(self):
 
         #   Gather Instruments  #
-        #m1 = self.metronome()
-        #m1 = build_measure(m1, m1, m1, m1)
-
         b1, b2 = self.bass()
         f1, f2 = self.funk()
         d1 = self.drums()
 
-        #s1, s2, s3 = self.synth()
-
-        #d0, d1 = self.drums()
-
 
         #   Produce each section    #
+        v0 = b1
         v1 = combine(b1, d1)
 
         v2 = combine(b1, f1)
         v2 = combine(v2, d1)
 
         prod = build_measure(
-            v1, v2
+            v0, v1, v2, v2
         )
 
-        prod = d1
 
         #   Save the production #
         self.save(prod, "intro")
 
+
+    def melody(self):
+        #   Gather Instruments  #
+        b1, b2 = self.bass()
+        f1, f2 = self.funk()
+        d1 = self.drums()
+
+
+        #   Produce each section    #
+        v1 = combine(b1, d1)
+        v1 = combine(v1, f2)
+
+        prod = build_measure(
+            v1
+        )
+
+
+        #   Save the production #
+        self.save(prod, "melody")
 
     def produce(self):
         #   Gather Each Section of the song    #
@@ -130,4 +143,4 @@ class First(Beat):
         return
     
 def main():
-    First(62).intro()
+    First(62).melody()

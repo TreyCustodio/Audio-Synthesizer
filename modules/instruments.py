@@ -224,9 +224,9 @@ class Skirt(Instrument):
             t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
 
             #   Create a modulated sine wave and noise   #
-            base = frequency * 112
+            base = frequency * 85
             mod = 120
-            mod_index = 0.5
+            mod_index = 0.2
 
             wave = np.sin(2 * np.pi * base * t + 
                         mod_index * np.sin(2 * np.pi * mod * t))
@@ -251,9 +251,9 @@ class Skirt(Instrument):
 class Funk(Instrument):
     def __init__(self):
         self.a = 0.0
-        self.d = 0.2
+        self.d = 0.3
         self.s = 0.5
-        self.r = 0.4
+        self.r = 0.3
 
         def func(freq, dur):
             
@@ -262,14 +262,24 @@ class Funk(Instrument):
             freq_func = None
             amp_func = None
 
-            synth1 = synthesize(freq, dur, 0,
+
+            synth1 = synthesize(freq / 2, dur, 0,
                                 harmonics, coeff, freq_func, amp_func,
                                 self.a, self.d, self.s, self.r) * 0.5 + \
-                     synthesize(freq, dur, 0,
-                                10, 1, None, None,
-                                0.0, 0.2, 0.0, 0.01)
+                     synthesize(freq * 0.25, dur, 0,
+                                20, 1, None, None,
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq * 2, dur, 0,
+                                20, 1, None, None,
+                                0.0, 0.2, 0.0, 0.01) * 0.1
+                     
 
-            return synth1
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            noise = np.random.normal(0, 0.5, len(t)) * np.exp(-t * 50)
+            
+            wave = synth1 + noise
+
+            return wave
         
         self.func = func
 
