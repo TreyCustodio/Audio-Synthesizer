@@ -2,7 +2,8 @@
 generate every possible note for each instrument."""
 
 from .audio import *
-from synthesizer import synthesize, log, exp, lin
+from .sampler import Sampler
+from synthesizer import synthesize, log, exp, lin, bass_harms
 
 class Instrument:
     def __init__(self, octave, measure, func, type=""):
@@ -152,10 +153,22 @@ class Instrument:
         return envelope(sound, a,d,s,r)
 
     
-    def note(self, pitch: str, dur: float):
+    def note(self, pitch: str = "", dur: float = 0.0):
         """Get a note based on a pitch and a duration"""
 
         return self.func(pitch, dur)
+
+class Hey(Instrument):
+    def __init__(self):
+        self.a = 0.0
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.0
+
+        def func(frequency, duration):
+            return Sampler.sample(os.path.join("samples", "Navi", "hey.wav"))
+
+        self.func = func
 
 class Bass(Instrument):
     def __init__(self, octave=0, measure=0, type=""):
@@ -246,18 +259,21 @@ class Skirt(Instrument):
             return wave
         
         self.func = func
-
-
 class Funk(Instrument):
     def __init__(self):
-        self.a = 0.0
-        self.d = 0.3
-        self.s = 0.5
-        self.r = 0.3
+        # self.a = 0.0
+        # self.d = 0.35
+        # self.s = 0.0
+        # self.r = 0.0
+
+        self.a = 0.5
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.5
 
         def func(freq, dur):
             
-            harmonics = 20
+            harmonics = 30
             coeff = 1
             freq_func = None
             amp_func = None
@@ -267,19 +283,108 @@ class Funk(Instrument):
                                 harmonics, coeff, freq_func, amp_func,
                                 self.a, self.d, self.s, self.r) * 0.5 + \
                      synthesize(freq * 0.25, dur, 0,
-                                20, 1, None, None,
+                                harmonics, 1, None, None,
                                 self.a, self.d, self.s, self.r) * 0.5 + \
                      synthesize(freq * 2, dur, 0,
-                                20, 1, None, None,
-                                0.0, 0.2, 0.0, 0.01) * 0.1
+                                harmonics, 1, None, None,
+                               self.a, self.d, self.s, self.r) * 0.1 + \
+                    synthesize(freq, dur, 0,
+                                20, coeff, bass_harms(2), "hold",
+                                0.7, 0.0, 1.0, 0.3)
                      
 
-            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
-            noise = np.random.normal(0, 0.5, len(t)) * np.exp(-t * 50)
+            # t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            # noise = np.random.normal(0, 0.5, len(t)) * np.exp(-t * 50)
             
-            wave = synth1 + noise
+            # wave = synth1 + noise
 
-            return wave
+            return synth1
+        
+        self.func = func
+
+class Deep_Synth(Instrument):
+    def __init__(self):
+        # self.a = 0.0
+        # self.d = 0.35
+        # self.s = 0.0
+        # self.r = 0.0
+
+        self.a = 0.5
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.5
+
+        def func(freq, dur):
+            
+            harmonics = 30
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+
+            synth1 = synthesize(freq / 2, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq * 0.25, dur, 0,
+                                harmonics, 1, None, None,
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq * 2, dur, 0,
+                                harmonics, 1, None, None,
+                               self.a, self.d, self.s, self.r) * 0.1 + \
+                    synthesize(freq, dur, 0,
+                                20, coeff, bass_harms(2), "hold",
+                                0.7, 0.0, 1.0, 0.3)
+                     
+
+            # t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            # noise = np.random.normal(0, 0.5, len(t)) * np.exp(-t * 50)
+            
+            # wave = synth1 + noise
+
+            return synth1
+        
+        self.func = func
+
+class Buzz(Instrument):
+    def __init__(self):
+        # self.a = 0.0
+        # self.d = 0.35
+        # self.s = 0.0
+        # self.r = 0.0
+
+        self.a = 0.5
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.5
+
+        def func(freq, dur):
+            
+            harmonics = 30
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+
+            synth1 = synthesize(freq / 2, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq * 0.25, dur, 0,
+                                harmonics, 1, None, None,
+                                self.a, self.d, self.s, self.r) * 0.5 + \
+                     synthesize(freq * 2, dur, 0,
+                                harmonics, 1, None, None,
+                               self.a, self.d, self.s, self.r) * 0.1 + \
+                    synthesize(freq, dur, 0,
+                                50, coeff, freq_func, lin(-1),
+                                self.a, self.d, self.s, self.r)
+                     
+
+            # t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            # noise = np.random.normal(0, 0.5, len(t)) * np.exp(-t * 50)
+            
+            # wave = synth1 + noise
+
+            return synth1
         
         self.func = func
 

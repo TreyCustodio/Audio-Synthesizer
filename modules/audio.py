@@ -225,12 +225,13 @@ def combine(wave1, wave2):
     wave1 = wave1.copy()
     wave2 = wave2.copy()
     
+    
     if len(wave1) > len(wave2):
         end = len(wave1) - 1
         num_zeros = end - (len(wave2) - 1)
+        #num_zeros = len(wave1) - len(wave2)
         zeros = [0 for i in range(num_zeros)]
         wave2 = np.append(wave2, zeros)
-
         return wave1 + wave2
     
     else:

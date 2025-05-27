@@ -21,13 +21,13 @@ class Engine:
         self.piano_black.set_colorkey(self.piano_black.get_at((0,0)))
         
         #   Bpm   #
-        self.bpm = 60
+        self.bpm = 62
 
         #   Instrument   #
         self.instrument = Funk()
 
         #   Octave   #
-        self.octave = 4
+        self.octave = 3
 
         #   Background Images   #
         self.white = pygame.rect.Rect(0, 0, WIDTH, 120)
@@ -140,13 +140,14 @@ class Engine:
 
         
     def play(self, note):
-        note = self.instrument.create_note_octave(note, get_quarter(self.bpm), self.octave)
+        note = self.instrument.create_note_octave(note, get_eighth(self.bpm), self.octave)
 
         
         #   Convert to PCM Format   #
         ##  Pulse-Code Modulation   
-        note = (note * 32767).astype(np.int16)
-        note = np.column_stack((note, note))
+        note = write(note, "", "note")
+        #note = (note / np.max(np.abs(note)) * 32767).astype(np.int16)
+        #note = np.column_stack((note, note))
         
-        sound = pygame.sndarray.make_sound(note)
+        sound = pygame.mixer.Sound("note.wav")
         sound.play()

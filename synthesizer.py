@@ -31,6 +31,11 @@ def lin(b):
         return (x ** b)
     return adjust
 
+def bass_harms(b=2):
+    def func(x):
+        return x / (b * x)
+    return func
+
 
 """   Synthesizing Process    """
 def synthesize(freq: float = 100.0, duration: float = 0.3, bpm=80, # Data for the fundamental sine wave
@@ -91,8 +96,11 @@ def add_harmonics(wav: np.ndarray, freq: float = 100.0, duration: float = 0.3,
 
             #   Use the amplitude function to modulate the amplitude    #
             if amp_func:
-                a = amp_func(i)
-                harm /= a
+                if amp_func == "hold":
+                    pass
+                else:
+                    a = amp_func(i)
+                    harm /= a
 
             #   Linearly attenuate the amplitude    #
             else:

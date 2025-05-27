@@ -1,4 +1,4 @@
-from modules import audio, instruments
+from modules import audio, instruments, sampler
 #from beats import digital_storytelling, dress, firstup
 from beatsnew import firstup
 
@@ -91,16 +91,14 @@ def main():
     #generate(instruments.Bass, "bass_1", 165, 1, "h")
     
     #generate(instruments.Tank, path.join("beats", "gens"), 45, 4)
-
-
-
     
-    #   (3) Produce VG SFX
-    #text_sounds()
-
 
     #   (4) Run the Interface
-    #interface.main()
+    interface.main()
+
+
+    #   (5) Test the Sampler
+    #sampler.main()
 
 
 if __name__ == '__main__':
