@@ -24,7 +24,9 @@ class Engine:
         self.bpm = 62
 
         #   Instrument   #
-        self.instrument = Funk()
+        #self.instrument = Cymbal()
+        self.instrument = Snare()
+        #self.instrument = Bass()
 
         #   Octave   #
         self.octave = 3
@@ -74,6 +76,10 @@ class Engine:
             "b2": 0,    
         }
 
+    def stop(self):
+        """Instantly stop all sounds"""
+        pygame.mixer.stop()
+
 
     def set_held(self, key):
         """Set the held key"""
@@ -84,6 +90,7 @@ class Engine:
         """Unset the held key"""
         if key in self.held:
             self.held[key] = 0
+            #self.stop()
 
     def incrementOctave(self):
         self.octave += 1
@@ -92,7 +99,7 @@ class Engine:
         self.octave -= 1
 
     def draw(self, surf):
-        """Draw routine"""
+        """Draw routine"""      
         #   Draw the piano  #
         surf.blit(self.paino, (0, 120))
         # surf.blit(self.piano_white, (0,120))
@@ -137,17 +144,37 @@ class Engine:
                 index += 1
             elif index != 1:
                 index_b += 1
+    
+    def dynamic(self, note):
+        #   No release
+        #wave = self.instrument.create_note_octave(note, 1.0, self.octave)
+        wave = self.instrument.dynamic(note, 0.1, self.octave)
+        wave = np.column_stack((wave, wave))
+        wave = wave.astype(np.int16)
+
+        #   Convert to Pygame Sound #
+        sound = pygame.sndarray.make_sound(wave)
+        sound.play()
+
+        return wave
 
         
+        
     def play(self, note):
+        
+        #note = self.dynamic(note)
         note = self.instrument.create_note_octave(note, get_eighth(self.bpm), self.octave)
 
         
         #   Convert to PCM Format   #
         ##  Pulse-Code Modulation   
+        
+        
         note = write(note, "", "note")
         #note = (note / np.max(np.abs(note)) * 32767).astype(np.int16)
         #note = np.column_stack((note, note))
         
         sound = pygame.mixer.Sound("note.wav")
         sound.play()
+
+

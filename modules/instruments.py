@@ -3,7 +3,7 @@ generate every possible note for each instrument."""
 
 from .audio import *
 from .sampler import Sampler
-from synthesizer import synthesize, log, exp, lin, bass_harms
+from synthesizer import synthesize, log, exp, lin, bass_harms, inv
 
 class Instrument:
     def __init__(self, octave, measure, func, type=""):
@@ -153,6 +153,11 @@ class Instrument:
         return envelope(sound, a,d,s,r)
 
     
+    def dynamic(self, pitch, dur, octave):
+        coeff = 2 ** (octave - 1)
+        return self.loop(pitch * coeff, dur)
+
+
     def note(self, pitch: str = "", dur: float = 0.0):
         """Get a note based on a pitch and a duration"""
 
@@ -170,6 +175,91 @@ class Hey(Instrument):
 
         self.func = func
 
+class Clean_Synth(Instrument):
+    def __init__(self):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            harmonics = 20
+            coeff = 1
+            freq_func = bass_harms(2)
+            amp_func = inv
+
+            wave1 = swell(freq, 1, dur * 0.1)
+
+            wave2 = synthesize(freq, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r)
+
+            return combine(wave1, wave2)
+        
+        self.func = func
+
+class Cymbal(Instrument):
+    def __init__(self):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+            freqs = np.random.uniform(freq, freq / 2, 20)
+            
+            wave = np.zeros_like(t)
+            for freq in freqs:
+                wave += np.sin(2 * np.pi * freq * t)
+
+            wave = white_noise(wave, 0.5)
+
+            wave = wave * np.exp(-t * 5)
+            #wave = envelope(wave, 0.0, 0.1 * dur, 0.7, 0.3 * dur)
+
+            wave = wave / np.max(np.abs(wave))
+            return wave
+
+
+        self.func = func
+class Snare(Instrument):
+        def __init__(self):
+            self.a = 0.0
+            self.d = 0.1
+            self.s = 0.7
+            self.r = 0.3
+
+
+            def func(freq, dur):
+                t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+                harmonics = 0
+                coeff = 1
+                freq_func = bass_harms(2)
+                amp_func = inv
+
+                wave1 = swell(freq, 1, dur * 0.1)
+                wave1 = envelope(wave1, self.a * dur * 0.1, self.d* dur * 0.1, self.s, self.r* dur * 0.1)
+
+                wave2 = synthesize(freq, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r)
+
+                
+                noise = np.random.normal(0, 0.5, wave2.shape) * np.exp(-t * 50)
+                noise *= np.exp(-t * 50)
+                wave2 += noise
+
+
+                return combine(wave1, noise)
+            
+            self.func = func
+    
 class Bass(Instrument):
     def __init__(self, octave=0, measure=0, type=""):
         self.a = 0.01
@@ -219,7 +309,7 @@ class Bass(Instrument):
 
 
             """Combine em   """
-            return synth1 + synth2
+            return synth1 + synth2  
         
         self.func = dress
 
@@ -259,6 +349,8 @@ class Skirt(Instrument):
             return wave
         
         self.func = func
+
+
 class Funk(Instrument):
     def __init__(self):
         # self.a = 0.0
@@ -300,7 +392,37 @@ class Funk(Instrument):
 
             return synth1
         
+        def loop(freq, dur):
+            
+            harmonics = 30
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+
+            synth1 = synthesize(freq / 2, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, self.d, self.s, 0.0) * 0.5 + \
+                     synthesize(freq * 0.25, dur, 0,
+                                harmonics, 1, None, None,
+                                self.a, self.d, self.s, 0.0) * 0.5 + \
+                     synthesize(freq * 2, dur, 0,
+                                harmonics, 1, None, None,
+                               self.a, self.d, self.s, 0.0) * 0.1 + \
+                    synthesize(freq, dur, 0,
+                                20, coeff, bass_harms(2), "hold",
+                                0.7, 0.0, 1.0, 0.3)
+                     
+
+            # t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            # noise = np.random.normal(0, 0.5, len(t)) * np.exp(-t * 50)
+            
+            # wave = synth1 + noise
+
+            return synth1
+
         self.func = func
+        self.loop = loop
 
 class Deep_Synth(Instrument):
     def __init__(self):
@@ -429,8 +551,11 @@ class Template(Instrument):
         super().__init__(octave, measure, func, type)
 
 
+# class Pluck(Instrument):
+#     def __init__(self)
+
 class FirstP(Instrument):
-    def __init__(self, octave, measure, type=""):
+    def __init__(self):
         self.a = 0.0
         self.d = 0.2
         self.s = 0.0
@@ -442,8 +567,7 @@ class FirstP(Instrument):
                             0.0, 0.2, 0.0, 0.01)
         
 
-        super().__init__(octave, measure, func, type)
-
+        self.func = func
 
 
 
@@ -477,7 +601,7 @@ class FirstF(Instrument):
         super().__init__(octave, measure, func, type)
 
 class First1(Instrument):
-    def __init__(self, octave, measure, type=""):
+    def __init__(self):
         self.a = 0.9
         self.d = 0.0
         self.s = 0.5
@@ -499,10 +623,10 @@ class First1(Instrument):
 
             return synth1
         
-        super().__init__(octave, measure, func, type)
+        self.func = func
 
 class First2(Instrument):
-    def __init__(self, octave, measure, type=""):
+    def __init__(self):
         self.a = 0.0
         self.d = 0.2
         self.s = 0.5
@@ -515,12 +639,15 @@ class First2(Instrument):
             freq_func = None
             amp_func = None
 
-            synth1 = synthesize(freq, dur, 0,
+            synth1 = synthesize(freq / 4, dur, 0,
                                 harmonics, coeff, freq_func, amp_func,
                                 self.a, self.d, self.s, self.r) * 0.5 + \
-                     synthesize(freq, dur, 0,
+                     synthesize(freq / 2, dur, 0,
                                 10, 1, None, None,
-                                0.0, 0.2, 0.0, 0.01)
+                                0.0, 0.2, 0.0, 0.01) * 0.5 +\
+                     synthesize(freq, dur, 0,
+                                20, coeff, bass_harms(2), "hold",
+                                0.7, 0.0, 1.0, 0.3) * 0.4
 
             return synth1
         
@@ -528,11 +655,11 @@ class First2(Instrument):
         #super().__init__(octave, measure, func, type)
 
 class First3(Instrument):
-    def __init__(self, octave, measure=80, type=""):
+    def __init__(self):
         self.a = 0.0
         self.d = 0.2
         self.s = 0.5
-        self.r = 0.4
+        self.r = 0.2
 
         def func(freq, dur):
             
@@ -611,461 +738,461 @@ class First3(Instrument):
             return synth1 + synth2 + synth3
 
         self.func = func
-        super().__init__(octave, measure, func, type)
 
-class Tank(Instrument):
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.0
-        self.d = 0.0
-        self.s = 1.0
-        self.r = 0.05
+class Old:
+    class Tank(Instrument):
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.0
+            self.d = 0.0
+            self.s = 1.0
+            self.r = 0.05
 
-        def dress(frequency, duration):
-            # return add_waves(envelope(swell(frequency + 300, frequency, duration / 2), 0.0, 0.3, 1.0, 0.2),
-            #                  envelope(swell(frequency, frequency + 300, duration / 2), 0.0, 0.3, 1.0, 0.2)
-            #                  ) + \
-            # return  synthesize(frequency, 
-            #                    duration,
-            #                    harmonics = 5, freq_func=lin(1), amp_func=lin(2), a=self.a, d=self.d, s=self.s, r=self.r
-            #                    ) + \
-            base = sine_wave(frequency-200, duration)
-            base = envelope(base, 0.0, 0.3 * duration, 0.0, 0.0)
+            def dress(frequency, duration):
+                # return add_waves(envelope(swell(frequency + 300, frequency, duration / 2), 0.0, 0.3, 1.0, 0.2),
+                #                  envelope(swell(frequency, frequency + 300, duration / 2), 0.0, 0.3, 1.0, 0.2)
+                #                  ) + \
+                # return  synthesize(frequency, 
+                #                    duration,
+                #                    harmonics = 5, freq_func=lin(1), amp_func=lin(2), a=self.a, d=self.d, s=self.s, r=self.r
+                #                    ) + \
+                base = sine_wave(frequency-200, duration)
+                base = envelope(base, 0.0, 0.3 * duration, 0.0, 0.0)
 
-            a = synthesize((frequency - 200), 
-                               duration,
-                               harmonics = 2, freq_func=lin(2), amp_func=exp(1.5), a=0.0, d=0.3, s=0.0, r=0.0
-                               )
-            a = distort(a, 2.0)
+                a = synthesize((frequency - 200), 
+                                duration,
+                                harmonics = 2, freq_func=lin(2), amp_func=exp(1.5), a=0.0, d=0.3, s=0.0, r=0.0
+                                )
+                a = distort(a, 2.0)
 
-            b = white_noise(sine_wave(1, duration),0.05)
-            b = envelope(b, 0.0, 0.3, 0.0, 0.0)
+                b = white_noise(sine_wave(1, duration),0.05)
+                b = envelope(b, 0.0, 0.3, 0.0, 0.0)
 
-            a = combine(a, b)
-            #a = distort(a, 1.0)
-            return a + base
+                a = combine(a, b)
+                #a = distort(a, 1.0)
+                return a + base
+                
+                #+ \
+                                # synthesize((frequency - 200) * 2, 
+                                #    duration,
+                                #    harmonics = 0, freq_func=lin(1), amp_func=lin(1), a=0.0, d=0.3, s=0.0, r=0.0
+                                #    )
             
-            #+ \
-                            # synthesize((frequency - 200) * 2, 
-                            #    duration,
-                            #    harmonics = 0, freq_func=lin(1), amp_func=lin(1), a=0.0, d=0.3, s=0.0, r=0.0
-                            #    )
+                    #    synthesize(frequency /4,
+                    #               duration, 80,
+                    #               harmonics=40,
+                    #               coeff=1, freq_func=None, amp_func=lin(2), a=self.a, d=self.d, s=self.s, r=self.r)
+            
+            super().__init__(octave, measure, dress, type)
+
+
+
+
+    class DressF(Instrument):
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.0001
+            self.d = 0.3
+            self.s = 0.0
+            self.r = 0.05
+
+            def dress(frequency, duration):
+                return synthesize(frequency, duration, 80, 0, 1, None, lin(2), self.a, self.d, self.s, self.r)
+            
+            super().__init__(octave, measure, dress, type)
+
+
+    class DressH(Instrument):
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.05
+            self.d = 0.1
+            self.s = 0.8
+            self.r = 0.2
+
+            def dress(frequency, duration):
+                return synthesize(frequency, duration, 80, 0, 1, None, lin(2), self.a, self.d, self.s, self.r)
+            
+            super().__init__(octave, measure, dress, type)
+
+    class DressP2(Instrument):
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.001
+            self.d = 0.2
+            self.s = 0.7
+            self.r = 0.01
+
+            
+            
+            def dressD(frequency, duration):
+                # 0, 0.5, 0.0, 0.0
+                a = 0.001
+                d = 0.5
+                s = 0.0
+                r = 0.0
+
+                #   Synthesizer Parameters  #
+                harmonics = 5
+                coeff = 1
+                freq_func = None #exp(2)
+                amp_func = exp(6) #log
+                
+
+                #   Function Call   #
+                return synthesize(frequency, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                a, d, s, r
+                                ) *0.1\
+                                + synthesize(frequency / 4, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                a, d, s, r
+                                ) * 0.2
+            
+            def dress(frequency, duration):
+                return synthesize(frequency, duration, 80, 0, 1, None, None, self.a, self.d, self.s, self.r) #+ dressD(frequency, duration)
+            
+            
+            
+            super().__init__(octave, measure, dress, type)
+
+    class Dress(Instrument):
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.01
+            self.d = 0.7
+            self.s = 0.2
+            self.r = 0.2
+            
+            def dress(frequency, duration):
+
+                #   Synthesizer Parameters  #
+                harmonics = 5
+                coeff = 1
+                freq_func = None #exp(2)
+                amp_func = exp(6) #log
+                
+
+                #   Function Call   #
+                return synthesize(frequency, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r
+                                ) \
+                                + synthesize(frequency / 4, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r
+                                ) * 0.2
         
-                #    synthesize(frequency /4,
-                #               duration, 80,
-                #               harmonics=40,
-                #               coeff=1, freq_func=None, amp_func=lin(2), a=self.a, d=self.d, s=self.s, r=self.r)
+            super().__init__(octave, measure, dress, type)
+
+
+        def getADSR(self):
+            return self.a, self.d, self.s, self.r
         
-        super().__init__(octave, measure, dress, type)
 
-
-
-
-class DressF(Instrument):
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.0001
-        self.d = 0.3
-        self.s = 0.0
-        self.r = 0.05
-
-        def dress(frequency, duration):
-            return synthesize(frequency, duration, 80, 0, 1, None, lin(2), self.a, self.d, self.s, self.r)
-        
-        super().__init__(octave, measure, dress, type)
-
-
-class DressH(Instrument):
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.05
-        self.d = 0.1
-        self.s = 0.8
-        self.r = 0.2
-
-        def dress(frequency, duration):
-            return synthesize(frequency, duration, 80, 0, 1, None, lin(2), self.a, self.d, self.s, self.r)
-        
-        super().__init__(octave, measure, dress, type)
-
-class DressP2(Instrument):
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.001
-        self.d = 0.2
-        self.s = 0.7
-        self.r = 0.01
-
-        
-        
-        def dressD(frequency, duration):
+    class DressD(Instrument):
+        def __init__(self, octave, measure, type=""):
             # 0, 0.5, 0.0, 0.0
-            a = 0.001
-            d = 0.5
-            s = 0.0
-            r = 0.0
-
-            #   Synthesizer Parameters  #
-            harmonics = 5
-            coeff = 1
-            freq_func = None #exp(2)
-            amp_func = exp(6) #log
+            self.a = 0.001
+            self.d = 0.5
+            self.s = 0.0
+            self.r = 0.0
             
+            def dress(frequency, duration):
 
-            #   Function Call   #
-            return synthesize(frequency, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            a, d, s, r
-                            ) *0.1\
-                            + synthesize(frequency / 4, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            a, d, s, r
-                            ) * 0.2
+                #   Synthesizer Parameters  #
+                harmonics = 5
+                coeff = 1
+                freq_func = None #exp(2)
+                amp_func = exp(6) #log
+                
+
+                #   Function Call   #
+                return synthesize(frequency, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r
+                                ) \
+                                + synthesize(frequency / 4, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r
+                                ) * 0.2
         
-        def dress(frequency, duration):
-            return synthesize(frequency, duration, 80, 0, 1, None, None, self.a, self.d, self.s, self.r) #+ dressD(frequency, duration)
+            super().__init__(octave, measure, dress, type)
+
+
+        def getADSR(self):
+            return self.a, self.d, self.s, self.r
         
+
+    class DressP(Instrument):
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.1
+            self.d = 0.2
+            self.s = 0.75
+            self.r = 0.1
+            
+            def dress(frequency, duration):
+
+                #   Synthesizer Parameters  #
+                harmonics = 0
+                coeff = 6
+                freq_func = None
+                amp_func = exp(4)# None #lin(2.5) #None #exp(6) #log #exp(80) #log
+                
+
+                #   Function Call   #
+                return synthesize(frequency, duration, 80,
+                                1, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r
+                                ) + \
+                                synthesize(frequency / 3, duration, 80,
+                                                    20, coeff,
+                                                    None, lin(4),
+                                                    0.01, 0.2, self.s, 0.7
+                                                    )
+            
+            super().__init__(octave, measure, dress, type)
+
+
+        def getADSR(self):
+            return self.a, self.d, self.s, self.r
         
+    class DressB(Instrument):
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.01
+            self.d = 0.7
+            self.s = 0.75
+            self.r = 0.2
+            
+            def dress(frequency, duration):
+                
+                """Synth 1"""
+                #   Synthesizer 1 Parameters  #
+                harmonics = 60
+                coeff = 2
+                freq_func = None #exp(2)
+                amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+                
+
+                #   Function Call   #
+                synth1 = synthesize(frequency, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r
+                                )
+                
+
+                return synth1
+            
+            super().__init__(octave, measure, dress, type)
+
+
+        def getADSR(self):
+            return self.a, self.d, self.s, self.r
         
-        super().__init__(octave, measure, dress, type)
 
-class Dress(Instrument):
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.01
-        self.d = 0.7
-        self.s = 0.2
-        self.r = 0.2
+    class DressDB(Instrument):
+        """DressB + DressD 2 Octaves higher"""
+
+        def __init__(self, octave, measure, type=""):
+            self.a = 0.01
+            self.d = 0.7
+            self.s = 0.75
+            self.r = 0.2
+            
+            def dress(frequency, duration):
+                
+                """DressB"""
+                #   Synthesizer 1 Parameters  #
+                harmonics = 60
+                coeff = 2
+                freq_func = None #exp(2)
+                amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+                
+
+                #   Function Call   #
+                synth1 = synthesize(frequency, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r
+                                )
+                
+
+                """DressD 2 Octaves Higher"""
+                
+                #   Synthesizer 2 Parameters  #
+                harmonics = 5
+                coeff = 1
+                freq_func = None #exp(2)
+                amp_func = exp(6) #log
+                a = 0.001
+                d = 0.5
+                s = 0.0
+                r = 0.0
+
+                #   Function Call   #
+                synth2 = synthesize(frequency * 3, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                a, d, s, r
+                                ) \
+                                + synthesize((frequency / 4) * 3, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                a, d, s, r
+                                ) * 0.2
+
+
+                """Combine em   """
+                return synth1 + synth2
+            
+            super().__init__(octave, measure, dress, type)
+
+
+        def getADSR(self):
+            return self.a, self.d, self.s, self.r
         
-        def dress(frequency, duration):
+    class Chime(Instrument):
+        def __init__(self, octave, measure, type=""):
+            def chime(frequency, duration):
+                
+                harmonics = 5
+                coeff = 1
+                freq_func = exp(2)
+                amp_func = log
 
-            #   Synthesizer Parameters  #
-            harmonics = 5
-            coeff = 1
-            freq_func = None #exp(2)
-            amp_func = exp(6) #log
+                return synthesize(frequency, duration, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func
+                                )
+
+            super().__init__(octave, measure, chime, type)
+
+
+    class Weeknd(Instrument):
+        def __init__(self, octave, measure, type=""):
+            super().__init__(octave, measure, weeknd, type)
+
+
+    class Piano(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "2":
+                super().__init__(octave, measure, piano2, type)
+            else:
+                super().__init__(octave, measure, piano, type)
+
+    class PianoBass(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "2":
+                super().__init__(octave, measure, pianobass2, type)
+            elif type == "3":
+                super().__init__(octave, measure, pianobass3, type)
+            elif type == "4":
+                super().__init__(octave, measure, pianobass4, type)
+            else:
+                super().__init__(octave, measure, pianobass, type)
+
+        def getADSR(self):
+                if self.type == "3":
+                    return 0.005, 0.8, 0.1, 0.05
+                
+    class PianoTreble(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "2":
+                super().__init__(octave, measure, pianotreble2)
+            else:
+                super().__init__(octave, measure, pianotreble, type)
+
+
+    class Synth(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "up":
+                super().__init__(octave, measure, slurrysynth_up)
+                
+            elif type == "down":
+                super().__init__(octave, measure, slurrysynth_down)
             
+            else:
+                super().__init__(octave, measure, synth)
 
-            #   Function Call   #
-            return synthesize(frequency, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
-                            ) \
-                            + synthesize(frequency / 4, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
-                            ) * 0.2
-    
-        super().__init__(octave, measure, dress, type)
+    class SpaceSynth(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "bass":
+                super().__init__(octave, measure, space_synth_bass)
+            else:
+                super().__init__(octave, measure, space_synth)
 
+    class Dreamy(Instrument):
+        def __init__(self, octave, measure):
+            super().__init__(octave, measure, dream)
 
-    def getADSR(self):
-        return self.a, self.d, self.s, self.r
-    
+    class Snare(Instrument):
+        def __init__(self, octave, measure, typ=""):
+            if typ == "2":
+                super().__init__(octave, measure, snare2)
+            else:
+                super().__init__(octave, measure, snare)
 
-class DressD(Instrument):
-    def __init__(self, octave, measure, type=""):
-        # 0, 0.5, 0.0, 0.0
-        self.a = 0.001
-        self.d = 0.5
-        self.s = 0.0
-        self.r = 0.0
-        
-        def dress(frequency, duration):
+    class Pluck(Instrument):
+        def __init__(self, octave, measure, type="base"):
+            if type == "2":
+                super().__init__(octave, measure, pluck2)
+            elif type == "3":
+                super().__init__(octave, measure, pluck3)
 
-            #   Synthesizer Parameters  #
-            harmonics = 5
-            coeff = 1
-            freq_func = None #exp(2)
-            amp_func = exp(6) #log
-            
+            elif type == "4":
+                super().__init__(octave, measure, pluck4)
+                
+            else:
+                super().__init__(octave, measure, pluck)
 
-            #   Function Call   #
-            return synthesize(frequency, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
-                            ) \
-                            + synthesize(frequency / 4, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
-                            ) * 0.2
-    
-        super().__init__(octave, measure, dress, type)
+    class Percussion(Instrument):
+        def __init__(self, octave, measure, type=""):
+            super().__init__(octave, measure, percussion)
 
+    class Xylo(Instrument):
+        def __init__(self, octave, measure):
+            super().__init__(octave, measure, xylo)
 
-    def getADSR(self):
-        return self.a, self.d, self.s, self.r
-    
+    class XyloTech(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "2":
+                super().__init__(octave, measure, xylotech2)
+            else:
+                super().__init__(octave, measure, xylotech)
 
-class DressP(Instrument):
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.1
-        self.d = 0.2
-        self.s = 0.75
-        self.r = 0.1
-        
-        def dress(frequency, duration):
+    class XyloHorn(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "2":
+                super().__init__(octave, measure, xylohorn2)
+            else:
+                super().__init__(octave, measure, xylohorn)
 
-            #   Synthesizer Parameters  #
-            harmonics = 0
-            coeff = 6
-            freq_func = None
-            amp_func = exp(4)# None #lin(2.5) #None #exp(6) #log #exp(80) #log
-            
+    class XyloBass(Instrument):
+        def __init__(self, octave, measure, type=""):
+            if type == "2":
+                super().__init__(octave, measure, xylobass2)
+            else:
+                super().__init__(octave, measure, xylobass)
 
-            #   Function Call   #
-            return synthesize(frequency, duration, 80,
-                            1, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
-                            ) + \
-                            synthesize(frequency / 3, duration, 80,
-                                                20, coeff,
-                                                None, lin(4),
-                                                0.01, 0.2, self.s, 0.7
-                                                )
-        
-        super().__init__(octave, measure, dress, type)
+    # class Bass(Instrument):
+    #     def __init__(self, octave, measure, type=""):
+    #         if type == "h":
+    #             super().__init__(octave, measure, bassh)
+    #         else:
+    #             super().__init__(octave, measure, bass)
 
 
-    def getADSR(self):
-        return self.a, self.d, self.s, self.r
-    
-class DressB(Instrument):
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.01
-        self.d = 0.7
-        self.s = 0.75
-        self.r = 0.2
-        
-        def dress(frequency, duration):
-            
-            """Synth 1"""
-            #   Synthesizer 1 Parameters  #
-            harmonics = 60
-            coeff = 2
-            freq_func = None #exp(2)
-            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
-            
+    class Symbol(Instrument):
+        def __init__(self, octave, measure, type = ""):
+            super().__init__(octave, measure, symbol)
 
-            #   Function Call   #
-            synth1 = synthesize(frequency, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
-                            )
-            
+    # class Skirt(Instrument):
+    #     def __init__(self, octave, measure):
+    #         super().__init__(octave, measure, skirt)
 
-            return synth1
-        
-        super().__init__(octave, measure, dress, type)
-
-
-    def getADSR(self):
-        return self.a, self.d, self.s, self.r
-    
-
-class DressDB(Instrument):
-    """DressB + DressD 2 Octaves higher"""
-
-    def __init__(self, octave, measure, type=""):
-        self.a = 0.01
-        self.d = 0.7
-        self.s = 0.75
-        self.r = 0.2
-        
-        def dress(frequency, duration):
-            
-            """DressB"""
-            #   Synthesizer 1 Parameters  #
-            harmonics = 60
-            coeff = 2
-            freq_func = None #exp(2)
-            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
-            
-
-            #   Function Call   #
-            synth1 = synthesize(frequency, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
-                            )
-            
-
-            """DressD 2 Octaves Higher"""
-            
-            #   Synthesizer 2 Parameters  #
-            harmonics = 5
-            coeff = 1
-            freq_func = None #exp(2)
-            amp_func = exp(6) #log
-            a = 0.001
-            d = 0.5
-            s = 0.0
-            r = 0.0
-
-            #   Function Call   #
-            synth2 = synthesize(frequency * 3, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            a, d, s, r
-                            ) \
-                            + synthesize((frequency / 4) * 3, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            a, d, s, r
-                            ) * 0.2
-
-
-            """Combine em   """
-            return synth1 + synth2
-        
-        super().__init__(octave, measure, dress, type)
-
-
-    def getADSR(self):
-        return self.a, self.d, self.s, self.r
-    
-class Chime(Instrument):
-    def __init__(self, octave, measure, type=""):
-        def chime(frequency, duration):
-            
-            harmonics = 5
-            coeff = 1
-            freq_func = exp(2)
-            amp_func = log
-
-            return synthesize(frequency, duration, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func
-                            )
-
-        super().__init__(octave, measure, chime, type)
-
-
-class Weeknd(Instrument):
-    def __init__(self, octave, measure, type=""):
-        super().__init__(octave, measure, weeknd, type)
-
-
-class Piano(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "2":
-            super().__init__(octave, measure, piano2, type)
-        else:
-            super().__init__(octave, measure, piano, type)
-
-class PianoBass(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "2":
-            super().__init__(octave, measure, pianobass2, type)
-        elif type == "3":
-            super().__init__(octave, measure, pianobass3, type)
-        elif type == "4":
-            super().__init__(octave, measure, pianobass4, type)
-        else:
-            super().__init__(octave, measure, pianobass, type)
-
-    def getADSR(self):
-            if self.type == "3":
-                return 0.005, 0.8, 0.1, 0.05
-            
-class PianoTreble(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "2":
-            super().__init__(octave, measure, pianotreble2)
-        else:
-            super().__init__(octave, measure, pianotreble, type)
-
-
-class Synth(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "up":
-            super().__init__(octave, measure, slurrysynth_up)
-            
-        elif type == "down":
-            super().__init__(octave, measure, slurrysynth_down)
-        
-        else:
-            super().__init__(octave, measure, synth)
-
-class SpaceSynth(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "bass":
-            super().__init__(octave, measure, space_synth_bass)
-        else:
-            super().__init__(octave, measure, space_synth)
-
-class Dreamy(Instrument):
-    def __init__(self, octave, measure):
-        super().__init__(octave, measure, dream)
-
-class Snare(Instrument):
-    def __init__(self, octave, measure, typ=""):
-        if typ == "2":
-            super().__init__(octave, measure, snare2)
-        else:
-            super().__init__(octave, measure, snare)
-
-class Pluck(Instrument):
-    def __init__(self, octave, measure, type="base"):
-        if type == "2":
-            super().__init__(octave, measure, pluck2)
-        elif type == "3":
-            super().__init__(octave, measure, pluck3)
-
-        elif type == "4":
-            super().__init__(octave, measure, pluck4)
-            
-        else:
-            super().__init__(octave, measure, pluck)
-
-class Percussion(Instrument):
-    def __init__(self, octave, measure, type=""):
-        super().__init__(octave, measure, percussion)
-
-class Xylo(Instrument):
-    def __init__(self, octave, measure):
-        super().__init__(octave, measure, xylo)
-
-class XyloTech(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "2":
-            super().__init__(octave, measure, xylotech2)
-        else:
-            super().__init__(octave, measure, xylotech)
-
-class XyloHorn(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "2":
-            super().__init__(octave, measure, xylohorn2)
-        else:
-            super().__init__(octave, measure, xylohorn)
-
-class XyloBass(Instrument):
-    def __init__(self, octave, measure, type=""):
-        if type == "2":
-            super().__init__(octave, measure, xylobass2)
-        else:
-            super().__init__(octave, measure, xylobass)
-
-# class Bass(Instrument):
-#     def __init__(self, octave, measure, type=""):
-#         if type == "h":
-#             super().__init__(octave, measure, bassh)
-#         else:
-#             super().__init__(octave, measure, bass)
-
-
-class Symbol(Instrument):
-    def __init__(self, octave, measure, type = ""):
-        super().__init__(octave, measure, symbol)
-
-# class Skirt(Instrument):
-#     def __init__(self, octave, measure):
-#         super().__init__(octave, measure, skirt)
-
-# class Skirt2(Instrument):
-#     def __init__(self, octave, measure):
-#         super().__init__(octave, measure, skirt2)
+    # class Skirt2(Instrument):
+    #     def __init__(self, octave, measure):
+    #         super().__init__(octave, measure, skirt2)

@@ -569,7 +569,7 @@ def build_measure(*args):
             tick += 1
         else:
             final = add_waves(final, wave)
-
+    
     return final
 
 def add_waves(wave_1, wave_2, position=-1, buffer = False, rest_time=0.0, times = 1):

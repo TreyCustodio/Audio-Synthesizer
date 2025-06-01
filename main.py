@@ -94,7 +94,7 @@ def main():
     
 
     #   (4) Run the Interface
-    interface.main()
+    #interface.main()
 
 
     #   (5) Test the Sampler

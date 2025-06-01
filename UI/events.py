@@ -186,6 +186,7 @@ class EventManager(object):
                 elif event.key == pygame.K_KP6 or event.key == pygame.K_5:
                     engine.play(B2)
                     engine.set_held("b2")
+                    
 
 
             #   Key Up  #
@@ -194,7 +195,6 @@ class EventManager(object):
                 #   C1  #
                 if event.key == pygame.K_a:
                     engine.unset_held("c")
-                    
                 
                 #   C#  #
                 elif event.key == pygame.K_w:
