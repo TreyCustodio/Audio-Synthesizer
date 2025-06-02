@@ -222,10 +222,12 @@ class Cymbal(Instrument):
             #wave = envelope(wave, 0.0, 0.1 * dur, 0.7, 0.3 * dur)
 
             wave = wave / np.max(np.abs(wave))
-            return wave
+            return wave * 2.0
 
 
         self.func = func
+
+        
 class Snare(Instrument):
         def __init__(self):
             self.a = 0.0
@@ -312,6 +314,46 @@ class Bass(Instrument):
             return synth1 + synth2  
         
         self.func = dress
+
+class Church(Instrument):
+    """Church-like ambience"""
+    def __init__(self):
+        self.a = 0.4
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.4
+
+        def func(freq, dur):
+            return synthesize(freq, dur, 0,
+                              10, 1,
+                              bass_harms(2), None,
+                              self.a, self.d, self.s, self.r) +\
+                    synthesize(freq, dur, 0,
+                               10, 1,
+                               exp(2), None,
+                               self.a, self.d, self.s, self.r)
+        
+        self.func = func
+
+class Strings(Instrument):
+    """WIP String Instrument"""
+    def __init__(self):
+        self.a = 0.4
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.4
+
+        def func(freq, dur):
+            return synthesize(freq, dur, 0,
+                              10, 1,
+                              bass_harms(2), None,
+                              self.a, self.d, self.s, self.r) +\
+                    synthesize(freq, dur, 0,
+                               10, 1,
+                               exp(2), None,
+                               self.a, self.d, self.s, self.r)
+        
+        self.func = func
 
 class Skirt(Instrument):
     def __init__(self):
@@ -641,7 +683,7 @@ class First2(Instrument):
 
             synth1 = synthesize(freq / 4, dur, 0,
                                 harmonics, coeff, freq_func, amp_func,
-                                self.a, self.d, self.s, self.r) * 0.5 + \
+                                self.a, self.d, self.s, self.r) + \
                      synthesize(freq / 2, dur, 0,
                                 10, 1, None, None,
                                 0.0, 0.2, 0.0, 0.01) * 0.5 +\
@@ -652,7 +694,54 @@ class First2(Instrument):
             return synth1
         
         self.func = func
-        #super().__init__(octave, measure, func, type)
+
+
+class First4(Instrument):
+    """A mod of First2"""
+
+    def __init__(self):
+        self.a = 0.0
+        self.d = 0.2
+        self.s = 0.5
+        self.r = 0.4
+
+        def func(freq, dur):
+            
+            harmonics = 20
+            coeff = 1
+            freq_func = None
+            amp_func = None
+
+            synth1 = synthesize(freq / 4, dur, 0,
+                                harmonics, coeff, freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * 0.5+ \
+                     synthesize(freq / 2, dur, 0,
+                                10, 1, None, None,
+                                0.0, 0.2, 0.0, 0.01) * 0.5 +\
+                    synthesize(freq / 2, dur, 0,
+                               10, 1, bass_harms(2), None,
+                               0.4, 0.1, 0.7, 0.01)
+                                
+
+
+            return synth1
+        
+        self.func = func
+
+class First5(Instrument):
+    def __init__(self):
+        self.a = 0.4
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.01
+
+        def func(freq, dur):
+            return synthesize(freq / 2, dur, 0,
+                               10, 1, bass_harms(2), None,
+                               self.a, self.d, self.s, self.r)
+
+        self.func = func
+
 
 class First3(Instrument):
     def __init__(self):

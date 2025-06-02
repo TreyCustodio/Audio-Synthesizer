@@ -36,12 +36,10 @@ class First(Beat):
 
 
     def funk(self):
-        f = First2()
+        f = First4()
 
-        #   Start at a C3
-        # C3, B2, A2, C3
-        # A2, B2, C3
 
+        #   V1 -- Unused    #
         m1 = build_measure(
         f.note(C4, self.e), # .5
         f.note(B3, self.s), # .75
@@ -69,10 +67,12 @@ class First(Beat):
         v1 = build_measure(m1, m1, m2, m2) * amp
         
 
+        #   V2 -- Alternate version of V1   ##
         v2 = build_measure(m2, m2, m2, m2) * amp
         
 
-        #   V3  #
+
+        #   V3  -- Hook #
         m3 = build_measure(f.note(F3, self.e), f.note(A3, self.s),
         f.note(B3, self.e), f.note(C4, self.e),
         f.note(D4, self.e), f.note(C4, self.s),
@@ -80,6 +80,13 @@ class First(Beat):
         )
 
         m3b = build_measure(f.note(F3, self.e), f.note(A3, self.s),
+        f.note(B3, self.e), f.note(C4, self.e),
+        f.note(D4, self.e), f.note(C4, self.s),
+        f.note(B3, self.e), f.note(A3, self.e), f.note(G3, self.e)
+        )
+
+        #   Pause at the start
+        m3c = build_measure(rest(self.e), f.note(A3, self.s),
         f.note(B3, self.e), f.note(C4, self.e),
         f.note(D4, self.e), f.note(C4, self.s),
         f.note(B3, self.e), f.note(A3, self.e), f.note(G3, self.e)
@@ -97,9 +104,18 @@ class First(Beat):
         f.note(A3, self.e), f.note(G3, self.e), f.note(F3, self.e)
         )
 
-        v3 = build_measure(m3, m3b, m4, m4b) * amp
+        #   Pause at the start
+        m4c = build_measure(rest(self.e), f.note(G3, self.s),
+        f.note(A3, self.e), f.note(B3, self.e),
+        f.note(C4, self.e), f.note(B3, self.s),
+        f.note(A3, self.e), f.note(G3, self.e), f.note(F3, self.e)
+        )
 
-        #   V4  #
+        v3 = build_measure(m3, m3c, m4, m4c)
+
+
+
+        #   V4  -- Unused; Possibly Verse 2 #
         m5 = build_measure(f.note(D3, self.e), rest(self.e),
                            f.note(F3, self.e), rest(self.e),
                            f.note(D3, self.e), f.note(F3, self.e),
@@ -123,10 +139,10 @@ class First(Beat):
 
         v4 = build_measure(m5, m6, m7, m8)
 
-        return v1, v2, v3 * 0.5, v4
+        return v1, v2, v3 * 0.75, v4
     
 
-    def drums(self):
+    def drums(self, variation = ""):
         d = Skirt()
         c = Cymbal()
         s = Snare()
@@ -144,6 +160,20 @@ class First(Beat):
             d.note(C3, self.s), d.note(C3, self.s) # 4
 
         )
+
+        m1c = build_measure(
+            c.note(C2, self.e),
+            c.note(C2, self.s), c.note(C2, self.s), # 1
+
+            c.note(C2, self.e), c.note(C2, self.s), # 1.75
+            c.note(C2, self.e), # 2.25
+            c.note(C2, self.s), # 2.5
+
+            c.note(C2, self.e), c.note(C2, self.e), #3.5
+            c.note(C2, self.s), c.note(C2, self.s) # 4
+
+        )
+        #m1 = m1 + m1c
 
 
         v1 = build_measure(m1, m1, m1, m1) * 3.0
@@ -182,10 +212,26 @@ class First(Beat):
 
         v3 = build_measure(m3, m4, m3, m4) * 3.0
         
+
+        #   c, s, d, b
+        intro_tings = build_measure(
+            d.note(B4, self.e),
+            )
+
+
+        if variation == "refrain1":
+            #   Kick drum with noise    #
+            return build_measure(
+                rest(self.e), rest(self.half + self.sixteenth),
+                c.note(C2, self.s), c.note(E2, self.e), c.note(D2, self.s), rest(self.sixteenth)
+            )
+        elif variation == "intro":
+            return build_measure(m1, m1, m1, m1)
+
         #   Island Beat with Snares, Cymbals, and Bass
         return v1, v2, v3
 
-    def plucks(self):
+    def plucks(self, variation = ""):
         # l, l, s, s, s, l x2 then go down
 
         p = First2()
@@ -219,9 +265,54 @@ class First(Beat):
             p.note(B4, self.s),
             p.note(A4, self.s), p.note(G4, self.e), rest(self.s)
         )
-        #m2
+
+
+        #   Chopped Versions    #
+        m5 = build_measure(
+            p.note(A4, self.e + self.s), rest(self.q - (self.e + self.s)),
+            rest(self.quarter + self.s*2),
+            p.note(B4, self.s), p.note(C5, self.s),
+            p.note(D5, self.q)
+        )
+
+        m6 = build_measure(
+            p.note(A4, self.e), p.note(B4, self.s), p.note(C5, self.s),
+            p.note(D5, self.e), p.note(C5, self.e) *1.5,
+            
+            rest(self.e), p.note(C5, self.e) * 2.0,
+            rest(self.q)
+        )
+
+        m7 = build_measure(
+            p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
+            p.note(B4, self.s), p.note(A4, self.e), 
+            rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
+            p.note(B4, self.s),
+            p.note(A4, self.e), rest(self.e)
+
+        )
+
+        m8 = build_measure(
+            p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
+            p.note(B4, self.s), p.note(A4, self.e), 
+            rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
+            p.note(B4, self.s),
+            p.note(A4, self.s), p.note(G4, self.e), rest(self.s)
+        )
+
+
 
         v1 = build_measure(m1, m2, m3, m4) * 0.1
+
+        if variation == "chopped1":
+            return build_measure(m5, m6, m7, m8)
+
+        elif variation == "faded":
+            return build_measure(m1, m2, fade_out(add_waves(m3, m4), 10.0))
+        
+        elif variation == "intro":
+            return build_measure(m1, m2, m3, m4)
+
         return v1
 
     def synth(self, variation = ""):
@@ -400,7 +491,9 @@ class First(Beat):
         v1 = combine(b1, d1)
 
         v2 = b2
-
+        v2 = combine(v2, self.drums('refrain1'))
+        
+        
         v3 = s1 * 0.6
         v3a = combine(v3, fade_in(d2, 1.0))
         v3b = combine(v3, d2)
@@ -437,6 +530,7 @@ class First(Beat):
         v1b = combine(s1b * 0.6, d2)
         v1b = combine(v1b, p1)
         v1b = combine(v1b, d3)
+
         #v1 = combine(d1, v1)
         #v1 = combine(v1, b1)
 
@@ -468,6 +562,13 @@ class First(Beat):
         chorus1 = self.chorus1()
         return build_measure(chorus1, chorus1)
 
+    def refrain1(self):
+        d1, d2, d3 = self.drums()
+        prod = d3
+
+        self.save(prod, "drum refrain")
+        return d3
+
     def verse2(self):
         return
 
@@ -479,6 +580,7 @@ class First(Beat):
         chorus = self.chorus1()
         hook = self.hook1()
         verse1 = self.verse1()
+        refrain1 = self.refrain1()
 
 
         #   Save the production #
@@ -495,6 +597,9 @@ class First(Beat):
             #   Verse 1 #
             verse1,
 
+            #   Refrain #
+            refrain1,
+
             #  Hook   #
             hook,
 
@@ -502,11 +607,13 @@ class First(Beat):
             chorus,
 
             #   Verse 2 #
-            verse1
+            verse1,
 
             #   Hook (Saxophone Solo)    #
+            hook,
 
             #   Chorus (Sax + sung) #
+            chorus
         )
 
         # prod = (prod / np.max(np.abs(prod)) * 32767).astype(np.int16)
@@ -524,3 +631,4 @@ class First(Beat):
     
 def main():
     First(62).produce()
+    #First(62).chorus1()

@@ -84,16 +84,6 @@ def main():
     #   (1) Produce a beat 
     firstup.main()
 
-
-    #   (2) Run some generations
-    # generate(instruments.PianoBass, "dream_gen", 170, 2, "4")
-    #generate(instruments.Symbol, "bass_1", 165, 4)
-    #generate(instruments.Bass, "bass_1", 165, 1, "h")
-    
-    #generate(instruments.Tank, path.join("beats", "gens"), 45, 4)
-    
-
-    #   (4) Run the Interface
     #interface.main()
 
 
