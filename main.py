@@ -1,6 +1,6 @@
 from modules import audio, instruments, sampler
 #from beats import digital_storytelling, dress, firstup
-from beatsnew import firstup
+from beatsnew import firstup, second
 
 
 from UI import interface
@@ -83,6 +83,7 @@ def main():
 
     #   (1) Produce a beat 
     firstup.main()
+    #second.main()
 
     #interface.main()
 

@@ -17,7 +17,7 @@ class First(Beat):
     
     def bass(self):
         b = Bass()
-
+        
         #m1 = fade_out(build_measure(b.q_c, b.q_c, b.q_c, b.q_c), 4)
         m1 = build_measure(b.note(C1, self.quarter),
                            rest(self.eighth), b.note(C1, self.s),
@@ -225,6 +225,7 @@ class First(Beat):
                 rest(self.e), rest(self.half + self.sixteenth),
                 c.note(C2, self.s), c.note(E2, self.e), c.note(D2, self.s), rest(self.sixteenth)
             )
+
         elif variation == "intro":
             return build_measure(m1, m1, m1, m1)
 
@@ -389,6 +390,35 @@ class First(Beat):
             f.note(C2, self.e) + f.note(E2, self.e)
         )
 
+        m7 = build_measure(
+            rest(self.q), f.note(D2, self.e), 
+            f.note(C2, self.s), f.note(D2, self.e),
+            rest(self.s + self.q)
+        )
+
+        m8 = build_measure(
+            rest(self.q), f.note(E2, self.e), 
+            f.note(D2, self.s), f.note(E2, self.e),
+            rest(self.s + self.q)
+        )
+
+        m1 = combine(m1, m7)
+        m2 = combine(m2, m7)
+        m3 = combine(m3, m8)
+        m4 = combine(m4, m8)
+
+
+        m9 = build_measure(
+            rest(self.q + self.q + self.e),
+            # leaving self.s + self.q
+            f.note(D2, self.s), f.note(D2, self.s), f.note(D2, self.s), f.note(D2, self.s),
+            f.note(D2, self.s), f.note(D2, self.s),
+        )
+
+        m4 = combine(m4, m9)
+        m6 = combine(m6, m8)
+        
+
         v1 = build_measure(m1, m2, m3, m4)
 
         v1b = build_measure(m1, m2, m5, m6)
@@ -463,6 +493,26 @@ class First(Beat):
         elif variation == "v2":
             return v2
         
+        elif variation == "refrain":
+            bar = build_measure(
+                rest(self.whole - self.e),
+                f.note(D2, self.e) + f.note(F2, self.e),
+                
+                rest(self.whole - self.q),
+                f.note(D2, self.e) + f.note(F2, self.e), f.note(C2, self.e) + f.note(E2, self.e),
+
+                rest(self.whole - self.e),
+                f.note(B1, self.e) + f.note(D2, self.e),
+
+                rest(self.whole - self.q - self.s),
+                f.note(A1, self.s) + f.note(C2, self.s), 
+                f.note(C2, self.s) + f.note(E2, self.s), 
+                f.note(C2, self.s)+ f.note(E2, self.s), f.note(C2, self.s) + f.note(E2, self.s), f.note(C2, self.s) + f.note(E2, self.s),
+                )
+
+
+            return bar
+
         else:
             return v1, v2
 
@@ -483,6 +533,7 @@ class First(Beat):
         d1, d2, d3 = self.drums()
         n1 = self.navi() * 0.05
         s1, s2 = self.synth()
+        s1b = self.synth("v1b")
 
 
         #   Produce each section    #
@@ -494,9 +545,9 @@ class First(Beat):
         v2 = combine(v2, self.drums('refrain1'))
         
         
-        v3 = s1 * 0.6
+        v3 = s1b * 0.6
         v3a = combine(v3, fade_in(d2, 1.0))
-        v3b = combine(v3, d2)
+        v3b = combine(s1 * 0.6, d2)
 
         #v2 = combine(b1, n1)
         #v2 = combine(v2, d1)
@@ -563,11 +614,14 @@ class First(Beat):
         return build_measure(chorus1, chorus1)
 
     def refrain1(self):
+        """4-bar refrain"""
         d1, d2, d3 = self.drums()
-        prod = d3
+        s1 = self.synth("refrain")
+
+        prod = combine(d3, s1)
 
         self.save(prod, "drum refrain")
-        return d3
+        return prod
 
     def verse2(self):
         return
@@ -631,4 +685,5 @@ class First(Beat):
     
 def main():
     First(62).produce()
+    #First(62).intro()
     #First(62).chorus1()
