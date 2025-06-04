@@ -210,15 +210,16 @@ class Cymbal(Instrument):
         def func(freq, dur):
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
 
-            freqs = np.random.uniform(freq, freq / 2, 20)
+            freqs = np.random.uniform(freq, freq / 4, 20)
             
             wave = np.zeros_like(t)
             for freq in freqs:
                 wave += np.sin(2 * np.pi * freq * t)
 
-            wave = white_noise(wave, 0.5)
+            wave = white_noise(wave, 1.0)
 
             wave = wave * np.exp(-t * 5)
+            #wave = distort(wave, 0.5)
             #wave = envelope(wave, 0.0, 0.1 * dur, 0.7, 0.3 * dur)
 
             wave = wave / np.max(np.abs(wave))
@@ -239,6 +240,21 @@ class Snare(Instrument):
             def func(freq, dur):
                 t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
 
+                freqs = np.random.uniform(freq, freq / 2, 20)
+                
+                wave = np.zeros_like(t)
+                for freq in freqs:
+                    wave += np.sin(2 * np.pi * freq * t)
+
+                wave = white_noise(wave, 0.1)
+                wave = wave * np.exp(-t * 5)
+                wave = wave / np.max(np.abs(wave))
+                return wave * 2.0
+
+
+                #   Code for a more intense skirt   #
+                t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
                 harmonics = 0
                 coeff = 1
                 freq_func = bass_harms(2)
@@ -255,10 +271,12 @@ class Snare(Instrument):
                 
                 noise = np.random.normal(0, 0.5, wave2.shape) * np.exp(-t * 50)
                 noise *= np.exp(-t * 50)
-                wave2 += noise
 
+                #wave2 += noise
+                wave1 = combine(wave1, wave2)
+                wave1 *= np.exp(-t * 20)
 
-                return combine(wave1, noise)
+                return wave1
             
             self.func = func
     

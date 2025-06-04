@@ -81,14 +81,14 @@ def generate(instrument, folder, bpm = 160, octave = 4, typ=""):
 def main():
     """Main Function: Create any sounds you want"""
 
-    #   (1) Produce a beat 
+    #   Produce a beat  #
     firstup.main()
     #second.main()
 
     #interface.main()
 
 
-    #   (5) Test the Sampler
+    #   Test the Sampler    #
     #sampler.main()
 
 

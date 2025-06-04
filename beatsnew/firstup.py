@@ -222,9 +222,11 @@ class First(Beat):
         if variation == "refrain1":
             #   Kick drum with noise    #
             return build_measure(
-                rest(self.e), rest(self.half + self.sixteenth),
-                c.note(C2, self.s), c.note(E2, self.e), c.note(D2, self.s), rest(self.sixteenth)
+                rest(self.e + self.s), 
+                s.note(C3, self.s), c.note(D3, self.e), s.note(C3, self.s),
+                rest(self.half - self.s) * 3.0
             )
+
 
         elif variation == "intro":
             return build_measure(m1, m1, m1, m1)
@@ -517,6 +519,23 @@ class First(Beat):
             return v1, v2
 
 
+    def drums2(self, variation=""):
+        c = Cymbal()
+        s = Snare()
+        b = Bass()
+        d = Skirt()
+
+        m0 = build_measure(
+            s.note(C2, self.e), s.note(C2, self.e),
+            c.note(C3, self.e) + s.note(C3, self.e), s.note(C2, self.s),
+            s.note(C3, self.e), s.note(C2, self.s),
+            s.note(C3, self.e),
+            c.note(C3, self.e) + s.note(C3, self.e),
+            rest(self.e),
+        )
+
+        if variation == "refrain":
+            return m0 * 3.0
 
     def navi(self):
         n1 = Hey()
@@ -529,6 +548,9 @@ class First(Beat):
 
         #   Gather Instruments  #
         b1, b2 = self.bass()
+        b1 *= 2.0
+        b2 *= 2.0
+
         f1, f2, f3, f4 = self.funk()
         d1, d2, d3 = self.drums()
         n1 = self.navi() * 0.05
@@ -553,7 +575,12 @@ class First(Beat):
         #v2 = combine(v2, d1)
 
         prod = build_measure(
-            v0, v1, v2, v3a, v3b
+            v0, v1,
+
+            #   Refrain #
+            v2,
+            
+            v3a, v3b
         )
 
 
@@ -563,6 +590,7 @@ class First(Beat):
 
 
     def chorus1(self):
+
         #   Gather Instruments  #
         b1, b2 = self.bass()
         #f1, f2, f3, f4 = self.funk()
@@ -574,12 +602,12 @@ class First(Beat):
 
         #   Produce each section    #
         v1 = s1 * 0.6
-        v1 = combine(v1, p1)
+        #v1 = combine(v1, p1)
         v1 = combine(v1, d2)
         v1 = combine(v1, d3)
 
         v1b = combine(s1b * 0.6, d2)
-        v1b = combine(v1b, p1)
+        #v1b = combine(v1b, p1)
         v1b = combine(v1b, d3)
 
         #v1 = combine(d1, v1)
@@ -610,8 +638,33 @@ class First(Beat):
 
 
     def verse1(self):
-        chorus1 = self.chorus1()
-        return build_measure(chorus1, chorus1)
+        #   Gather Instruments  #
+        b1, b2 = self.bass()
+        #f1, f2, f3, f4 = self.funk()
+        s1, s2 = self.synth()
+        p1 = self.plucks()
+        s1b = self.synth("v1b")
+        d1, d2, d3 = self.drums()
+
+
+        #   Produce each section    #
+        v1 = s1 * 0.6
+        v1 = combine(v1, p1)
+        v1 = combine(v1, d2)
+        v1 = combine(v1, d3)
+
+        v1b = combine(s1b * 0.6, d2)
+        v1b = combine(v1b, p1)
+        v1b = combine(v1b, d3)
+
+
+        prod = build_measure(
+                            v1b, v1,
+                            v1b, v1
+                            )
+
+        self.save(prod, "verse1")
+        return prod
 
     def refrain1(self):
         """4-bar refrain"""
@@ -623,8 +676,47 @@ class First(Beat):
         self.save(prod, "drum refrain")
         return prod
 
+    def refrain2(self):
+        """4-bar refrain"""
+        d1, d2, d3 = self.drums()
+
+        prod = d3
+
+        self.save(prod, "drum refrain")
+        return prod
+
     def verse2(self):
-        return
+        """Chopped up plucks"""
+        r = self.drums2("refrain")
+
+        #   Gather Instruments  #
+        b1, b2 = self.bass()
+        #f1, f2, f3, f4 = self.funk()
+        s1, s2 = self.synth()
+        p1 = self.plucks()
+        s1b = self.synth("v1b")
+        d1, d2, d3 = self.drums()
+
+
+        #   Produce each section    #
+        v1 = s1 * 0.6
+        v1 = combine(v1, p1)
+        v1 = combine(v1, d2)
+        v1 = combine(v1, d3)
+
+        v1b = combine(s1b * 0.6, d2)
+        v1b = combine(v1b, p1)
+        v1b = combine(v1b, d3)
+
+
+        prod = build_measure(
+                            r,
+                            v1b, v1,
+                            v1b, v1
+                            )
+
+        self.save(prod, "verse2")
+        return prod
 
         
 
@@ -634,7 +726,9 @@ class First(Beat):
         chorus = self.chorus1()
         hook = self.hook1()
         verse1 = self.verse1()
+        verse2 = self.verse2()
         refrain1 = self.refrain1()
+        refrain2 = self.refrain2()
 
 
         #   Save the production #
@@ -647,6 +741,9 @@ class First(Beat):
 
             #   Hook    #
             hook,
+
+            #   Yeah!   #
+            rest(self.h),
 
             #   Verse 1 #
             verse1,
@@ -661,8 +758,14 @@ class First(Beat):
             chorus,
 
             #   Verse 2 #
-            verse1,
+            verse2,
 
+            #   Refrain1    #
+            refrain2,
+
+            #   Keys Solo (Play hook to refrain beat)   #
+            refrain2,
+        
             #   Hook (Saxophone Solo)    #
             hook,
 
@@ -687,3 +790,4 @@ def main():
     First(62).produce()
     #First(62).intro()
     #First(62).chorus1()
+    #First(62).refrain1()
