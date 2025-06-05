@@ -1,20 +1,23 @@
-m1 = build_measure(
-            b.note(C2, self.s + self.s/2), b.note(D2, self.e + self.s/2),
-            b.note(E2, self.s + self.s/2), b.note(Gs2, self.e),
-            rest(self.q + self.s/2),
-            b.note(A2, self.e), rest(self.e)
-            )
-        
-        m2 = build_measure(
-            b.note(C2, self.e), b.note(D2, self.e),
-            b.note(E2, self.s + self.s/2), b.note(Gs2, self.e),
-            rest(self.q + self.s/2),
-            b.note(A2, self.e), rest(self.e)
-            )
+c3 = build_measure(c.note(F3, self.e), c.note(A3, self.s),
+        c.note(B3, self.e), c.note(C4, self.e),
+        c.note(D4, self.e), c.note(C4, self.s),
+        c.note(B3, self.e), c.note(A3, self.q)
+        )
 
-        m3 = build_measure(
-            b.note(C2, self.e), b.note(D2, self.e),
-            b.note(E2, self.e), b.note(Gs2, self.e),
-            rest(self.q),
-            b.note(A2, self.e), rest(self.e)
-            )
+        c3b = build_measure(c.note(F3, self.e), c.note(A3, self.s),
+        c.note(B3, self.e), c.note(C4, self.e),
+        c.note(D4, self.e), c.note(C4, self.s),
+        c.note(B3, self.e), c.note(A3, self.e), c.note(G3, self.e)
+        )
+
+        c4 = build_measure(c.note(E3, self.e), c.note(G3, self.s),
+        c.note(A3, self.e), c.note(B3, self.e),
+        c.note(C4, self.e), c.note(B3, self.s),
+        c.note(A3, self.e), c.note(G3, self.q)
+        )
+
+        c4b = build_measure(c.note(E3, self.e), c.note(G3, self.s),
+        c.note(A3, self.e), c.note(B3, self.e),
+        c.note(C4, self.e), c.note(B3, self.s),
+        c.note(A3, self.e), c.note(G3, self.e), c.note(F3, self.e)
+        )

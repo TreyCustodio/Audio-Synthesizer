@@ -37,6 +37,7 @@ class First(Beat):
 
     def funk(self):
         f = First4()
+        c = Church()
 
 
         #   V1 -- Unused    #
@@ -111,7 +112,40 @@ class First(Beat):
         f.note(A3, self.e), f.note(G3, self.e), f.note(F3, self.e)
         )
 
+        ##  Add Churches    ##
+        c3 = build_measure(c.note(F3, self.e), c.note(A3, self.s),
+        c.note(B3, self.e), c.note(C4, self.e),
+        c.note(D4, self.e), c.note(C4, self.s),
+        c.note(B3, self.e), c.note(A3, self.q)
+        )
+
+        c3b = build_measure(
+        rest(self.whole)
+        # c.note(F3, self.e), c.note(A3, self.s),
+        # c.note(B3, self.e), c.note(C4, self.e),
+        # c.note(D4, self.e), c.note(C4, self.s),
+        # c.note(B3, self.e), c.note(A3, self.e), c.note(G3, self.e)
+        )
+
+        c4 = build_measure(c.note(E3, self.e), c.note(G3, self.s),
+        c.note(A3, self.e), c.note(B3, self.e),
+        c.note(C4, self.e), c.note(B3, self.s),
+        c.note(A3, self.e), c.note(G3, self.q)
+        )
+
+        c4b = build_measure(c.note(E2, self.e), c.note(G2, self.s),
+        c.note(A2, self.e), c.note(B2, self.e),
+        c.note(C3, self.e), c.note(B2, self.s),
+        c.note(A2, self.e), c.note(G2, self.e), c.note(F2, self.e)
+        )
+
+
         v3 = build_measure(m3, m3c, m4, m4c)
+        v3c = build_measure(c3, c3b, c4, c4b) * 0.3
+        v3 = combine(v3, v3c)
+
+
+
 
 
 
@@ -270,45 +304,152 @@ class First(Beat):
         )
 
 
-        #   Chopped Versions    #
-        m5 = build_measure(
-            p.note(A4, self.e + self.s), rest(self.q - (self.e + self.s)),
-            rest(self.quarter + self.s*2),
-            p.note(B4, self.s), p.note(C5, self.s),
-            p.note(D5, self.q)
-        )
+        
 
-        m6 = build_measure(
-            p.note(A4, self.e), p.note(B4, self.s), p.note(C5, self.s),
-            p.note(D5, self.e), p.note(C5, self.e) *1.5,
-            
-            rest(self.e), p.note(C5, self.e) * 2.0,
-            rest(self.q)
-        )
-
-        m7 = build_measure(
-            p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
-            p.note(B4, self.s), p.note(A4, self.e), 
-            rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
-            p.note(B4, self.s),
-            p.note(A4, self.e), rest(self.e)
-
-        )
-
-        m8 = build_measure(
-            p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
-            p.note(B4, self.s), p.note(A4, self.e), 
-            rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
-            p.note(B4, self.s),
-            p.note(A4, self.s), p.note(G4, self.e), rest(self.s)
-        )
+        
 
 
+        v1 = build_measure(m1, m2, m3, m4) * 0.2
 
-        v1 = build_measure(m1, m2, m3, m4) * 0.1
+        if variation == "chopped":
+            #   Chopped Versions    #
+            m5 = build_measure(
+                p.note(A4, self.e + self.s), rest(self.q - (self.e + self.s)),
+                rest(self.quarter + self.s*2),
+                p.note(B4, self.s), p.note(C5, self.s),
+                p.note(D5, self.q)
+            )
 
-        if variation == "chopped1":
-            return build_measure(m5, m6, m7, m8)
+            m6 = build_measure(
+                p.note(A4, self.e), p.note(B4, self.s), p.note(C5, self.s),
+                p.note(D5, self.e), p.note(C5, self.e) *1.5,
+                
+                rest(self.e), p.note(C5, self.e) * 2.0,
+                rest(self.q)
+            )
+
+            m7 = build_measure(
+                p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s), p.note(A4, self.e), 
+                rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s),
+                p.note(A4, self.e), rest(self.e)
+
+            )
+
+            m8 = build_measure(
+                p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s), p.note(A4, self.e), 
+                rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s),
+                p.note(A4, self.s), p.note(G4, self.e), rest(self.s)
+            )
+
+            return build_measure(m5, m6, m7, m8) * 0.2
+        
+        elif variation == "chopped2":
+
+            m9 = build_measure(
+                p.note(A4, self.s), rest(self.s), p.note(A4, self.e),
+                rest(self.q + self.e),
+                p.note(B4, self.s), p.note(C5, self.s),
+                p.note(D5, self.q)
+            )
+
+            m10 = build_measure(
+                p.note(B4, self.s), p.note(C5, self.s), p.note(D5, self.e),
+
+                p.note(D5, self.s), p.note(C5, self.s), p.note(B4, self.s), p.note(D5, self.e),
+                p.note(B4, self.s), p.note(C5, self.e), # 3/4
+                
+                p.note(D5, self.e), p.note(C5, self.e)
+            )
+
+            m11 = build_measure(
+                p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s), p.note(A4, self.e), 
+                rest(self.e), rest(self.s), p.note(A4, self.e),
+                rest(self.q)
+            )
+
+            m12 = build_measure(
+                p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s), p.note(A4, self.e), 
+                rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s),
+                p.note(A4, self.s), p.note(G4, self.e), rest(self.s)
+            )
+
+            return build_measure(m9, m10, m11, m12) * 0.2
+
+
+
+
+        elif variation == "chopped3":
+
+            m13 = build_measure(
+                p.note(A4, self.s), rest(self.s), p.note(A4, self.e),
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+            )
+
+            m14 = build_measure(
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+                p.note(A4, self.s), rest(self.s), p.note(A4, self.e),
+            )
+
+            m15 = build_measure(
+                p.note(G4, self.s), rest(self.s), p.note(G4, self.e),
+                rest(self.e), p.note(G4, self.s), rest(self.s),
+                rest(self.e), p.note(G4, self.s), rest(self.s),
+                rest(self.e), p.note(G4, self.e),
+            )
+
+            m16 = build_measure(
+                p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s), p.note(A4, self.e), 
+                rest(self.e), p.note(D5, self.s), p.note(C5, self.s),
+                p.note(B4, self.s),
+                p.note(A4, self.s), p.note(G4, self.e), rest(self.s)
+            )
+
+            return build_measure(m13, m14, m15, m16) * 0.2
+
+
+        elif variation == "chopped4":
+            m17 = build_measure(
+                p.note(A4, self.s), rest(self.s), p.note(A4, self.e),
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+                rest(self.e), p.note(A4, self.e),
+                p.note(E5, self.e), p.note(D5, self.s), rest(self.s)
+            )
+
+            m18 = build_measure(
+                p.note(A4, self.s), rest(self.s), p.note(A4, self.e),
+                rest(self.e), p.note(A4, self.s), rest(self.s),
+                rest(self.e), p.note(A4, self.e),
+                p.note(E5, self.e), p.note(D5, self.s), p.note(C5, self.s), 
+            )
+
+            m19 = build_measure(
+                p.note(G4, self.s), rest(self.s), p.note(G4, self.e),
+                rest(self.e), p.note(G4, self.s), rest(self.s),
+                rest(self.e), p.note(G4, self.e),
+                p.note(D5, self.e), p.note(C5, self.s), rest(self.s)
+            )
+
+            m20 = build_measure(
+                p.note(G4, self.s), rest(self.s), p.note(G4, self.e),
+                rest(self.e), p.note(G4, self.s), rest(self.s),
+                rest(self.e), p.note(G4, self.e),
+                p.note(C5, self.e), p.note(D5, self.s), rest(self.s)
+            )
+
+            return build_measure(m17, m18, m19, m20) * 0.2
+
 
         elif variation == "faded":
             return build_measure(m1, m2, fade_out(add_waves(m3, m4), 10.0))
@@ -687,32 +828,55 @@ class First(Beat):
 
     def verse2(self):
         """Chopped up plucks"""
+
         r = self.drums2("refrain")
 
         #   Gather Instruments  #
         b1, b2 = self.bass()
-        #f1, f2, f3, f4 = self.funk()
         s1, s2 = self.synth()
-        p1 = self.plucks()
+
+        ##  Chopped Plucks --------
+        p1 = self.plucks("chopped")
+        p2 = self.plucks("chopped2")
+        p3 = self.plucks("chopped3")
+        p4 = self.plucks("chopped4")
+        ##  -----------------------
+
         s1b = self.synth("v1b")
         d1, d2, d3 = self.drums()
 
 
         #   Produce each section    #
-        v1 = s1 * 0.6
-        v1 = combine(v1, p1)
-        v1 = combine(v1, d2)
-        v1 = combine(v1, d3)
+        base = combine(s1 * 0.6, d2)
+        base = combine(base, d3)
 
-        v1b = combine(s1b * 0.6, d2)
-        v1b = combine(v1b, p1)
-        v1b = combine(v1b, d3)
+        baseb = combine(s1b * 0.6, d2)
+        baseb = combine(baseb, d3)
+
+
+        ##  Add Plucks -------
+        v1b = combine(baseb, p1)
+        ##  ------------------
+
+        ##  Add Plucks -------
+        v1 = combine(base, p2)
+        ##  ------------------
+
+        ##  Add Plucks -------
+        v2b = combine(baseb, p3)
+        ##  ------------------
+
+        ##  Add Plucks -------
+        v2 = combine(base, p4)
+        ##  ------------------
+
+
 
 
         prod = build_measure(
                             r,
                             v1b, v1,
-                            v1b, v1
+                            v2b, v2
                             )
 
         self.save(prod, "verse2")
@@ -742,7 +906,7 @@ class First(Beat):
             #   Hook    #
             hook,
 
-            #   Yeah!   #
+            #   I...   #
             rest(self.h),
 
             #   Verse 1 #
@@ -786,8 +950,12 @@ class First(Beat):
 
         return
     
+
+
 def main():
     First(62).produce()
     #First(62).intro()
     #First(62).chorus1()
     #First(62).refrain1()
+    #First(62).verse2()
+

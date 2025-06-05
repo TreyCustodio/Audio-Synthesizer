@@ -163,6 +163,10 @@ class Instrument:
 
         return self.func(pitch, dur)
 
+"""
+Samples
+"""
+
 class Hey(Instrument):
     def __init__(self):
         self.a = 0.0
@@ -175,31 +179,10 @@ class Hey(Instrument):
 
         self.func = func
 
-class Clean_Synth(Instrument):
-    def __init__(self):
-        self.a = 0.0
-        self.d = 0.1
-        self.s = 0.7
-        self.r = 0.3
 
-
-        def func(freq, dur):
-            harmonics = 20
-            coeff = 1
-            freq_func = bass_harms(2)
-            amp_func = inv
-
-            wave1 = swell(freq, 1, dur * 0.1)
-
-            wave2 = synthesize(freq, dur, 80,
-                            harmonics, coeff,
-                            freq_func, amp_func,
-                            self.a, self.d, self.s, self.r)
-
-            return combine(wave1, wave2)
-        
-        self.func = func
-
+"""
+Percussion and Bass
+"""
 class Cymbal(Instrument):
     def __init__(self):
         self.a = 0.0
@@ -332,6 +315,127 @@ class Bass(Instrument):
             return synth1 + synth2  
         
         self.func = dress
+
+
+"""
+Synths and Keyboard Sounds
+"""
+class Wom(Instrument):
+    """The swelling sound heard in "I Wonder" by Kanye West"""
+    def __init__(self):
+        self.a = 0.6
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.4
+
+        def func(freq, dur):
+            """40% is the buildup, 60% is the sustain"""
+
+            #   Build-Up    #
+            # wave = swell(freq / 2, freq, dur)
+            # d = dur
+            # wave = envelope(wave, self.a * d, 0.0, 1.0, 0.1*d)
+            # return wave
+
+            wave = swell(freq / 2, freq, dur*0.4)
+            d = dur*0.4
+            wave = envelope(wave, self.a * d, 0.0, 1.0, 0.1*d)
+           
+            wave3 = sine_wave(freq, dur*0.6)
+            d = dur * 0.6
+            wave3 = envelope(wave3, 0.1*d, 0.0, 1.0, self.r*d)
+            
+            wave = add_waves(wave, wave3)
+
+
+
+            #   Swell  #
+            t = np.linspace(0, dur, int(44100 * dur*0.6), endpoint=False)
+            
+            # sustain = np.zeros_like(t)
+            # for i in range(1, 21):
+            #     sustain += swell((freq * i) / 6, (freq*i) / 3, dur*0.6)
+
+            sustain = swell(freq/2, freq, dur*0.6)
+            sustain = envelope(sustain, self.a * dur *0.6, 0.0, 1.0, 0.1*dur*0.6)
+            sustain *= 0.5
+
+            #   Bass    #
+            bass = synthesize(freq / 2, dur, 0,
+                              30, 1,
+                              bass_harms(2), None,
+                              0.0, 0.3, self.s, 0.1)
+
+            #   Release #
+            release = sine_wave(freq*2, dur * 0.4)
+            release = envelope(release, 0.3*dur*0.2, 0.0, 1.0, 0.7*dur*0.2)
+
+            release2 = sine_wave(freq, dur * 0.4)
+            release2 = envelope(release2, 0.3*dur*0.2, 0.0, 1.0, 0.7*dur*0.2)
+
+            release += release2
+
+            #   Final Combination   #
+            final = add_waves(sustain, release)
+            final = combine(final, bass)
+
+            return final
+            
+        self.func = func
+
+class Double(Instrument):
+    def __init__(self):
+        self.a = 0.6
+        self.d = 0.0
+        self.s = 1.0
+        self.r = 0.4
+
+        def func(freq, dur):
+            """40% is the buildup, 60% is the sustain"""
+
+            #   Wave 1   #
+            wave = swell(freq / 2, freq, dur*0.4)
+            d = dur*0.4
+            wave = envelope(wave, self.a * d, 0.0, 1.0, 0.1*d)
+        
+            #   Wave 2  #
+            wave3 = sine_wave(freq, dur*0.6)
+            d = dur * 0.6
+            wave3 = envelope(wave3, 0.1*d, 0.0, 1.0, self.r*d)
+            
+            #   Final Combination   #
+            wave = add_waves(wave, wave3)
+
+
+            return wave
+        
+        self.func = func
+
+
+class Clean_Synth(Instrument):
+    def __init__(self):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            harmonics = 20
+            coeff = 1
+            freq_func = bass_harms(2)
+            amp_func = inv
+
+            wave1 = swell(freq, 1, dur * 0.1)
+
+            wave2 = synthesize(freq, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r)
+
+            return combine(wave1, wave2)
+        
+        self.func = func
 
 class Church(Instrument):
     """Church-like ambience"""
@@ -701,7 +805,7 @@ class First2(Instrument):
 
             synth1 = synthesize(freq / 4, dur, 0,
                                 harmonics, coeff, freq_func, amp_func,
-                                self.a, self.d, self.s, self.r) + \
+                                self.a, self.d, self.s, self.r) * 0.5 + \
                      synthesize(freq / 2, dur, 0,
                                 10, 1, None, None,
                                 0.0, 0.2, 0.0, 0.01) * 0.5 +\

@@ -5,7 +5,9 @@ SAMPLE_FOLDER = "samples"
 
 class Sampler:
     def sample(sound):
-        """Convert a sound file to a numpy array using pygame's mixer"""
+        """Convert a sound file to a numpy array using pygame's mixer.
+        Returns a stereo audio file.
+        """
 
         #   Initialize pygame mixer
         pygame.mixer.init()
@@ -16,7 +18,7 @@ class Sampler:
         #   Convert the sound to a numpy array
         sound_data = pygame.sndarray.array(sound)
 
-        #   Convert to mono
+        #   Convert to mono -- Not used
         sound = pygame.sndarray.make_sound(sound_data)
 
         mono = [arr[0] for arr in sound_data]
