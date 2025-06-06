@@ -183,6 +183,36 @@ class Hey(Instrument):
 """
 Percussion and Bass
 """
+
+class HipSkirt(Instrument):
+    def __init__(self):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+            freqs = np.random.uniform(freq, freq / 4, 20)
+            
+            wave = np.zeros_like(t)
+            for freq in freqs:
+                wave += np.sin(2 * np.pi * freq * t)
+
+            wave = white_noise(wave, 1.0)
+
+            wave = wave * np.exp(-t * 5)
+            #wave = distort(wave, 0.5)
+            #wave = envelope(wave, 0.0, 0.1 * dur, 0.7, 0.3 * dur)
+
+            wave = wave / np.max(np.abs(wave))
+            return wave * 2.0
+
+
+        self.func = func
+
+        
 class Cymbal(Instrument):
     def __init__(self):
         self.a = 0.0
@@ -264,7 +294,7 @@ class Snare(Instrument):
             self.func = func
     
 class Bass(Instrument):
-    def __init__(self, octave=0, measure=0, type=""):
+    def __init__(self, octave=0, measure=0, type="", amp=1.0):
         self.a = 0.01
         self.d = 0.7
         self.s = 0.75
@@ -312,7 +342,7 @@ class Bass(Instrument):
 
 
             """Combine em   """
-            return synth1 + synth2  
+            return (synth1 + synth2) * 2.0 * amp
         
         self.func = dress
 

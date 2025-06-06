@@ -212,6 +212,7 @@ class First(Beat):
 
         v1 = build_measure(m1, m1, m1, m1) * 3.0
 
+
         #   Island Drum Beat  #
         m2 = build_measure(
             d.note(C3, self.e), d.note(C3, self.e),
@@ -219,8 +220,18 @@ class First(Beat):
             d.note(C3, self.s), d.note(C5, self.s), d.note(C5, self.e),
             d.note(B4, self.e),
             rest(self.e)
-
         )
+
+        m2b = build_measure(
+            b.note(C1, self.e), b.note(C1, self.e),
+            b.note(C1, self.e), b.note(C1, self.s),
+            b.note(C1, self.e), b.note(C1, self.s),
+            b.note(C1, self.e),
+            b.note(C1, self.e),
+            rest(self.e)
+        )
+
+        # m2 = combine(m2, m2b)
 
         v2 = build_measure(m2, m2, m2, m2) * 3.0
 
@@ -461,6 +472,7 @@ class First(Beat):
 
     def synth(self, variation = ""):
         f = Bass()
+        
 
         #   Notes to be sung    #
         # m1 = build_measure(
@@ -494,7 +506,7 @@ class First(Beat):
         # )
 
 
-        #   V1 - supporting tenor   #
+        #   V1 - supporting tenor in Chorus/Verse   #
         m1 = build_measure(
             delaycombo(f.note(D2, self.e), f.note(F2, self.e), 0.05), rest(self.e - 0.05),
             rest(self.trey - self.e),

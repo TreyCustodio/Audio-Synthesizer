@@ -24,12 +24,12 @@ class Engine:
         self.bpm = 62
 
         #   Instrument   #
-        #self.instrument = Cymbal()
-        self.instrument = Wom()
+        self.instrument = Cymbal()
         #self.instrument = Bass()
         #self.instrument = Skirt()
         #self.instrument = First2()
         #self.instrument = Clean_Synth()
+        #self.instrument = Snare()
 
         #   Octave   #
         self.octave = 3
@@ -166,7 +166,7 @@ class Engine:
     def play(self, note):
         
         #note = self.dynamic(note)
-        note = self.instrument.create_note_octave(note, get_trey(self.bpm), self.octave)
+        note = self.instrument.create_note_octave(note, get_eighth(self.bpm), self.octave)
 
         
         #   Convert to PCM Format   #
