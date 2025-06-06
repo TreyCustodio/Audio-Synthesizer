@@ -20,6 +20,7 @@ class TrapPop(Beat):
     def bass(self):
         b = Bass()
         d = Snare()
+        dub = Double(6.0)
         
         amp = 2.0
 
@@ -29,24 +30,39 @@ class TrapPop(Beat):
             b.note(C1, self.e)
         )
 
-        m2 = build_measure(
-            b.note(C1, self.q),
-            rest(self.trey)
-        )
-
         m1b = build_measure(
             d.note(C2, self.q),
             rest(self.trey - self.e),
             d.note(C2, self.e)
         ) * amp
 
+        m1c = build_measure(
+            dub.note(C1, self.q),
+            rest(self.trey - self.e),
+            dub.note(C1, self.e)
+        )
+
+
+        m2 = build_measure(
+            b.note(C1, self.q),
+            rest(self.trey)
+        )
+
         m2b = build_measure(
             d.note(C2, self.q),
             rest(self.trey)
         ) * amp
 
-        m1 += m1b
-        m2 += m2b
+        m2c = build_measure(
+            dub.note(C1, self.q),
+            rest(self.trey)
+        )
+
+        m1 = combine(m1, m1b)
+        m1 = combine(m1, m1c)
+
+        m2 = combine(m2, m2b)
+        m2 = combine(m2, m2c)
 
         v1 = build_measure(m1, m2, m1, m2)
         return v1
@@ -70,12 +86,21 @@ class TrapPop(Beat):
             k.note(C3, self.e), k.note(C3, self.e),
         )
 
-        v1 = build_measure(m1, m2, m1, m2)
+        m3 = build_measure(
+            rest(self.q),
+            rest(self.q),
+            rest(self.e), k.note(C3, self.s), k.note(C3, self.s),
+            k.note(C3, self.s), rest(self.s*3),
+        )
+
+
+
+        v1 = build_measure(m1, m2, m1, combine(m2, m3)) * 3.0
 
         return v1
 
     def drums2(self):
-        k = Skirt()
+        k = Skirt2()
         s = Snare()
         c = Cymbal()
 
@@ -89,11 +114,12 @@ class TrapPop(Beat):
         m1b = build_measure(
             s.note(C3, self.e), rest(self.e),
             rest(self.trey),
-        ) * 5.0
+        )
+
 
         m1 = combine(m1, m1b)
 
-        v1 = build_measure(m1, m1, m1, m1)
+        v1 = build_measure(m1, m1, m1, m1) * 3.0
 
         return v1
 
@@ -122,7 +148,7 @@ class TrapPop(Beat):
         ) * 0.1
 
         v1_bar = m1 + m2 + m3
-        v1 = build_measure(v1_bar, v1_bar, v1_bar, v1_bar)
+        v1 = build_measure(v1_bar, v1_bar, v1_bar, v1_bar) * 0.5
 
         return v1
 
@@ -141,10 +167,10 @@ class TrapPop(Beat):
             s.note(E2, self.e), s.note(D2, self.e),
             s.note(G2, self.e), s.note(F2, self.e),
             s.note(E2, self.e), s.note(D2, self.e)
-        ) * 0.1
+        ) * 0.3
 
         v1_bar = m2 + m3
-        v1 = build_measure(v1_bar, v1_bar, v1_bar, v1_bar)
+        v1 = build_measure(v1_bar, v1_bar, v1_bar, v1_bar) * 0.5
 
         return v1
 
@@ -159,13 +185,13 @@ class TrapPop(Beat):
             rest(self.whole*3),
             rest(self.trey),
             k.note(A2, self.s), k.note(F2, self.s), k.note(A2, self.e)
-        ) * 3.0
+        ) * 4.0
 
         m0b = build_measure(
             rest(self.whole*3),
             rest(self.trey),
             s.note(A2, self.s), s.note(F2, self.s), s.note(A2, self.e)
-        ) * 2.0
+        ) * 3.0
 
         m0 += m0b
 
@@ -174,6 +200,62 @@ class TrapPop(Beat):
 
         return m0
 
+    def new(self):
+        #   Octave -3   #
+        coeff = 2 ** (-3 - 1)
+        d = D1 * coeff
+
+        s = Skirt2()
+        p = Clean_Pluck(amp=0.05)
+
+        m1 = build_measure(
+            rest(self.q),
+            s.note(d, self.e), rest(self.e),
+            rest(self.q),
+            s.note(d, self.e), rest(self.e)
+        )
+
+        m2 = build_measure(
+            rest(self.q),
+            s.note(d, self.e), rest(self.e),
+            rest(self.q),
+            s.note(d, self.e), s.note(d, self.e),
+        )
+
+        m4 = build_measure(
+            rest(self.q),
+            s.note(d, self.e), rest(self.e),
+            rest(self.q - self.s), s.note(d, self.s),
+            s.note(d, self.s), s.note(d, self.s), s.note(d, self.s), s.note(d, self.s),
+        )
+
+
+        d = D3
+        p1 = build_measure(
+            rest(self.q),
+            p.note(d, self.e), rest(self.e),
+            rest(self.q),
+            p.note(d, self.e), rest(self.e)
+        )
+
+        p2 = build_measure(
+            rest(self.q),
+            p.note(d, self.e), rest(self.e),
+            rest(self.q),
+            p.note(d, self.e), p.note(d, self.e),
+        )
+
+        p4 = build_measure(
+            rest(self.q),
+            p.note(d, self.e), rest(self.e),
+            rest(self.q - self.s), p.note(d, self.s),
+            p.note(d, self.s), p.note(d, self.s), p.note(d, self.s), p.note(d, self.s),
+        )
+        p1 = build_measure(p1, p2, p1, p4)
+        v1 = build_measure(m1, m2, m1, m4) * 10.0
+        v1 = combine(v1, p1)
+
+        return v1 
 
     """
     Sections of the Song
@@ -214,19 +296,34 @@ class TrapPop(Beat):
         d1= self.drums()
         d2 = self.drums2()
         s1 = self.synth()
+        k = self.klinks()
 
+        n = self.new()
+
+
+        #   Base    #
         v1 = combine(b1, d1)
+        v1 = combine(v1, n)
 
+        #   V2 and V3   #
         v2 = combine(v1, s1)
+        v3 = combine(v2, k)
 
+        #   V4 and V5   #
         v4 = combine(v2, d2)
+        v5 = combine(v4, k)
 
 
         prod = build_measure(
-            v4, v4,
-            v4, v4,
-            v4, v4,
-            v4, v4
+            v2, v3,
+            v4, v5,
+
+
+            v2, v3,
+            v4, v5,
+            v2, v3
+
+
         )
 
         return prod

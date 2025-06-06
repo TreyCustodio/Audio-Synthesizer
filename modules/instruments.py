@@ -194,7 +194,7 @@ class HipSkirt(Instrument):
         def func(freq, dur):
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
 
-            freqs = np.random.uniform(freq, freq / 4, 20)
+            freqs = np.random.uniform(freq, freq / 2, 20)
             
             wave = np.zeros_like(t)
             for freq in freqs:
@@ -202,12 +202,12 @@ class HipSkirt(Instrument):
 
             wave = white_noise(wave, 1.0)
 
-            wave = wave * np.exp(-t * 5)
+            wave = wave * np.exp(-t * 20)
             #wave = distort(wave, 0.5)
             #wave = envelope(wave, 0.0, 0.1 * dur, 0.7, 0.3 * dur)
 
             wave = wave / np.max(np.abs(wave))
-            return wave * 2.0
+            return wave * 4.0
 
 
         self.func = func
@@ -347,6 +347,59 @@ class Bass(Instrument):
         self.func = dress
 
 
+class Bass2(Instrument):
+    def __init__(self, octave=0, measure=0, type="", amp=1.0):
+        self.a = 0.01
+        self.d = 0.7
+        self.s = 0.75
+        self.r = 0.2
+        
+        def dress(frequency, duration):
+            """DressB"""
+            #   Synthesizer 1 Parameters  #
+            harmonics = 60
+            coeff = 2
+            freq_func = None #exp(2)
+            amp_func = lin(5) #None #exp(6) #log #exp(80) #log
+            
+
+            #   Function Call   #
+            synth1 = synthesize(frequency, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r
+                            )
+            
+
+            """DressD 2 Octaves Higher"""
+            #   Synthesizer 2 Parameters  #
+            harmonics = 5
+            coeff = 1
+            freq_func = None #exp(2)
+            amp_func = exp(6) #log
+            a = 0.001
+            d = 0.5
+            s = 0.0
+            r = 0.0
+
+            #   Function Call   #
+            synth2 = synthesize(frequency * 3, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            a, d, s, r
+                            ) \
+                            + synthesize((frequency / 4) * 3, duration, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            a, d, s, r
+                            ) * 0.2
+
+
+            """Combine em   """
+            return (synth1 + synth2) * 2.0 * amp
+        
+        self.func = dress
+
 """
 Synths and Keyboard Sounds
 """
@@ -414,7 +467,7 @@ class Wom(Instrument):
         self.func = func
 
 class Double(Instrument):
-    def __init__(self):
+    def __init__(self, amp = 1.0):
         self.a = 0.6
         self.d = 0.0
         self.s = 1.0
@@ -437,7 +490,7 @@ class Double(Instrument):
             wave = add_waves(wave, wave3)
 
 
-            return wave
+            return wave * amp
         
         self.func = func
 
@@ -464,6 +517,31 @@ class Clean_Synth(Instrument):
                             self.a, self.d, self.s, self.r)
 
             return combine(wave1, wave2)
+        
+        self.func = func
+
+class Clean_Pluck(Instrument):
+    def __init__(self, amp = 1.0):
+        self.a = 0.0
+        self.d = 0.4
+        self.s = 0.0
+        self.r = 0.0
+
+
+        def func(freq, dur):
+            harmonics = 20
+            coeff = 1
+            freq_func = bass_harms(2)
+            amp_func = inv
+
+            wave1 = swell(freq, 1, dur * 0.1)
+
+            wave2 = synthesize(freq, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r)
+
+            return combine(wave1, wave2) * amp
         
         self.func = func
 
@@ -544,6 +622,43 @@ class Skirt(Instrument):
         
         self.func = func
 
+class Skirt2(Instrument):
+    def __init__(self):
+        self.a = 0.01
+        self.d = 0.0
+        self.s = 0.75
+        self.r = 0.01
+        
+        def func(frequency, duration):
+            """Create a skirt sound by combining a metallic, modulated wave with noise"""
+            
+            #   Generate a time array for the duration of the sound    #
+            t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
+
+            #   Create a modulated sine wave and noise   #
+            base = frequency * 85
+            mod = 120
+            mod_index = 0.2
+
+            wave = np.sin(2 * np.pi * base * t + 
+                        mod_index * np.sin(2 * np.pi * mod * t))
+            
+            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
+            
+
+            #   Apply an exponential decay to the wave and noise    #
+            wave *= np.exp(-t * 70)
+            noise *= np.exp(-t * 50)
+        
+            wave += noise
+
+
+            #   Wrap the wave in an envelope    #
+            wave = envelope(wave, self.a, self.d, self.s, self.r)
+
+            return wave
+        
+        self.func = func
 
 class Funk(Instrument):
     def __init__(self):

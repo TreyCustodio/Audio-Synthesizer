@@ -24,12 +24,14 @@ class Engine:
         self.bpm = 62
 
         #   Instrument   #
-        self.instrument = Cymbal()
+        #self.instrument = Cymbal()
         #self.instrument = Bass()
         #self.instrument = Skirt()
         #self.instrument = First2()
         #self.instrument = Clean_Synth()
         #self.instrument = Snare()
+        #self.instrument = Double()
+        self.instrument = Skirt2()
 
         #   Octave   #
         self.octave = 3
