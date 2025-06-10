@@ -28,10 +28,14 @@ class Engine:
         #self.instrument = Bass()
         #self.instrument = Skirt()
         #self.instrument = First2()
-        #self.instrument = Clean_Synth()
+        self.instrument = Clean_Synth()
+        # self.instrument = Clean_Pluck()
+        #self.instrument = Funk()
+
         #self.instrument = Snare()
         #self.instrument = Double()
-        self.instrument = Skirt2()
+        #self.instrument = Skirt2()
+        #self.instrument = HipSkirt(attack = 20, amp = 12.0)
 
         #   Octave   #
         self.octave = 3

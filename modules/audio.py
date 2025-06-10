@@ -280,24 +280,15 @@ def slur(freq1, freq2, duration, wait):
 
         return add_waves(wave1, wave2)
 
-# def slur(wave1, wave2, duration, wait):
-#         """Slur from freq1 to freq2 after wait"""
-#         #   The number of samples we'll use for the wave
-        
-#         sample1 = int(44100 * wait) # Note1
+def bitcrush(wave, bits=4):
+    max_val = np.max(np.abs(wave))
+    levels = 2 ** bits
+
+    # Normalize to [0, 1], quantize, then scale back
+    crushed = np.round((wave / max_val) * (levels // 2)) / (levels // 2)
     
-#         wave1 = wave1[:sample1]
-#         return add_waves(wave1, wave2)
+    return crushed * max_val
 
-        t1 = np.linspace(0, duration, sample1, endpoint=False)
-        wave1 = np.sin(2 * np.pi * freq1 * t1)
-
-        
-        sample2 = int(44100 * (duration - wait)) # Note 2
-        t2 = np.linspace(0, duration, sample2, endpoint=False)
-        wave2 = np.sin(2 * np.pi * freq2 * t2)
-
-        return add_waves(wave1, wave2)
 
 def synth(frequency, duration):
     #   Define fundamental wave
@@ -495,7 +486,7 @@ def slurrysynth_down(frequency, duration):
     return sound
     
 
-def write(effect, folder: str = "", name: str = "", stereo=True):
+def write(effect, folder: str = "", name: str = "", stereo=True, norm=True):
     """Save a sound as a .wav file.
     Final step in the audio generation process.
     (1) Generate and manipulate sine waves in float64 format
@@ -526,7 +517,11 @@ def write(effect, folder: str = "", name: str = "", stereo=True):
         wf.setframerate(SAMPLE_RATE)
 
         ##  Convert to PCM format and find sample width
-        final = (effect / np.max(np.abs(effect)) * 32767).astype(np.int16)
+        if norm:
+            final = (effect / np.max(np.abs(effect)) * 32767).astype(np.int16)
+        else:
+            final = effect
+
         samp_width = final.dtype.itemsize
         wf.setsampwidth(samp_width)
 
@@ -658,7 +653,7 @@ def fade_in(wave, delta = 1):
     
     return w
 
-def fade_mult(wave_1, wave_2, iterations, rest_time, factor):
+def fade_mult(wave_1, wave_2, iterations, rest_time=0.0, factor=1.0):
     """Add *wave_2* to the end of *wave_1* *iterations* times.
     Each successive addition gets quieter and quieter by *factor*"""
     #   (1) Copy the waves

@@ -184,35 +184,174 @@ class Hey(Instrument):
 Percussion and Bass
 """
 
-class HipSkirt(Instrument):
+class Skirt(Instrument):
     def __init__(self):
+        self.a = 0.01
+        self.d = 0.0
+        self.s = 0.75
+        self.r = 0.01
+        
+        def func(frequency, duration):
+            """Create a skirt sound by combining a metallic, modulated wave with noise"""
+            
+            #   Generate a time array for the duration of the sound    #
+            t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
+
+            #   Create a modulated sine wave and noise   #
+            base = frequency * 85
+            mod = 120
+            mod_index = 0.2
+
+            wave = np.sin(2 * np.pi * base * t + 
+                        mod_index * np.sin(2 * np.pi * mod * t))
+            
+            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
+            
+
+            #   Apply an exponential decay to the wave and noise    #
+            wave *= np.exp(-t * 50)
+            noise *= np.exp(-t * 50)
+            wave += noise
+
+
+            #   Wrap the wave in an envelope    #
+            wave = envelope(wave, self.a, self.d, self.s, self.r)
+
+            return wave
+        
+        self.func = func
+
+class Skirt2(Instrument):
+    def __init__(self):
+        self.a = 0.01
+        self.d = 0.0
+        self.s = 0.75
+        self.r = 0.01
+        
+        def func(frequency, duration):
+            """Create a skirt sound by combining a metallic, modulated wave with noise"""
+            
+            #   Generate a time array for the duration of the sound    #
+            t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
+
+            #   Create a modulated sine wave and noise   #
+            base = frequency * 85
+            mod = 120
+            mod_index = 0.2
+
+            wave = np.sin(2 * np.pi * base * t + 
+                        mod_index * np.sin(2 * np.pi * mod * t))
+            
+            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
+            
+
+            #   Apply an exponential decay to the wave and noise    #
+            wave *= np.exp(-t * 70)
+            noise *= np.exp(-t * 50)
+        
+            wave += noise
+
+
+            #   Wrap the wave in an envelope    #
+            wave = envelope(wave, self.a, self.d, self.s, self.r)
+
+            return wave
+        
+        self.func = func
+
+class HipSkirt(Instrument):
+    def __init__(self, attack = 1, amp = 1.0):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
         self.r = 0.3
 
         def func(freq, dur):
+            f = freq
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
 
-            freqs = np.random.uniform(freq, freq / 2, 20)
+            # freqs = np.random.uniform(freq*2, freq / 2, 20)
             
             wave = np.zeros_like(t)
-            for freq in freqs:
-                wave += np.sin(2 * np.pi * freq * t)
+            # for freq in freqs:
+            #     wave += np.sin(2 * np.pi * freq * t)
+            
+            wave += np.sin(2 * np.pi * f * 2* t)
 
-            wave = white_noise(wave, 1.0)
+            #   Metal   #
+            m = swell(f*3, f/2, dur)
+            m *= np.exp(-t * 30)
+            wave += m
 
-            wave = wave * np.exp(-t * 20)
-            #wave = distort(wave, 0.5)
-            #wave = envelope(wave, 0.0, 0.1 * dur, 0.7, 0.3 * dur)
+            #   Noise   #
+            wave = white_noise(wave, 1.5)
+            wave = bitcrush(wave, 2)
 
-            wave = wave / np.max(np.abs(wave))
-            return wave * 4.0
+            #   Attack  #
+            ##  Modify this last attack envelope to create longer or shorter skirts  ##
+            wave = lowpass(wave, 5000)
+            wave = wave * np.exp(-t * attack)
+
+            return wave * amp
+
 
 
         self.func = func
 
-        
+class KickBass(Instrument):
+    """A kick drum with emphasized base tones"""
+    def __init__(self, amp = 1.0, attack = 15):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            #   Kick    #
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            wave = np.zeros_like(t)
+
+            ##   Attempt 2   #
+            freqs = np.random.uniform(freq, freq /2, 10)
+            for freq in freqs:
+                wave += np.sin(2 * np.pi * freq * t)
+            
+            wave *= np.exp(-t * attack)
+
+            return wave * amp
+
+
+            ##   Attempt 1   #
+            freqs = np.random.uniform(freq * 2, freq, 10)
+            freqs_2 = np.random.uniform(freq, freq /2, 10)
+            freqs_3 = np.random.uniform(freq / 2, freq / 4, 10)
+            
+            for freq in freqs:
+                wave += np.sin(2 * np.pi * freq * t) * np.exp(-t * 15) * 0.8
+            
+            for freq in freqs_2:
+                wave += np.sin(2 * np.pi * freq * t) * np.exp(-t * 10)
+            
+            for freq in freqs_3:
+                wave += np.sin(2 * np.pi * freq * t) * np.exp(-t * 10)
+
+
+            wave1 = swell(freq*2, freq, dur) * np.exp(-t * 30)
+            wave2 = swell(freq, freq/2, dur) * np.exp(-t * 30)
+            wave3 = swell(freq/2, freq/4, dur) * np.exp(-t * 30)
+            wave += wave1 + wave2 + wave3
+
+            #   Combine and add final effects   #
+            #final = wave * np.exp(-t * attack)
+            final = wave
+
+            #final /= np.linalg.norm(final)
+            return final * amp
+
+        self.func = func
+
+
 class Cymbal(Instrument):
     def __init__(self):
         self.a = 0.0
@@ -494,9 +633,297 @@ class Double(Instrument):
         
         self.func = func
 
+class Dirty_Strings(Instrument):
+    def __init__(self, amp = 1.0, bass = 20, bass_amp=1.0, high_bass= 20, metal_amp = 1.0, slur_amp = 1.0, bass_only = False, metal_only = False):
+        self.a = 0.2
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            
+            #   Parameters / Metadata   #
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            harmonics = 20
+            coeff = 1
+            freq_func = bass_harms(2)
+            amp_func = inv
+            m_amp = 0.5
+
+            
+
+            if bass_only:
+                final = np.zeros_like(t)
+                bass9 = synthesize(freq * 2, dur, 80,
+                            high_bass, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.6, 0.0, 0.0)
+                
+                wave2 = synthesize(freq, dur, 80,
+                            bass, coeff,
+                            freq_func, amp_func,
+                            0.0, self.d, self.s, self.r) * m_amp
+
+                wave4 = synthesize(freq/2, dur, 80,
+                            bass, coeff,
+                            freq_func, amp_func,
+                            0.0, self.d, self.s, self.r)
+                
+                final = combine(final, bass9)
+                final = combine(final, wave2)
+                final = combine(final, wave4)
+                return final * amp
+
+            elif metal_only:
+                metal = synthesize(freq*6, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.01, self.d, self.s, self.r) * 0.05
+
+                metal2 = synthesize(freq*9, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * 0.001
+
+                metal3 = synthesize(freq*12, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * (0.005 / 3)
+
+                metal4 = synthesize(freq*15, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * (0.001 /3)
+
+                metal5 = synthesize(freq*18, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * (0.005 / 6)
+
+                metal6 = synthesize(freq*21, dur, 80,
+                                harmonics, coeff,
+                                bass_harms(2), "hold",
+                                self.a, self.d, self.s, self.r) * (0.001 / 6)
+
+                metal7 = synthesize(freq*24, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * (0.005 / 9)
+
+                metal8 = synthesize(freq*27, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r) * (0.001 / 9)
+                
+                metal = combine(metal, metal2)
+                metal = combine(metal, metal3)
+                metal = combine(metal, metal4)
+                metal = combine(metal, metal5)
+                metal = combine(metal, metal6)
+                metal = combine(metal, metal7)
+                metal = combine(metal, metal8)
+                metal *= metal_amp
+
+                return metal
+
+
+            #   Harmonic Tones   #
+
+            ##   Fundamental Tones   #
+            wave1 = swell(freq, 1, dur * 0.1) * m_amp
+
+            wave2 = synthesize(freq, dur, 80,
+                            bass, coeff,
+                            freq_func, amp_func,
+                            0.0, self.d, self.s, self.r) * m_amp
+
+            ##   Bass Tones  #
+            wave3 = swell(freq/2, 1, dur * 0.1)
+
+            wave4 = synthesize(freq/2, dur, 80,
+                            bass, coeff,
+                            freq_func, amp_func,
+                            0.0, self.d, self.s, self.r)
+
+            ##   High Tone 1  #
+            h_amp = 0.2
+            wave5 = swell(freq*2, 1, dur * 0.1) * h_amp
+
+            wave6 = synthesize(freq*2, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.2, self.d, self.s, self.r) * h_amp
+
+
+            ##   High Tone 2 #
+            wave7 = synthesize(freq*4, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.4, self.d, self.s, self.r) * 0.08
+
+            wave8 = synthesize(freq*5, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.4, self.d, self.s, self.r) * 0.08
+            
+            wave7 = combine(wave7, wave8)
+
+            waves = combine(wave1, wave2)
+            waves = combine(waves, wave3)
+            waves = combine(waves, wave4)
+            waves = combine(waves, wave5)
+            waves = combine(waves, wave6)
+            waves = combine(waves, wave7)
+
+
+            ##   Slurs   #
+            s1 = swell(freq * 2, freq, dur) * np.exp(-t * 15) * 1.5
+
+            slurs = np.zeros_like(t)
+            slurs = combine(slurs, s1)
+            slurs *= slur_amp
+
+
+
+
+            ##   Metal   #
+            metal = synthesize(freq*6, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.01, self.d, self.s, self.r) * 0.05
+
+            metal2 = synthesize(freq*9, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r) * 0.001
+
+            metal3 = synthesize(freq*12, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r) * (0.005 / 3)
+
+            metal4 = synthesize(freq*15, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r) * (0.001 /3)
+
+            metal5 = synthesize(freq*18, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r) * (0.005 / 6)
+
+            metal6 = synthesize(freq*21, dur, 80,
+                            harmonics, coeff,
+                            bass_harms(2), "hold",
+                            self.a, self.d, self.s, self.r) * (0.001 / 6)
+
+            metal7 = synthesize(freq*24, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r) * (0.005 / 9)
+
+            metal8 = synthesize(freq*27, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            self.a, self.d, self.s, self.r) * (0.001 / 9)
+            
+            metal = combine(metal, metal2)
+            metal = combine(metal, metal3)
+            metal = combine(metal, metal4)
+            metal = combine(metal, metal5)
+            metal = combine(metal, metal6)
+            metal = combine(metal, metal7)
+            metal = combine(metal, metal8)
+            metal *= metal_amp
+
+            ##  Bass Frequencies
+            bass1 = synthesize(freq, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.3, 0.0, 0.0) * bass_amp
+
+            bass2 = synthesize(freq / 2, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.3, 0.0, 0.0) * bass_amp
+            
+            bass3 = synthesize(freq / 3, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.5, 0.0, 0.0) * 0.6 * bass_amp
+
+            bass4 = synthesize(freq / 4, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.5, 0.0, 0.0) * bass_amp
+
+            bass5 = synthesize(freq / 5, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.6, 0.0, 0.0) * 0.6 * bass_amp
+
+            bass6 = synthesize(freq / 6, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.6, 0.0, 0.0) * bass_amp
+            
+            bass7 = synthesize(freq / 7, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.7, 0.0, 0.0) * 0.6 * bass_amp
+
+            bass8 = synthesize(freq / 8, dur, 80,
+                            harmonics, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.7, 0.0, 0.0) * bass_amp
+
+
+            #   Decide if you want the high bass tone to be emphasized or not   #
+            bass9 = synthesize(freq * 2, dur, 80,
+                            high_bass, coeff,
+                            freq_func, amp_func,
+                            0.0, 0.6, 0.0, 0.0)
+
+
+
+
+            basses = combine(bass1, bass2)
+            # basses = combine(basses, bass3)
+            basses = combine(basses, bass4)
+            # basses = combine(basses, bass5)
+            basses = combine(basses, bass6)
+            # basses = combine(basses, bass7)
+            basses = combine(basses, bass8)
+            basses = combine(basses, bass9)
+
+
+
+
+            #   Final Mix   #
+
+            ##   Wave Foundation   #
+            final = np.zeros_like(t)
+            
+
+            final = combine(final, waves)
+
+            ##   Slurs   #
+            final = combine(final, slurs)
+
+            ##   Metallic Tones  #
+            final = combine(final, metal)
+            
+            ##  Bass Tones  #
+            final = combine(final, basses)
+
+            return final * amp
+        
+        self.func = func
+
 
 class Clean_Synth(Instrument):
-    def __init__(self):
+    def __init__(self, amp = 1.0):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
@@ -516,7 +943,9 @@ class Clean_Synth(Instrument):
                             freq_func, amp_func,
                             self.a, self.d, self.s, self.r)
 
-            return combine(wave1, wave2)
+            final = combine(wave1, wave2)
+
+            return final * amp
         
         self.func = func
 
@@ -585,80 +1014,7 @@ class Strings(Instrument):
         
         self.func = func
 
-class Skirt(Instrument):
-    def __init__(self):
-        self.a = 0.01
-        self.d = 0.0
-        self.s = 0.75
-        self.r = 0.01
-        
-        def func(frequency, duration):
-            """Create a skirt sound by combining a metallic, modulated wave with noise"""
-            
-            #   Generate a time array for the duration of the sound    #
-            t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
 
-            #   Create a modulated sine wave and noise   #
-            base = frequency * 85
-            mod = 120
-            mod_index = 0.2
-
-            wave = np.sin(2 * np.pi * base * t + 
-                        mod_index * np.sin(2 * np.pi * mod * t))
-            
-            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
-            
-
-            #   Apply an exponential decay to the wave and noise    #
-            wave *= np.exp(-t * 50)
-            noise *= np.exp(-t * 50)
-            wave += noise
-
-
-            #   Wrap the wave in an envelope    #
-            wave = envelope(wave, self.a, self.d, self.s, self.r)
-
-            return wave
-        
-        self.func = func
-
-class Skirt2(Instrument):
-    def __init__(self):
-        self.a = 0.01
-        self.d = 0.0
-        self.s = 0.75
-        self.r = 0.01
-        
-        def func(frequency, duration):
-            """Create a skirt sound by combining a metallic, modulated wave with noise"""
-            
-            #   Generate a time array for the duration of the sound    #
-            t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
-
-            #   Create a modulated sine wave and noise   #
-            base = frequency * 85
-            mod = 120
-            mod_index = 0.2
-
-            wave = np.sin(2 * np.pi * base * t + 
-                        mod_index * np.sin(2 * np.pi * mod * t))
-            
-            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
-            
-
-            #   Apply an exponential decay to the wave and noise    #
-            wave *= np.exp(-t * 70)
-            noise *= np.exp(-t * 50)
-        
-            wave += noise
-
-
-            #   Wrap the wave in an envelope    #
-            wave = envelope(wave, self.a, self.d, self.s, self.r)
-
-            return wave
-        
-        self.func = func
 
 class Funk(Instrument):
     def __init__(self):
