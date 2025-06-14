@@ -242,6 +242,21 @@ def combine(wave1, wave2):
 
         return wave1 + wave2
 
+def mix(*waves):
+    """A repeated version of the combine function"""
+    #   If only 1 wave is passed in, return the wave    #
+    if len(waves) == 1:
+        return waves[0]
+    
+    #   Combine each wave passed into the function  #
+    final = waves[0].copy()
+    for w in waves[1:]:
+        final = combine(final, w)
+    
+    #   Return the final mix    #
+    return final
+
+
 def delaycombo(wave1, wave2, rest_time = 0.1):
     """Combines 2 waves but adds the rest time to the beginning of wave2"""
     wave1 = wave1.copy()
@@ -259,6 +274,23 @@ def delaycombo(wave1, wave2, rest_time = 0.1):
 
     return combine(wave1, second)
             
+def delaymix(*waves_and_rests):
+    """Expects a tuple in the form (wave, rest_time)
+    and mixes each wave passed in along with its delay time"""
+    
+    #   If only 1 wave is passed in, return it  #
+    if len(waves_and_rests) == 1:
+        return waves_and_rests[0][0]
+    
+    #   Begin with the first wave and its appending rest    #
+    final = combine(waves_and_rests[0][0].copy(), waves_and_rests[0][1]) 
+    
+    #   Combine each wave and append each specifiied delay/rest time #
+    for t in waves_and_rests[1:]:
+        final = delaycombo(final, t[0], t[1])
+    
+    #   Return the final mix    #
+    return final
 
 def swell(note1, note2, duration, dynamic = False):
     """Slur a note"""
@@ -920,6 +952,9 @@ def lowpass(wave, cutoff):
     
     fft_wave = np.fft.fft(wave) # Converts time signal to frequency-domain representation
     frequencies = np.fft.fftfreq(len(wave), 1/SAMPLE_RATE)
+    # for i in range(len(fft_wave)):
+    #     if np.abs(frequencies) > cutoff:
+    #         fft_wave[i] = 0
     fft_wave[np.abs(frequencies) > cutoff] = 0
     final = np.fft.ifft(fft_wave)
 
@@ -933,6 +968,26 @@ def highpass(wave, cutoff):
     final = np.fft.ifft(fft_wave)
 
     return np.real(final)
+
+def limit(wave, cutoff):
+
+    final = np.zeros_like(wave)
+
+    for w in wave:
+        if w > 0:
+            if w > cutoff:
+                final = np.append(final, cutoff)
+                continue
+
+        elif w < 0:
+            if w < cutoff:
+                final = np.append(final, -cutoff)
+                continue
+        
+        final = np.append(final, w)
+    
+    return final
+
 
 def dream(frequency, duration):
     """Add an envelope to the wave that makes it sound dreamy"""

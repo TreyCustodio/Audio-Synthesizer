@@ -15,18 +15,54 @@ class How(Beat):
         write(sound, os.path.join("beatsnew", "how"), name, norm=norm)
     
     def drums(self, part=""):
-        c = HipSkirt(attack =10, amp = 12.0)
+        c = HipSkirt(attack =70, amp = 24.0, low = 0)
 
         if part == "v1":
+
             m1 = build_measure(
-                c.note(C3, self.e), c.note(C3, self.s), c.note(C3, self.s),# 1
-                c.note(C3, self.e), c.note(C3, self.s), c.note(C3, self.s),#2
-                c.note(C3, self.e), c.note(C3, self.s), c.note(C3, self.e),#3.25
-                c.note(C3, self.e), rest(self.s)
+                c.note(C3, self.e), c.note(C3, self.e), # 1
+                c.note(C3, self.e), c.note(C3, self.s), # 1.75
+                c.note(C3, self.e), c.note(C3, self.s), # 2.5
+                c.note(C3, self.e), c.note(C3, self.e), # 3.5
+                c.note(C3, self.e)
             )
 
-            v1 = build_measure(m1, m1, m1, m1)
+            
+            m2 = build_measure(
+                c.note(C3, self.e), c.note(C3, self.e),
+                c.note(C3, self.e), c.note(C3, self.e),
+                c.note(C3, self.e), c.note(C3, self.e),
+                c.note(C3, self.e), rest(self.e)
+            )
+
+            m3 = build_measure(
+                c.note(C3, self.e), c.note(C3, self.e),
+                c.note(C3, self.e), c.note(C3, self.e),
+                c.note(C3, self.e), c.note(C3, self.e),
+                c.note(C3, self.e), c.note(C3, self.s), c.note(C3, self.s),
+            )
+
+            m4 = build_measure(
+                c.note(C3, self.e), c.note(C3, self.s), c.note(C3, self.s),
+                c.note(C3, self.e), c.note(C3, self.s), c.note(C3, self.s),
+                c.note(C3, self.e), c.note(C3, self.e),
+                c.note(C3, self.e), c.note(C3, self.e)
+            )
+
+            v1 = build_measure(m1, m2, m3, m4)
             return v1
+        
+        elif part == "v2" or part == "solo":
+            m1 = build_measure(
+                c.note(C3, self.e), c.note(C3, self.e), # 1
+                c.note(C3, self.e), c.note(C3, self.s), # 1.75
+                c.note(C3, self.e), c.note(C3, self.s), # 2.5
+                c.note(C3, self.e), c.note(C3, self.e), # 3.5
+                c.note(C3, self.e)
+            )
+
+            v2 = build_measure(m1, m1, m1, m1)
+            return v2
 
 
 
@@ -92,7 +128,7 @@ class How(Beat):
         
         #   V0 - Intro Build-up #
         if part == "v0":
-            s = Dirty_Strings(amp=0.55, metal_amp = 0.0)
+            s = Dirty_Strings(amp=0.3, metal_amp = 0.0)
 
             #mi = fade_mult(s.note(A4, self.q), s.note(A4, self.q), 3, factor = 4.0)
                 
@@ -125,7 +161,7 @@ class How(Beat):
         elif part == "v1" or part == "bass" or part == "v3":
 
             #   Build the bass section  #
-            s2 = Dirty_Strings(amp=0.45, bass_only = True)
+            s2 = Dirty_Strings(amp=0.1, bass_only = True)
 
             m1b = build_measure(
                 rest(self.h),
@@ -139,10 +175,10 @@ class How(Beat):
             #   Build the treble / midtone section  #
             else:
                 if part == "v1":
-                    s = Dirty_Strings(amp=0.45, bass = 0, bass_amp = 2.5, high_bass = 10, metal_amp = 0.5)
+                    s = Dirty_Strings(amp=0.3,bass_amp = 2.5, high_bass = 10, metal_amp = 0.5)
                 
                 elif part == "v3":
-                    s = Dirty_Strings(amp=0.45, bass_amp = 2.5, metal_amp = 0.75)
+                    s = Dirty_Strings(amp=0.3,bass_amp = 2.5, metal_amp = 0.75)
                     
                     
                 m1 = build_measure(
@@ -172,7 +208,7 @@ class How(Beat):
 
         #   V2 - Refrain    #
         elif part == "v2":
-            s = Dirty_Strings(amp=0.45, bass_amp = 2.5, metal_amp = 0.5)
+            s = Dirty_Strings(amp=0.3, bass_amp = 2.5, metal_amp = 0.5)
 
             m1 = build_measure(
                 s.note(As4, self.e + self.s), s.note(A4, self.e + self.s), #1.5
@@ -195,20 +231,37 @@ class How(Beat):
 
 
     def intro(self):
+        #   Gather Instruments  #
+        ##   Drums and Bass  #
         b1 = self.bass("bass")
-        b2 = self.bass()
-        bs = self.bass("solo")
+        d1 = self.drums("v1")
 
+
+        #   Testing the Drum Beat   #
+        # prod = combine(b1, d1)
+        # prod = (prod / np.max(np.abs(prod)) * 32767).astype(np.int16)
+
+        # self.save(prod, "intro", norm = False)
+        # return
+
+        b2 = self.bass()
+        d2 = self.drums("v2")
+        bs = self.bass("solo")
+        ds = self.drums("solo")
+
+        ##  Keyboard Sounds #
         k0 = self.keys("v0")
         k1 = self.keys("v1")
         k2 = self.keys("v2")
         k3 = self.keys("v3")
-
         kb = self.keys("bass")
         km = self.keys("metal")
 
-        d1 = self.drums("v1")
 
+        #   Put together each section   #
+        b1 = combine(b1, d1)
+        b2 = combine(b2, d2)
+        bs = combine(bs, ds)
 
         v1 = k0
 
@@ -228,6 +281,7 @@ class How(Beat):
         #v6 = combine(v3, d1)
 
 
+        #   Combine Each Section    #
         prod = build_measure(
             #   Intro   #
             v1, 
@@ -243,6 +297,7 @@ class How(Beat):
             v3, v2, v3
 
         )
+
 
         
         #   Normalize the audio

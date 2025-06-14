@@ -163,6 +163,150 @@ class Instrument:
 
         return self.func(pitch, dur)
 
+
+"""
+Sound Fonts
+"""
+
+class Tangible_Light:
+
+    class Title_Synth(Instrument):
+        def __init__(self, amp = 1.0):
+            self.a = 0.01
+            self.d = 0.2
+            self.s = 0.7
+            self.r = 0.01
+
+
+            def func(freq, dur):
+                #freq /= 2
+                harmonics = 3
+                coeff = 1
+                freq_func = bass_harms(4)
+                amp_func = inv
+
+                #   Treble  #
+                # wave1 = synthesize(freq, dur, 80,
+                #                 3, coeff,
+                #                 exp(2), lin(6),
+                #                 0.05, 0.4, 0.5, 0.2)
+
+                wave1 = sine_wave(freq / 2, dur)
+                wave1 = envelope(wave1, 
+                0.1 * dur, 0.4 * dur, 0.5, 0.2 * dur)
+
+                wave2 = sine_wave(freq, dur)
+                wave2 = envelope(wave2, 
+                0.0 * dur, 0.6 * dur, 0.0, 0.0 * dur) * 0.4
+
+                wave3 = sine_wave(freq / 2, dur)
+                wave3 = envelope(wave3, 
+                0.0 * dur, 0.6 * dur, 0.0, 0.0 * dur)
+
+                wave4 = sine_wave(freq * (3 ** 2), dur) / (2 ** 4)
+                wave4 = envelope(wave4, 
+                0.0 * dur, 0.65 * dur, 0.0, 0.0 * dur) * 0.15
+                
+                final = mix(
+                    wave2,
+                    wave3,
+                    wave4
+                )
+
+                return final * amp
+        
+            self.func = func
+        
+    class Title_Bass(Instrument):
+        def __init__(self, amp = 1.0, low = 350):
+            self.a = 0.1
+            self.d = 0.6
+            self.s = 0.0
+            self.r = 0.0
+
+
+            def func(freq, dur):
+                harmonics = 3
+                coeff = 1
+                freq_func = bass_harms(4)
+                amp_func = inv
+
+                wave1 = sine_wave(freq /2, dur)
+
+                wave2 = sine_wave(freq /4, dur)
+                #wave2 = distort(wave2, 2.0)
+
+                wave3 = sine_wave(freq /6, dur)
+                #wave3 = distort(wave3, 4.0)
+
+
+                wave1 = envelope(wave1,
+                0.01 * dur, 0.2 * dur, 0.0, 0.0)
+
+                wave2 = envelope(wave2,
+                0.01 * dur, 0.6 * dur, 0.0, 0.0)
+
+                wave3 = envelope(wave3,
+                0.01 * dur, 0.7 * dur, 0.0, 0.0) * 0.75
+
+
+                final = mix(wave1, wave2, wave3)
+
+                return final * amp
+        
+            self.func = func
+
+    class Title_Snare(Instrument):
+        def __init__(self):
+            self.a = 0.0
+            self.d = 0.1
+            self.s = 0.7
+            self.r = 0.3
+
+
+            def func(freq, dur):
+                t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+                freqs = np.random.uniform(freq, freq / 2, 20)
+                
+                wave = np.zeros_like(t)
+                for freq in freqs:
+                    wave += np.sin(2 * np.pi * freq * t)
+
+                wave = white_noise(wave, 0.1)
+                wave = wave * np.exp(-t * 5)
+                wave = wave / np.max(np.abs(wave))
+                return wave * 2.0
+
+
+                #   Code for a more intense skirt   #
+                t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+                harmonics = 0
+                coeff = 1
+                freq_func = bass_harms(2)
+                amp_func = inv
+
+                wave1 = swell(freq, 1, dur * 0.1)
+                wave1 = envelope(wave1, self.a * dur * 0.1, self.d* dur * 0.1, self.s, self.r* dur * 0.1)
+
+                wave2 = synthesize(freq, dur, 80,
+                                harmonics, coeff,
+                                freq_func, amp_func,
+                                self.a, self.d, self.s, self.r)
+
+                
+                noise = np.random.normal(0, 0.5, wave2.shape) * np.exp(-t * 50)
+                noise *= np.exp(-t * 50)
+
+                #wave2 += noise
+                wave1 = combine(wave1, wave2)
+                wave1 *= np.exp(-t * 20)
+
+                return wave1
+            
+            self.func = func
+
 """
 Samples
 """
@@ -260,7 +404,7 @@ class Skirt2(Instrument):
         self.func = func
 
 class HipSkirt(Instrument):
-    def __init__(self, attack = 1, amp = 1.0):
+    def __init__(self, attack = 1, amp = 1.0, low = 4000, dist = 6.0):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
@@ -289,8 +433,14 @@ class HipSkirt(Instrument):
 
             #   Attack  #
             ##  Modify this last attack envelope to create longer or shorter skirts  ##
-            wave = lowpass(wave, 5000)
+            if low > 0:
+                wave = lowpass(wave, low)
+            
+            if dist > 0:
+                wave = distort(wave, dist)
+
             wave = wave * np.exp(-t * attack)
+
 
             return wave * amp
 
@@ -300,7 +450,7 @@ class HipSkirt(Instrument):
 
 class KickBass(Instrument):
     """A kick drum with emphasized base tones"""
-    def __init__(self, amp = 1.0, attack = 15):
+    def __init__(self, amp = 1.0, attack = 15, count = 10):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
@@ -313,12 +463,20 @@ class KickBass(Instrument):
             wave = np.zeros_like(t)
 
             ##   Attempt 2   #
-            freqs = np.random.uniform(freq, freq /2, 10)
+            freqs = np.random.uniform(freq, freq /2, count)
             for freq in freqs:
                 wave += np.sin(2 * np.pi * freq * t)
             
             wave *= np.exp(-t * attack)
 
+            #   Bass    #
+            
+            b = synthesize(freq / 4, dur, 80,
+                                10, 1,
+                                bass_harms(2), None,
+                                self.a, self.d, self.s, self.r)
+
+            #wave = combine(wave, b)
             return wave * amp
 
 
@@ -642,6 +800,17 @@ class Dirty_Strings(Instrument):
 
 
         def func(freq, dur):
+            """Code is pretty messy here. Could do some reorganizing of specific return statements.
+            Need to remove unnecessary lines.
+            Determine which harmonics leave and stay.
+
+            (1) Specific Returns
+            (2) Harmonic Tones
+                (i) Wave Foundation
+                (ii) Metal
+                (iii) Slurs
+                (iv) Bass
+            """
             
             #   Parameters / Metadata   #
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
@@ -652,7 +821,7 @@ class Dirty_Strings(Instrument):
             m_amp = 0.5
 
             
-
+            #   (1) Specific Returns    #
             if bass_only:
                 final = np.zeros_like(t)
                 bass9 = synthesize(freq * 2, dur, 80,
@@ -728,52 +897,83 @@ class Dirty_Strings(Instrument):
                 return metal
 
 
-            #   Harmonic Tones   #
+            #   (2) Harmonic Tones   #
 
             ##   Fundamental Tones   #
             wave1 = swell(freq, 1, dur * 0.1) * m_amp
 
-            wave2 = synthesize(freq, dur, 80,
-                            bass, coeff,
-                            freq_func, amp_func,
-                            0.0, self.d, self.s, self.r) * m_amp
+            ###   Experiment with this tone   #
+            wave2 = synthesize((freq/2) * 1.5, dur, 80,
+                            20, coeff,
+                            bass_harms(2), "hold",
+                            0.0, 0.8, 0.0, 0.0) #* 20.0
+            wave2 += sine_wave((freq/2) * 16, dur) * 0.002
+            wave2 *= 10
 
             ##   Bass Tones  #
-            wave3 = swell(freq/2, 1, dur * 0.1)
+            b_amp = 2.0
+            wave3 = swell(freq/2, 1, dur * 0.1) * b_amp
 
             wave4 = synthesize(freq/2, dur, 80,
                             bass, coeff,
                             freq_func, amp_func,
-                            0.0, self.d, self.s, self.r)
+                            0.0, 0.6, 0.0, 0.0) * b_amp
+            
+            wave3b = swell(freq/4, 1, dur * 0.1) * b_amp * 2
+
+            wave4b = synthesize(freq/4, dur, 80,
+                            bass, coeff,
+                            freq_func, amp_func,
+                            0.1, 0.6, 0.0, 0.0) * b_amp * 2
+            
+            wave3bb = swell(freq/6, 1, dur * 0.1) * b_amp * 4
+
+            wave4bb = synthesize(freq/6, dur, 80,
+                            bass, coeff,
+                            freq_func, amp_func,
+                            0.1, 0.6, 0.0, 0.0) * b_amp * 4
+
 
             ##   High Tone 1  #
+
             h_amp = 0.2
             wave5 = swell(freq*2, 1, dur * 0.1) * h_amp
 
             wave6 = synthesize(freq*2, dur, 80,
                             harmonics, coeff,
                             freq_func, amp_func,
-                            0.2, self.d, self.s, self.r) * h_amp
+                            0.0, self.d, self.s, 0.0) * h_amp
 
 
             ##   High Tone 2 #
             wave7 = synthesize(freq*4, dur, 80,
                             harmonics, coeff,
                             freq_func, amp_func,
-                            0.4, self.d, self.s, self.r) * 0.08
+                            0.0, 0.4, 0.0, 0.0) * 0.08
 
             wave8 = synthesize(freq*5, dur, 80,
                             harmonics, coeff,
                             freq_func, amp_func,
-                            0.4, self.d, self.s, self.r) * 0.08
+                            0.2, 0.5, 0.0, 0.0) * 0.08
             
             wave7 = combine(wave7, wave8)
 
-            waves = combine(wave1, wave2)
-            waves = combine(waves, wave3)
-            waves = combine(waves, wave4)
-            waves = combine(waves, wave5)
-            waves = combine(waves, wave6)
+
+            
+            waves = np.zeros_like(t)
+           # waves = combine(wave1, wave2)
+
+            if bass > 0:
+                waves = combine(waves, wave3)
+                waves = combine(waves, wave4)
+                waves = combine(waves, wave3b)
+                waves = combine(waves, wave4b)
+                waves = combine(waves, wave3bb)
+                waves = combine(waves, wave4bb)
+
+
+            # waves = combine(waves, wave5)
+            # waves = combine(waves, wave6)
             waves = combine(waves, wave7)
 
 
@@ -783,9 +983,6 @@ class Dirty_Strings(Instrument):
             slurs = np.zeros_like(t)
             slurs = combine(slurs, s1)
             slurs *= slur_amp
-
-
-
 
             ##   Metal   #
             metal = synthesize(freq*6, dur, 80,
@@ -904,23 +1101,97 @@ class Dirty_Strings(Instrument):
 
             ##   Wave Foundation   #
             final = np.zeros_like(t)
-            
 
             final = combine(final, waves)
 
             ##   Slurs   #
-            final = combine(final, slurs)
+            #final = combine(final, slurs)
 
             ##   Metallic Tones  #
             final = combine(final, metal)
             
             ##  Bass Tones  #
-            final = combine(final, basses)
+            #final = combine(final, basses)
+
+
+            #final = highpass(final, 50)
 
             return final * amp
         
         self.func = func
 
+
+class DontMind(Instrument):
+    def __init__(self, amp = 1.0):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur))
+            n = 0.0
+            atk = 10
+
+            atk2 = 15
+            dist = 32.0
+            dist2 = 32.0
+
+            #   Wave Foundation #
+            fundamental = sine_wave(freq / 2, dur)
+
+            wave1 = sine_wave(freq / 2, dur)
+            wave1 = distort(wave1, 20)
+            wave1 *= np.exp(-t * 10)
+            wave1 *= 0.2
+
+            wave2 = sine_wave(freq / 4, dur)
+            wave2 = distort(wave2, 6)
+            wave2 *= np.exp(-t * 16)
+            wave2 *= 0.6
+
+            wave3 = sine_wave(freq / 6, dur)
+            wave3 = distort(wave3, 6)
+            wave3 *= np.exp(-t * 8)
+
+
+            final = mix(
+            wave1,
+            wave2,
+            wave3
+            )
+
+            return final * amp
+        
+        self.func = func
+
+class DontTell(Instrument):
+    def __init__(self, amp = 1.0):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur))
+
+            #   Wave Foundation #
+            fundamental = sine_wave(freq, dur)
+
+            wave1 = fundamental.copy()
+            wave1 *= np.exp(-t * 10)
+
+
+
+            final = mix(
+                wave1
+            )
+
+            return final * amp
+        
+        self.func = func
 
 class Clean_Synth(Instrument):
     def __init__(self, amp = 1.0):

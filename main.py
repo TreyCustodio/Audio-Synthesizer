@@ -1,6 +1,7 @@
 from modules import audio, instruments, sampler
 #from beats import digital_storytelling, dress, firstup
 from beatsnew import firstup, second, trap, how
+from Tangible_Light.scripts import title
 
 
 from UI import interface
@@ -85,9 +86,10 @@ def main():
     #firstup.main()
     #second.main()
     #trap.main()
-    #how.main()
+    how.main()
+    #title.main()
 
-    interface.main()
+    #interface.main()
 
 
     #   Test the Sampler    #
