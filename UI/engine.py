@@ -28,9 +28,10 @@ class Engine:
         #self.instrument = Bass()
         #self.instrument = Skirt()
         #self.instrument = First2()
-        self.instrument = Tangible_Light.Title_Snare()
+        #self.instrument = Tangible_Light.Title_Snare()
         # self.instrument = Clean_Pluck()
         #self.instrument = Funk()
+        self.instrument = DontMind()
 
         #self.instrument = Snare()
         #self.instrument = Double()

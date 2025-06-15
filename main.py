@@ -1,6 +1,6 @@
 from modules import audio, instruments, sampler
 #from beats import digital_storytelling, dress, firstup
-from beatsnew import firstup, second, trap, how
+from beatsnew import firstup, second, trap, how, new
 from Tangible_Light.scripts import title
 
 
@@ -86,8 +86,9 @@ def main():
     #firstup.main()
     #second.main()
     #trap.main()
-    how.main()
+    #how.main()
     #title.main()
+    new.main()
 
     #interface.main()
 

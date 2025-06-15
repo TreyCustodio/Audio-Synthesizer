@@ -218,7 +218,7 @@ class Tangible_Light:
             self.func = func
         
     class Title_Bass(Instrument):
-        def __init__(self, amp = 1.0, low = 350):
+        def __init__(self, amp = 1.0, low = 350, dist = 0.0):
             self.a = 0.1
             self.d = 0.6
             self.s = 0.0
@@ -234,10 +234,8 @@ class Tangible_Light:
                 wave1 = sine_wave(freq /2, dur)
 
                 wave2 = sine_wave(freq /4, dur)
-                #wave2 = distort(wave2, 2.0)
 
                 wave3 = sine_wave(freq /6, dur)
-                #wave3 = distort(wave3, 4.0)
 
 
                 wave1 = envelope(wave1,
@@ -252,12 +250,15 @@ class Tangible_Light:
 
                 final = mix(wave1, wave2, wave3)
 
+                if dist > 0.0:
+                    final = distort(final, dist)
+
                 return final * amp
         
             self.func = func
 
     class Title_Snare(Instrument):
-        def __init__(self):
+        def __init__(self, dist = 0.0, atk = 5):
             self.a = 0.0
             self.d = 0.1
             self.s = 0.7
@@ -273,10 +274,14 @@ class Tangible_Light:
                 for freq in freqs:
                     wave += np.sin(2 * np.pi * freq * t)
 
-                wave = white_noise(wave, 0.1)
-                wave = wave * np.exp(-t * 5)
+                #wave = white_noise(wave, 0.1)
+                wave = wave * np.exp(-t * atk)
                 wave = wave / np.max(np.abs(wave))
+                wave *= dist
                 return wave * 2.0
+
+
+
 
 
                 #   Code for a more intense skirt   #
@@ -302,6 +307,9 @@ class Tangible_Light:
                 #wave2 += noise
                 wave1 = combine(wave1, wave2)
                 wave1 *= np.exp(-t * 20)
+
+                if dist > 0.0:
+                    wave1 = distort(wave1, dist)
 
                 return wave1
             
@@ -509,6 +517,44 @@ class KickBass(Instrument):
 
         self.func = func
 
+class KickBass2(Instrument):
+    """A kick drum with emphasized base tones"""
+    def __init__(self, amp = 1.0, attack = 15, count = 10, dist = 0.0):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            #   Kick    #
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            wave = np.zeros_like(t)
+
+            wave1 = sine_wave(freq / 2, dur)
+            wave1 *= np.exp(-t * attack)
+
+            wave2 = sine_wave(freq / 4, dur)
+            wave2 *= np.exp(-t * attack - 5)
+            wave2 *= 1.5
+
+            wave3 = sine_wave(freq / 6, dur)
+            wave3 *= np.exp(-t * attack - 10)
+            wave3 *= 2.0
+
+
+            final = mix(
+                wave1,
+                wave2,
+                wave3
+                )
+
+            if dist > 0.0:
+                final = distort(final, dist)
+
+            return final * amp
+
+        self.func = func
 
 class Cymbal(Instrument):
     def __init__(self):
@@ -540,7 +586,7 @@ class Cymbal(Instrument):
 
         
 class Snare(Instrument):
-        def __init__(self):
+        def __init__(self, amp=1.0):
             self.a = 0.0
             self.d = 0.1
             self.s = 0.7
@@ -559,7 +605,7 @@ class Snare(Instrument):
                 wave = white_noise(wave, 0.1)
                 wave = wave * np.exp(-t * 5)
                 wave = wave / np.max(np.abs(wave))
-                return wave * 2.0
+                return wave * amp
 
 
                 #   Code for a more intense skirt   #

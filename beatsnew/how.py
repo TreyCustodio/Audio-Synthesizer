@@ -68,11 +68,7 @@ class How(Beat):
 
     def bass(self, part=""):
 
-        # if part == "solo":
-        #     b = KickBass(amp = 32.0 + 10, attack=30)
-        #     c = HipSkirt(amp = 25.0 + 10, attack = 18)
-        # else:
-        b = KickBass(amp = 30.0, attack = 30)
+        b = KickBass2(amp = 180.0, attack = 10)
         b2 = Bass(amp=40.0)
         c = HipSkirt(amp = 90.0, attack = 20)
 

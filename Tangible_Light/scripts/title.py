@@ -21,9 +21,11 @@ class Title(Beat):
         e = self.e
         s = self.s
 
-        k = Tangible_Light.Title_Bass()
-        #k = DontTell()
+        if part == "v1":
+            k = Tangible_Light.Title_Bass(dist = 2.0)
 
+        elif part == "v2":
+            k = Tangible_Light.Title_Bass()
 
         m1 = build_measure(
                 k.note(A3, q),
@@ -75,7 +77,8 @@ class Title(Beat):
 
         v1 = build_measure(m1, m2, m3, m4)
         
-        #   For Testing #
+
+        #   For Testing -- Kent Jones type beat #
         # v1 = build_measure(
         #     k.note(A2, e), rest(s),
         #     k.note(F2, e), rest(s),
@@ -92,13 +95,14 @@ class Title(Beat):
         e = self.e
         q = self.q
         s = self.s
+
         if part == "v1" or part == "v2":
             if part == "v1":
                 k = Tangible_Light.Title_Synth(amp=1.0)
 
             elif part == "v2":
                 k = Tangible_Light.Title_Synth(amp = 1.0)
-
+            
             m1 = build_measure(
                 k.note(A3, q),
 
@@ -107,7 +111,6 @@ class Title(Beat):
                 k.note(A3, s), k.note(B3, e),
                 
                 k.note(C4, e), k.note(D4, e + s),
-
             )
 
             m2 = build_measure(
@@ -151,7 +154,7 @@ class Title(Beat):
             return v1
 
     def drums(self, part=""):
-        k = HipSkirt(attack=15, amp = 0.2, dist = 20)
+        k = HipSkirt(attack=15, amp = 0.2, dist = 32)
         b = KickBass(amp = 2.0, count = 1)
 
         if part == "v1":
@@ -179,15 +182,19 @@ class Title(Beat):
 
         elif part == "v3":
             s = HipSkirt(attack=80, amp = 0.1, dist = 15)
+
             m1 = build_measure(
                 s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
                 s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
                 s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
-                
-                
+
                 s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), 
                 rest(self.e)
+
+
                 #s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
+            
+            
             )
 
             m2 = build_measure(
@@ -215,6 +222,20 @@ class Title(Beat):
             v1 = build_measure(m1, m1, m1, m1)
             return v1
 
+        elif part == "v5":
+            n = Tangible_Light.Title_Snare(dist=8.0)
+            
+            m1 = build_measure(
+                n.note(C2, self.e), k.note(C1, self.s / 2), k.note(C1, self.s/ 2), k.note(C1, self.s / 2), rest(self.s/2), # 1
+                n.note(C2, self.e), k.note(C1, self.s/2), rest(self.s/2), # 1.75
+                n.note(C2, self.e), k.note(C1, self.s / 2), rest(self.s/2),# 2.5
+                n.note(C2, self.e), k.note(C1, self.s/2), rest(self.s/2),# 3.25
+                n.note(C1, self.e), n.note(C1, self.s),
+            )
+
+            v1 = build_measure(m1, m1, m1, m1)
+            return v1
+
     def produce(self):      
         #   Gather Each Section of the song    #
         b1 = self.bass('v1')
@@ -223,7 +244,7 @@ class Title(Beat):
         k2 = self.keys("v2")
 
         d1 = self.drums("v1")
-        d2 = self.drums("v2")
+        d2 = self.drums("v5")
         d3 = self.drums("v3")
         d4 = self.drums("v4")
 
