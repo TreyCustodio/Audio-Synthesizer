@@ -1,22 +1,10 @@
 from modules import audio, instruments, sampler
 #from beats import digital_storytelling, dress, firstup
-from beatsnew import firstup, second, trap, how, new
+from beatsnew import firstup, second, trap, how, new, training
 from Tangible_Light.scripts import title
 
-
 from UI import interface
-
 from os import path
-
-#from UI import interface
-
-
-# #import audio
-# import hiphop
-# import instruments
-
-# #   Import the songs
-# import writealone, blessup, unknown, rage, jiggy, yank
 
 
 """
@@ -46,39 +34,6 @@ def text_sounds():
 
 
 
-def generate_percussion():
-    audio.sound_generator(envelope=audio.percussion, folder="percussion_gen", play_sounds=False)
-    
-def generate_snares():
-    audio.sound_generator(envelope=audio.snare, folder="snare_gen")
-    
-def generate_strings():
-    audio.sound_generator(envelope=audio.pluck, folder="string_gen", play_sounds=False)
-
-def generate(instrument, folder, bpm = 160, octave = 4, typ=""):
-    instr = instrument(octave, 1/(bpm / 60) * 4, typ)
-
-    audio.write(instr.q_c, folder, "c")
-    audio.write(instr.q_cs, folder, "c#")
-
-    audio.write(instr.q_d, folder, "d")
-    audio.write(instr.q_ds, folder, "d#")
-
-    audio.write(instr.q_e, folder, "e")
-
-    audio.write(instr.q_f, folder, "f")
-    audio.write(instr.q_fs, folder, "f#")
-
-    audio.write(instr.q_g, folder, "g")
-    audio.write(instr.q_gs, folder, "g#")
-
-    audio.write(instr.q_a, folder, "a")
-    audio.write(instr.q_as, folder, "a#")
-
-    audio.write(instr.q_b, folder, "b")
-
-
-
 def main():
     """Main Function: Create any sounds you want"""
 
@@ -87,13 +42,21 @@ def main():
     #second.main()
     #trap.main()
     #how.main()
-    #title.main()
-    new.main()
+    title.main()
+    #new.main()
+    #training.main()
 
-    #interface.main()
 
+    #   Run the Interface   #
+    interface.main()
+    
 
     #   Test the Sampler    #
+    # b = instruments.Bass()
+    # note = b.note(audio.C1, 1.0)
+    # print(note.pitch)
+    # audio.write(note(), "", "test")
+
     #sampler.main()
 
 

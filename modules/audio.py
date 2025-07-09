@@ -257,7 +257,7 @@ def mix(*waves):
     return final
 
 
-def delaycombo(wave1, wave2, rest_time = 0.1):
+def delaycombo(wave1, wave2, rest_time = 0.1, silence = True):
     """Combines 2 waves but adds the rest time to the beginning of wave2"""
     wave1 = wave1.copy()
     second = add_waves(rest(rest_time), wave2)
@@ -270,7 +270,8 @@ def delaycombo(wave1, wave2, rest_time = 0.1):
             break
 
     #   Silence Wave 1 after this index
-    wave1[index:] = 0
+    if silence:
+        wave1[index:] = 0
 
     return combine(wave1, second)
             
@@ -591,9 +592,12 @@ def build_measure(*args):
     final = None
     tick = 0
     for wave in args:
+        #   Set final to the first wave in args #
         if tick == 0:
             final = wave
             tick += 1
+
+        #   Keep adding the waves in args to the final wave #
         else:
             final = add_waves(final, wave)
     
@@ -964,7 +968,7 @@ def highpass(wave, cutoff):
     """Expects a wave and a cutoff; returns the filtered wave"""
     fft_wave = np.fft.fft(wave) # Converts time signal to frequency-domain representation
     frequencies = np.fft.fftfreq(len(wave), 1/SAMPLE_RATE)
-    fft_wave[np.abs(frequencies) < cutoff] = 0
+    fft_wave[np.abs(frequencies) <= cutoff] = 0
     final = np.fft.ifft(fft_wave)
 
     return np.real(final)

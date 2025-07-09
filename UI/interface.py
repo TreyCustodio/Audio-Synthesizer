@@ -2,6 +2,7 @@ import pygame
 from .engine import Engine
 from .events import EventManager
 from .globals import WIDTH, HEIGHT
+from os import path
 
 """
 This file contains the main routine to pass
@@ -23,8 +24,8 @@ def main():
     #   Initialize modules  #
     pygame.init()
     pygame.font.init()
-    pygame.mixer.pre_init(44100, size=-16, channels = 2)
-    pygame.mixer.init()
+    #pygame.mixer.pre_init(44100, size=16, channels = 2)
+    #pygame.mixer.init()
 
 
     #   Set the screen up   #
@@ -32,16 +33,17 @@ def main():
     screen = pygame.display.set_mode(list(map(int, UPSCALED)), flags=flags)
     drawSurface = pygame.Surface(list(map(int, RESOLUTION)))
     drawSurface.fill((255,255,255))
-
+    
 
     #   Set mouse visible   #
     pygame.mouse.set_visible(True)
     
     #   Set application icon    #
-    # iconSurf = pygame.Surface((32,32))
-    # image = pygame.image.load("displayIcon.png").convert()
-    # iconSurf.blit(image, (0,0))
-    # pygame.display.set_icon(iconSurf)
+    iconSurf = pygame.Surface((32,32))
+    image = pygame.image.load(path.join("UI", "images", "icon.png")).convert()
+    iconSurf.blit(image, (0,0))
+    pygame.display.set_icon(iconSurf)
+    pygame.display.set_caption("Trizzy Beats Studio")
 
 
     #   Initialize the engine and eventManager  #
@@ -79,6 +81,10 @@ def main():
 
 
         #   (3) Update  #
+        gameClock.tick(60)
+        seconds = gameClock.get_time() / 1000
+
+        engine.update(seconds)
         
         # if EventManager.readyToUpdate():
             
