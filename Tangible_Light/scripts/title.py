@@ -1,6 +1,7 @@
 from modules.beat import *
 from modules.instruments import *
 from modules.audio import *
+
 import pygame.sndarray
 import pygame.mixer
 
@@ -9,184 +10,307 @@ class Title(Beat):
         super().__init__(bpm)
 
         self.instruments = {
-            0: [Tangible_Light.Title_Synth, self.keys("v1")],
-            1: [Tangible_Light.Title_Bass, self.keys2("v1")],
-            2: [KickBass, self.keys2("v1", KickBass2(attack=1))]
-            #2: [Bass, self.strings("v1")]
-            #2: [DontMind, self.keys2("v1", DontMind(freq_mod = 4))]
+            #   Keys    #
+            0: [LowSynth, self.keys("v1")],
+            1: [DontTell, self.keys("v3")],
+            #2: [Tangible_Light.Title_Synth, self.keys_long("v1")],
+
+            #   Bass    #
+            3: [Tangible_Light.Title_Bass, self.bass("v1", Tangible_Light.Title_Bass(amp=2.0, freq_mod = 2))],
+            
+            #   Percussion  #
+            4: [KickBass, self.kick("v1")],
+            5: [None, self.drums("v1")]
         }
 
     def save(self, sound, name = "", norm=True):
         """Save the sound to the desired folder"""
 
-        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm)
+        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
     
-    
-    def bass(self, part=""):
-        q = self.q
-        e = self.e
-        s = self.s
+    def drums(self, part="") -> list:
+        #d = HipSkirt(attack=25, amp=0.6, low=0, high=0, dist=5.0, noise_amount=1.4)
+        d = HipSkirt(attack=25, amp=0.3, low=0, high=0, dist=8.0, noise_amount=0.6)
 
-        if part == "v1":
-            k = Tangible_Light.Title_Bass(dist = 2.0)
+        m1 = [
+           d.note(Cs1, self.e), d.note(Cs1, self.e), # 1
+           d.note(Cs1, self.s), d.note(Cs1, self.s/2), d.note(Cs1, self.s + self.s/2), #1.75
+           d.note(Cs1, self.e), rest(self.e), # 2.75
+           rest(self.q + self.s)
+        ]
 
-        elif part == "v2":
-            k = Tangible_Light.Title_Bass()
+        m2 = [
+            d.note(Cs1, self.e), d.note(Cs1, self.e), # 1
+            d.note(Cs1, self.s), d.note(Cs1, self.s/2), d.note(Cs1, self.s + self.s/2), d.note(Cs1, self.s), # 2
+            d.note(Cs1, self.e), d.note(Cs1, self.e),
+            d.note(Cs1, self.s), d.note(Cs1, self.s/2), d.note(Cs1, self.s + self.s/2), d.note(Cs1, self.s),
+        ]
 
-        m1 = build_measure(
-                k.note(A3, q),
+        return \
+        [rest(self.whole)] +\
+        \
+        [rest(self.whole)] +\
+        [rest(self.whole)] +\
+        [rest(self.whole)] +\
+        [rest(self.whole)] +\
+        \
+        [rest(self.whole)] +\
+        [rest(self.whole)] +\
+        [rest(self.whole)] +\
+        [rest(self.whole)] +\
+        \
+        m1 +\
+        m1 +\
+        m1 +\
+        m1 +\
+        \
+        m2 +\
+        m2 +\
+        m1 +\
+        m1 +\
+        \
+        m2 +\
+        m2 +\
+        m1 +\
+        m1
 
-                k.note(B3, q),
-
-                k.note(A3, s), k.note(B3, e),
-                
-                k.note(C4, e), k.note(D4, e + s),
-
-            )
-
-        m2 = build_measure(
-            k.note(A3, e), k.note(B3, e),
-
-            k.note(C4, s), 
-
-            k.note(D4, e), k.note(E4, e),
-            
-            k.note(D4, e), k.note(C4, e), 
-
-            k.note(B3, s),
-            k.note(A3, e)
-
-        )
-
-        m3 = build_measure(
-            k.note(G3, q),
-
-            k.note(A3, q),
-
-            k.note(G3, s), k.note(A3, e),
-            
-            k.note(B3, e), k.note(C4, e + s),
-
-        )
-
-        m4 = build_measure(
-            k.note(G3, e), k.note(A3, e),
-
-            k.note(B3, s), 
-
-            k.note(C4, e), k.note(D4, e),
-            
-            k.note(C4, e), k.note(B3, e), 
-            k.note(A3, s),
-            k.note(G3, e)
-        )
-
-        v1 = build_measure(m1, m2, m3, m4)
         
+    def kick(self, part="") -> list:
+        d = KickBass(amp=2.5, attack=85, bass_dist = 0.0, bass_amp = 0.5)
+        #d = Tangible_Light.Title_Kick()
 
-        return v1
+        m1 = [
+            d.note(C2, self.e), d.note(C2, self.e),
+            d.note(C2, self.e), d.note(C2, self.e),
+            d.note(C2, self.e), d.note(C2, self.e),
+            d.note(C2, self.e), d.note(C2, self.e),
+        ]
+
+        return \
+        [rest(self.whole)] +\
+        m1 +\
+        m1 +\
+        m1 +\
+        m1 +\
+        \
+        m1 +\
+        m1 +\
+        m1 +\
+        m1 +\
+        \
+        m1 +\
+        m1 +\
+        m1 +\
+        m1
+
+
+
+    def keys_long(self, part="") -> list:
+        n = Tangible_Light.Title_Synth(amp=0.15)
+        d = DontTell(amp=3.0)
+        
+        m1 = [
+            fade_out(n.note(A4, self.w)(), 12.0),
+            #n.note(A4, self.h),
+        ]
+
+        m2 = [
+            rest(self.h),
+            n.note(B4, self.q),
+            delaycombo(n.note(A4, self.q)(), n.note(G4, self.e)() * 1.2, self.e, False),
+            #n.note(A4, self.e), n.note(G4, self.e),
+        ]
+
+        m3 = [
+            delaycombo(n.note(G4, self.h)(), n.note(A4, self.q)(), self.q, False),
+            delaycombo(n.note(G4, self.h)(), n.note(A4, self.q)(), self.q, False),
+        ]
+
+        m4 = [
+            delaycombo(n.note(G4, self.h)(), n.note(A4, self.q)(), self.q, False),
+            n.note(A4, self.q),
+            n.note(G4, self.q)
+        ]
+
+        m5 = [
+            d.note(F2, self.e), rest(self.e),
+            rest(self.e), d.note(F2, self.e), 
+            d.note(F2, self.e), rest(self.e),
+            rest(self.q)
+        ]
+
+        return \
+            [rest(self.whole)] +\
+            \
+            [rest(self.whole)] +\
+            [rest(self.whole)] +\
+            [rest(self.whole)] +\
+            [rest(self.whole)] +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 +\
+            \
+            m5 +\
+            m5 +\
+            m5 +\
+            m5 +\
+            \
+            m5 +\
+            m5 +\
+            m5 +\
+            m5
 
     def keys(self, part="") -> list:
         e = self.e
         q = self.q
         s = self.s
 
-        if part == "v1" or part == "v2":
-            if part == "v1":
-                k = LowSynth(amp=0.6, freq_mod=1/2)
+        if part == "v1":
+            k = LowSynth(amp=0.2, freq_mod=1/2)
 
-            elif part == "v2":
-                k = Tangible_Light.Title_Synth(amp = 1.0)
-            
-            m1 = [
-                delaycombo(k.note(A3, q)(), k.note(F3, q - 0.08)(), 0.08, silence = False),
-
-                delaycombo(k.note(G3, q)(), k.note(B3, q - 0.08)(), 0.08, silence = False),
-
-                delaycombo(k.note(F3, s)(), k.note(A3, s - 0.04)(), 0.04, silence = False), delaycombo(k.note(G3, e)(), k.note(B3, e - 0.06)(), 0.06, False),
-                
-                delaycombo(k.note(A3, e)(), k.note(C4, e - 0.06)(), 0.06, False),
-                delaycombo(k.note(B3, e + s)(), k.note(D4, e + s - 0.07)(), 0.07, False),
-            ]
-
-            m2 = [
-                k.note(A3, e) + k.note(F3, e), k.note(B3, e) + k.note(G3, e),
-
-                k.note(C4, s) + k.note(A3, s), 
-
-                k.note(D4, e) + k.note(B3, e), k.note(E4, e) + k.note(C4, e),
-                
-                k.note(D4, e) + k.note(B3, e), k.note(C4, e) + k.note(A3, e), 
-
-                k.note(B3, s) + k.note(G3, s),
-                k.note(A3, e) + k.note(F3, e)
-
-            ]
-
-            m3 = [
-                k.note(G3, q) + k.note(E3, q),
-
-                k.note(A3, q) + k.note(F3, q),
-
-                k.note(G3, s) + k.note(E3, s), k.note(A3, e) + k.note(F3, e),
-                
-                k.note(B3, e) + k.note(G3, e), k.note(C4, e + s) + k.note(A3, e + s),
-
-            ]
-
-            m4 = [
-                k.note(G3, e) + k.note(E3, e), k.note(A3, e) + k.note(F3, e),
-
-                k.note(B3, s) + k.note(G3, s), 
-
-                k.note(C4, e) + k.note(A3, e), k.note(D4, e) + k.note(B3, e),
-                
-                k.note(C4, self.h - s) + k.note(A3, self.h - s)
-
-            ]
-
-            v1 = [rest(self.whole*4)]
-            v2 = m1 + m2 + m3 + m4
-            v3 = v2
-
-
-            m5 = [
-                k.note(F3, e), k.note(G3, e),
-                k.note(B3, s), k.note(A3, e),
-                k.note(B3, e), k.note(A3, e),
-                k.note(B3, e), k.note(A3, s), k.note(G3, e)
-            ]
-
-            m6 = [
-                k.note(F3, e), k.note(G3, e), # 1
-                k.note(B3, s), k.note(A3, e), # 1.75
-                k.note(B3, e), k.note(A3, e), # 2.75
-                k.note(B3, e + s), # 3.25
-                k.note(A3, s), k.note(B3, s) # 3.75
-            ]
-
-            m7 = [
-                k.note(C4, e), k.note(B3, e), # 1
-                k.note(C4, s), k.note(B3, e), # 1.75
-                k.note(C4, e), k.note(D4, e), # 2.75
-                k.note(D4, e), k.note(C4, s), k.note(B3, e), # 3.75
-            ]
-
-            m8 = [
-                k.note(C4, e), k.note(B3, e),
-                k.note(C4, s), k.note(B3, e),
-                k.note(A3, q), rest(self.s),
-                k.note(G3, q), 
-            ]
-            v4 = m5 + m6 + m7 + m8
+        elif part == "v2":
+            k = Tangible_Light.Title_Synth(amp = 1.0)
+        
+        elif part == "v3":
+            k = DontTell(amp=0.6)
             
 
-            return v1 +\
-                v2 + v3 +\
-                v4 + v4
 
-    def keys2(self, part="", instr = Tangible_Light.Title_Bass(amp=1.4)):
+
+        m1 = [
+            delaycombo(k.note(A3, q)(), k.note(F3, q - 0.08)(), 0.08, silence = False),
+
+            delaycombo(k.note(G3, q)(), k.note(B3, q - 0.08)(), 0.08, silence = False),
+
+            delaycombo(k.note(F3, s)(), k.note(A3, s - 0.04)(), 0.04, silence = False), delaycombo(k.note(G3, e)(), k.note(B3, e - 0.06)(), 0.06, False),
+            
+            delaycombo(k.note(A3, e)(), k.note(C4, e - 0.06)(), 0.06, False),
+            delaycombo(k.note(B3, e + s)(), k.note(D4, e + s - 0.07)(), 0.07, False),
+        ]
+
+        m2 = [
+            k.note(A3, e) + k.note(F3, e), k.note(B3, e) + k.note(G3, e),
+
+            k.note(C4, s) + k.note(A3, s), 
+
+            k.note(D4, e) + k.note(B3, e), k.note(E4, e) + k.note(C4, e),
+            
+            k.note(D4, e) + k.note(B3, e), k.note(C4, e) + k.note(A3, e), 
+
+            k.note(B3, s) + k.note(G3, s),
+            k.note(A3, e) + k.note(F3, e)
+
+        ]
+
+        m3 = [
+            k.note(G3, q) + k.note(E3, q),
+
+            k.note(A3, q) + k.note(F3, q),
+
+            k.note(G3, s) + k.note(E3, s), k.note(A3, e) + k.note(F3, e),
+            
+            k.note(B3, e) + k.note(G3, e), k.note(C4, e + s) + k.note(A3, e + s),
+
+        ]
+
+        m4 = [
+            k.note(G3, e) + k.note(E3, e), k.note(A3, e) + k.note(F3, e),
+
+            k.note(B3, s) + k.note(G3, s), 
+
+            k.note(C4, e) + k.note(A3, e), k.note(D4, e) + k.note(B3, e),
+            
+            k.note(C4, self.h - s) + k.note(A3, self.h - s)
+
+        ]
+
+        v1 = [rest(self.whole*4)]
+        v2 = m1 + m2 + m3 + m4
+        v3 = v2
+
+
+        m5 = [
+            k.note(F3, e), k.note(G3, e),
+            k.note(B3, s), k.note(A3, e),
+            k.note(B3, e), k.note(A3, e),
+            k.note(B3, e), k.note(A3, s), k.note(G3, e)
+        ]
+
+        m6 = [
+            k.note(F3, e), k.note(G3, e), # 1
+            k.note(B3, s), k.note(A3, e), # 1.75
+            k.note(B3, e), k.note(A3, e), # 2.75
+            k.note(B3, e + s), # 3.25
+            k.note(A3, s), k.note(B3, s) # 3.75
+        ]
+
+        m7 = [
+            k.note(C4, e), k.note(B3, e), # 1
+            k.note(C4, s), k.note(B3, e), # 1.75
+            k.note(C4, e), k.note(D4, e), # 2.75
+            k.note(D4, e), k.note(C4, s), k.note(B3, e), # 3.75
+        ]
+
+        m8 = [
+            k.note(C4, e), k.note(B3, e),
+            k.note(C4, s), k.note(B3, e),
+            k.note(A3, q), rest(self.s),
+            k.note(G3, q), 
+        ]
+        v4 = m5 + m6 + m7 + m8
+        
+        v0 = [
+        rest(self.whole)
+        ]
+
+        return \
+            [rest(self.whole)] +\
+            \
+            [rest(self.whole)] +\
+            [rest(self.whole)] +\
+            [rest(self.whole)] +\
+            [rest(self.whole)] +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 +\
+            \
+            m5 +\
+            m6 +\
+            m7 +\
+            m8 +\
+            \
+            m5 +\
+            m6 +\
+            m7 +\
+            m8
+                
+
+
+    def bass(self, part="", instr = Tangible_Light.Title_Bass(amp=3.0, freq_mod = 4)):
         n = instr
+        
+
+        ma = [
+            n.note(F3, self.q),
+            rest(self.e), n.note(F3, self.s),
+            n.note(D3, self.q + self.s),
+            n.note(F3, self.q)
+        ]
+
 
         m1 = [
             n.note(F3, self.e), n.note(D3, self.e),
@@ -201,7 +325,7 @@ class Title(Beat):
             n.note(F3, self.s), n.note(D3, self.s), n.note(D3, self.s), 
             n.note(C3, self.e), n.note(F3, self.e),
             n.note(D3, self.s),
-            n.note(E3, self.e), n.note(F3, self.e),
+            n.note(C3, self.e), n.note(F3, self.e),
         ]
 
         m3 = [
@@ -237,10 +361,11 @@ class Title(Beat):
             n.note(F3, self.s), n.note(E3, self.s), n.note(F3, self.s),# 4
         ]
 
+        v0 = ma
         v1 = m1 + m2 + m3 + m4
         v2 = m1 + m2 + m3 + m5
 
-        return v1 +\
+        return v0 + v1 +\
                v2 + v2 +\
                v1 + v2 +\
                v2
@@ -271,88 +396,6 @@ class Title(Beat):
             m1 + m1 + m2 + m2 +\
             m1 + m1 + m2 + m2
 
-    def drums(self, part=""):
-        k = HipSkirt(attack=15, amp = 0.2, dist = 32)
-        b = KickBass(amp = 2.0, count = 1)
-
-        if part == "v1":
-            m1 = build_measure(
-                b.note(C2, self.e), b.note(C2, self.e),
-                k.note(C2, self.e) + b.note(C2, self.e), b.note(C2, self.e),
-                b.note(C2, self.e), b.note(C2, self.e),
-                b.note(C2, self.e), b.note(C2, self.e) + k.note(C2, self.e),
-            )
-
-            v1 = build_measure(m1, m1, m1, m1)
-            return v1
-
-        elif part == "v2":
-            m2 = build_measure(
-                b.note(C2, self.s), b.note(C2, self.s), b.note(C2, self.s), b.note(C2, self.s),
-                b.note(C2, self.s) + k.note(C2, self.s), b.note(C2, self.s) + k.note(C2, self.s), b.note(C2, self.s), b.note(C2, self.s),
-                b.note(C2, self.s), b.note(C2, self.s), b.note(C2, self.s), b.note(C2, self.s),
-                b.note(C2, self.s), b.note(C2, self.s), 
-                combine(k.note(C2, self.e), add_waves(b.note(C2, self.s), b.note(C2, self.s)))
-            )
-
-            v2 = build_measure(m2, m2, m2, m2)
-            return v2
-
-        elif part == "v3":
-            s = HipSkirt(attack=80, amp = 0.1, dist = 15)
-
-            m1 = build_measure(
-                s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
-                s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
-                s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
-
-                s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), 
-                rest(self.e)
-
-
-                #s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2), s.note(C3, self.s / 2),
-            
-            
-            )
-
-            m2 = build_measure(
-                s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4),
-                s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4),
-                s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4),
-                s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4), s.note(C3, self.s / 4),
-            )
-
-            v3 = build_measure(m1, m1, m1, m1)
-
-            return v3
-
-        elif part == "v4":
-            n = Tangible_Light.Title_Snare()
-
-            m1 = build_measure(
-                n.note(C1, self.e), n.note(C1, self.e), # 1
-                n.note(C1, self.s), n.note(C3, self.e),  # 1.75
-                n.note(C1, self.e), n.note(C1, self.e),  # 2.75
-                n.note(C1, self.e), rest(self.s), # 3.5
-                n.note(C3, self.e),
-            )
-
-            v1 = build_measure(m1, m1, m1, m1)
-            return v1
-
-        elif part == "v5":
-            n = Tangible_Light.Title_Snare(dist=8.0)
-            
-            m1 = build_measure(
-                n.note(C2, self.e), k.note(C1, self.s / 2), k.note(C1, self.s/ 2), k.note(C1, self.s / 2), rest(self.s/2), # 1
-                n.note(C2, self.e), k.note(C1, self.s/2), rest(self.s/2), # 1.75
-                n.note(C2, self.e), k.note(C1, self.s / 2), rest(self.s/2),# 2.5
-                n.note(C2, self.e), k.note(C1, self.s/2), rest(self.s/2),# 3.25
-                n.note(C1, self.e), n.note(C1, self.s),
-            )
-
-            v1 = build_measure(m1, m1, m1, m1)
-            return v1
 
 
 
@@ -395,8 +438,6 @@ class Title(Beat):
         )
 
 
-        #   Normalize the audio
-        prod = (prod / np.max(np.abs(prod)) * 32767).astype(np.int16)
 
         self.save(prod, "01_Title", norm = False)
         return prod

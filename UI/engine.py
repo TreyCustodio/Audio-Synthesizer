@@ -38,11 +38,10 @@ class Engine:
         self.bpm = 85
 
         #   Instrument   #
-        self.instrument = HipSkirt(attack = 60, dist=20.0, amp=0.4, low = 10000)
-        self.instrument = Snare(attack=7)
+        self.instrument = HipSkirt(attack=25, amp=0.6, low=0, high=0, dist=28.0, noise_amount=3.8)
 
         #   Octave   #
-        self.octave = 3
+        self.octave = 1
 
         #   Background Images   #
         self.white = pygame.rect.Rect(0, 0, WIDTH, 120)

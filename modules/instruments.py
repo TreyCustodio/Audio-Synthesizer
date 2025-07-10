@@ -210,26 +210,24 @@ class Tangible_Light:
 
             def func(freq, dur):
                 #freq /= 2
-                harmonics = 3
-                coeff = 1
-                freq_func = bass_harms(4)
-                amp_func = inv
 
+                base1 = sine_wave(freq, dur)
+                base2 = sine_wave(freq / 2, dur)
 
-                wave2 = sine_wave(freq, dur)
-                wave2 = envelope(wave2, 
-                0.005, 0.4 * dur, 0.0, 0.0* dur)
+                atk = 0.01
+                rel = 0.01
 
-                wave3 = sine_wave(freq, dur)
-                wave3 = envelope(wave3,
-                0.4 * dur, 0.6 * dur, 0.0, 0.0 * dur)
+                wave1 = envelope(base1, 
+                atk, dur - atk - rel, 0.6, rel) * 0.75
+
+                wave2 = envelope(base2,
+                0.1, dur - 0.1, 0.0, 0.0) * 1.5
 
 
                 
                 final = mix(
-                    #wave1,
+                    wave1,
                     wave2,
-                    wave3,
                 )
 
                 return final * amp
@@ -237,7 +235,7 @@ class Tangible_Light:
             self.func = func
         
     class Title_Bass(Instrument):
-        def __init__(self, amp = 1.0, low = 350, dist = 0.0):
+        def __init__(self, amp = 1.0, low = 350, dist = 0.0, freq_mod = 1):
             self.a = 0.1
             self.d = 0.6
             self.s = 0.0
@@ -245,29 +243,34 @@ class Tangible_Light:
 
 
             def func(freq, dur):
-                harmonics = 3
-                coeff = 1
-                freq_func = bass_harms(4)
-                amp_func = inv
+                freq /= freq_mod
 
-                wave1 = sine_wave(freq , dur)
+                base1 = sine_wave(freq, dur)
 
-                wave2 = sine_wave(freq /2, dur)
+                base2 = sine_wave(freq /2, dur)
 
-                wave3 = sine_wave(freq /4, dur)
+                base3 = sine_wave(freq /4, dur)
 
 
-                wave1 = envelope(wave1,
-                0.01, 0.2 * dur, 0.0, 0.0)
-
-                wave2 = envelope(wave2,
-                0.01, 0.6 * dur, 0.0, 0.0)
-
-                wave3 = envelope(wave3,
-                0.01, 0.7 * dur, 0.0, 0.0) * 0.75
 
 
-                final = mix(wave1, wave2, wave3)
+                wave1 = envelope(base1,
+                0.05, dur - 0.05, 0.0, 0.0)
+
+                wave2 = envelope(base2,
+                0.1, dur - 0.1, 0.0, 0.0) * 2.0
+
+
+                wave3 = envelope(base3,
+                0.0, 0.4 * dur, 0.0, 0.0)
+
+
+
+                final = mix(
+                    wave1,
+                    wave2,
+                    #wave3
+                    )
 
                 if dist > 0.0:
                     final = distort(final, dist)
@@ -314,8 +317,8 @@ class Tangible_Light:
             
             self.func = func
 
-    class Title_Snare(Instrument):
-        def __init__(self, dist = 0.0, atk = 5):
+    class Title_Kick(Instrument):
+        def __init__(self, amp = 1.0, dist = 0.0, atk = 5):
             self.a = 0.0
             self.d = 0.1
             self.s = 0.7
@@ -334,8 +337,8 @@ class Tangible_Light:
                 #wave = white_noise(wave, 0.1)
                 wave = wave * np.exp(-t * atk)
                 wave = wave / np.max(np.abs(wave))
-                wave *= dist
-                return wave * 2.0
+
+                return wave * amp
 
 
 
@@ -469,22 +472,19 @@ class Skirt2(Instrument):
         self.func = func
 
 class HipSkirt(Instrument):
-    def __init__(self, attack = 1, amp = 1.0, low = 4000, high=0, dist = 6.0):
+    def __init__(self, attack = 15, amp = 1.0, low = 4000, high=0, dist = 6.0, noise_amount = 1.0):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
         self.r = 0.3
 
         def func(freq, dur):
+            #   Metadata    #
             f = freq
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
 
-            # freqs = np.random.uniform(freq*2, freq / 2, 20)
-            
+            #   Fundamental Structure   #
             wave = np.zeros_like(t)
-            # for freq in freqs:
-            #     wave += np.sin(2 * np.pi * freq * t)
-            
             wave += np.sin(2 * np.pi * f * 2* t)
 
             #   Metal   #
@@ -493,21 +493,22 @@ class HipSkirt(Instrument):
             wave += m
 
             #   Noise   #
-            wave = white_noise(wave, 1.5)
-            wave = bitcrush(wave, 2)
+            wave = white_noise(wave, noise_amount)
 
             #   Attack  #
             ##  Modify this last attack envelope to create longer or shorter skirts  ##
-            if low > 0:
+            wave = wave * np.exp(-t * attack)
+            
+            #   Filters #
+            if low != 0:
                 wave = lowpass(wave, low)
             
-            if dist > 0:
+            if dist != 0:
                 wave = distort(wave, dist)
 
             if high != 0:
                 wave = highpass(wave, high)
 
-            wave = wave * np.exp(-t * attack)
 
 
             return wave * amp
@@ -518,7 +519,7 @@ class HipSkirt(Instrument):
 
 class KickBass(Instrument):
     """A kick drum with emphasized base tones"""
-    def __init__(self, amp = 1.0, attack = 15, count = 10):
+    def __init__(self, amp = 1.0, attack = 45, bass_dist = 2.5, bass_amp = 1.0):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
@@ -528,24 +529,28 @@ class KickBass(Instrument):
         def func(freq, dur):
             #   Kick    #
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
-            wave = np.zeros_like(t)
+            #wave = np.zeros_like(t)
 
-            ##   Attempt 2   #
-            freqs = np.random.uniform(freq, freq /2, count)
-            for freq in freqs:
-                wave += np.sin(2 * np.pi * freq * t)
-            
+            wave = swell(freq * 2, 1, dur)
             wave *= np.exp(-t * attack)
 
-            #   Bass    #
-            
-            b = synthesize(freq / 4, dur, 80,
-                                10, 1,
-                                bass_harms(2), None,
-                                self.a, self.d, self.s, self.r)
+            bass_wave = sine_wave(freq / 2, dur)
+            bass_wave = envelope(
+                bass_wave,
+                0.001, dur - 0.001, 0.0, 0.0
+            )
 
-            #wave = combine(wave, b)
-            return wave * amp
+            if bass_dist > 0.0:
+                bass_wave = distort(bass_wave, bass_dist)
+
+            bass_wave *= bass_amp
+            
+            final = mix(
+                wave,
+                bass_wave
+            )
+
+            return final * amp
 
 
             ##   Attempt 1   #
