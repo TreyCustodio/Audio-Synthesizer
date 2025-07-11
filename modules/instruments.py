@@ -25,8 +25,14 @@ class Note:
         return len(self.wave)
     
     def __add__(self, other):
-        return self.wave + other.wave
-
+        if isinstance(other, Note):
+            return self.wave + other.wave
+        
+        elif isinstance(other, np.ndarray):
+            return self.wave + other
+        else:
+            return NotImplemented
+    
 
 
 class Instrument:
@@ -258,11 +264,11 @@ class Tangible_Light:
                 0.05, dur - 0.05, 0.0, 0.0)
 
                 wave2 = envelope(base2,
-                0.1, dur - 0.1, 0.0, 0.0) * 2.0
+                0.05, dur - 0.05, 0.0, 0.0) * 2.0
 
 
                 wave3 = envelope(base3,
-                0.0, 0.4 * dur, 0.0, 0.0)
+                0.0, 0.4 * dur, 0.3, 0.0)
 
 
 

@@ -29,8 +29,8 @@ class Title(Beat):
         write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
     
     def drums(self, part="") -> list:
-        #d = HipSkirt(attack=25, amp=0.6, low=0, high=0, dist=5.0, noise_amount=1.4)
-        d = HipSkirt(attack=25, amp=0.3, low=0, high=0, dist=8.0, noise_amount=0.6)
+        c = HipSkirt(attack=25, amp=0.2, low=0, high=0, dist=15.0, noise_amount=1.4)
+        d = HipSkirt(attack=35, amp=0.2, low=0, high=0, dist=8.0, noise_amount=0.6)
 
         m1 = [
            d.note(Cs1, self.e), d.note(Cs1, self.e), # 1
@@ -46,6 +46,10 @@ class Title(Beat):
             d.note(Cs1, self.s), d.note(Cs1, self.s/2), d.note(Cs1, self.s + self.s/2), d.note(Cs1, self.s),
         ]
 
+
+        m3 = [
+            
+        ]
         return \
         [rest(self.whole)] +\
         \
@@ -74,9 +78,9 @@ class Title(Beat):
         m1 +\
         m1
 
-        
+    
     def kick(self, part="") -> list:
-        d = KickBass(amp=2.5, attack=85, bass_dist = 0.0, bass_amp = 0.5)
+        d = KickBass(amp=2.5, attack=85, bass_dist = 0.0, bass_amp = 0.0)
         #d = Tangible_Light.Title_Kick()
 
         m1 = [
@@ -106,8 +110,8 @@ class Title(Beat):
 
 
     def keys_long(self, part="") -> list:
-        n = Tangible_Light.Title_Synth(amp=0.15)
-        d = DontTell(amp=3.0)
+        n = Tangible_Light.Title_Synth(amp=0.65)
+        d = DontTell(amp=3.5)
         
         m1 = [
             fade_out(n.note(A4, self.w)(), 12.0),
@@ -237,33 +241,43 @@ class Title(Beat):
 
 
         m5 = [
-            k.note(F3, e), k.note(G3, e),
-            k.note(B3, s), k.note(A3, e),
-            k.note(B3, e), k.note(A3, e),
-            k.note(B3, e), k.note(A3, s), k.note(G3, e)
+            k.note(F3, e) + k.note(D3, self.e), k.note(G3, e) + k.note(E3, self.e),
+            k.note(B3, s) + k.note(G3, s), k.note(A3, e) + k.note(F3, e),
+            k.note(B3, e) + k.note(G3, e), k.note(A3, e) + k.note(F3, e),
+            k.note(B3, e) + k.note(G3, e), k.note(A3, s) + k.note(F3, s), k.note(G3, e) + k.note(E3, e)
         ]
 
         m6 = [
             k.note(F3, e), k.note(G3, e), # 1
             k.note(B3, s), k.note(A3, e), # 1.75
             k.note(B3, e), k.note(A3, e), # 2.75
-            k.note(B3, e + s), # 3.25
-            k.note(A3, s), k.note(B3, s) # 3.75
+            k.note(B3, e + s) + k.note(G3, e + s), # 3.25
+            k.note(A3, s) + k.note(F3, s), k.note(B3, s) + k.note(G3, s) # 3.75
+        ]
+
+        m6b = [
+            k.note(F3, e), k.note(G3, e) + k.note(E3, e), # 1
+            k.note(B3, s) + k.note(G3, s), k.note(A3, e) + k.note(F3, e), # 1.75
+            k.note(B3, e) + k.note(G3, e), k.note(A3, e) + k.note(F3, e), # 2.75
+            k.note(B3, e + s) + k.note(G3, e + s), # 3.25
+            k.note(A3, s) + k.note(F3, s), k.note(B3, s) + k.note(G3, s)
         ]
 
         m7 = [
-            k.note(C4, e), k.note(B3, e), # 1
-            k.note(C4, s), k.note(B3, e), # 1.75
-            k.note(C4, e), k.note(D4, e), # 2.75
-            k.note(D4, e), k.note(C4, s), k.note(B3, e), # 3.75
+            k.note(C4, e) + k.note(A3, e), k.note(B3, e) + k.note(G3, e), # 1
+            k.note(C4, s) + k.note(A3, s), k.note(B3, e) + k.note(G3, e), # 1.75
+            k.note(C4, e) + k.note(A3, e), k.note(D4, e) + (k.note(B3, e) + k.note(F4, e)), # 2.75
+            k.note(D4, e) + (k.note(B3, e) + k.note(F4, e)), k.note(C4, s) + (k.note(A3, s) + k.note(E4, s)), k.note(B3, e) + (k.note(G3, e) + k.note(D4, e)), # 3.75
         ]
 
         m8 = [
-            k.note(C4, e), k.note(B3, e),
-            k.note(C4, s), k.note(B3, e),
-            k.note(A3, q), rest(self.s),
-            k.note(G3, q), 
+            k.note(C4, e) + k.note(A3, e), k.note(B3, e) + k.note(G3, e),
+            k.note(C4, s) + k.note(A3, s), k.note(B3, e) + k.note(G3, e),
+            k.note(A3, q) + k.note(F3, q), rest(self.s),
+            k.note(G3, q) + k.note(E3, q), 
         ]
+
+        #   Additional solo here    #
         v4 = m5 + m6 + m7 + m8
         
         v0 = [
@@ -294,7 +308,7 @@ class Title(Beat):
             m8 +\
             \
             m5 +\
-            m6 +\
+            m6b +\
             m7 +\
             m8
                 
@@ -302,7 +316,6 @@ class Title(Beat):
 
     def bass(self, part="", instr = Tangible_Light.Title_Bass(amp=3.0, freq_mod = 4)):
         n = instr
-        
 
         ma = [
             n.note(F3, self.q),
@@ -316,16 +329,18 @@ class Title(Beat):
             n.note(F3, self.e), n.note(D3, self.e),
             n.note(F3, self.s), n.note(D3, self.s), n.note(D3, self.s), 
             n.note(E3, self.e), n.note(F3, self.e),
-            n.note(D3, self.s),
-            n.note(F3, self.e), n.note(E3, self.e),
+            #slur_notes(n.note(D3, self.e + self.s), n.note(F3, self.e + self.s), self.s, self.e + self.s, 2000),
+            n.note(D3, self.e), n.note(F3, self.s),
+            n.note(E3, self.e),
         ]
 
         m2 = [
             n.note(F3, self.e), n.note(D3, self.e),
             n.note(F3, self.s), n.note(D3, self.s), n.note(D3, self.s), 
             n.note(C3, self.e), n.note(F3, self.e),
-            n.note(D3, self.s),
-            n.note(C3, self.e), n.note(F3, self.e),
+            #slur_notes(n.note(D3, self.e + self.s), n.note(C3, self.e + self.s), self.s, self.e+self.s, 2000),
+            n.note(D3, self.s), n.note(C3, self.e),
+            n.note(F3, self.e),
         ]
 
         m3 = [
@@ -333,12 +348,14 @@ class Title(Beat):
 
             n.note(F3, self.s), n.note(D3, self.s/2), n.note(D3, self.s/2), n.note(D3, self.s), 
             n.note(E3, self.e), n.note(F3, self.e),
-            n.note(D3, self.s),
-            n.note(F3, self.e), n.note(E3, self.e),
+            #slur_notes(n.note(D3, self.s + self.e), n.note(F3, self.e + self.s), self.s, self.e + self.s),
+            n.note(D3, self.s), n.note(F3, self.e),
+            n.note(E3, self.e),
         ]
 
         m4 = [
-            n.note(F3, self.e), n.note(D3, self.e), # 1
+            #slur_notes(n.note(F3, self.q), n.note(D3, self.q), self.e, self.q), # 1
+            n.note(F3, self.e), n.note(D3, self.e),
             n.note(F3, self.s), n.note(D3, self.s), n.note(D3, self.s), # 1.75
             n.note(C3, self.e), # 2.25
             
@@ -361,14 +378,56 @@ class Title(Beat):
             n.note(F3, self.s), n.note(E3, self.s), n.note(F3, self.s),# 4
         ]
 
-        v0 = ma
-        v1 = m1 + m2 + m3 + m4
-        v2 = m1 + m2 + m3 + m5
 
-        return v0 + v1 +\
-               v2 + v2 +\
-               v1 + v2 +\
-               v2
+        m6 = [
+            n.note(F3, self.e), n.note(D3, self.e),
+            n.note(F3, self.s), n.note(D3, self.s), n.note(D3, self.s), 
+            n.note(E3, self.e), rest(self.e), rest(self.s),
+            rest(self.q)
+        ]
+
+        m7 = [
+            n.note(D3, self.e), n.note(F3, self.e),
+            n.note(D3, self.s), n.note(D3, self.s), n.note(F3, self.s),
+            n.note(E3, self.e), rest(self.e + self.s),
+            rest(self.q)
+        ]
+
+        m8 = [
+            n.note(D3, self.e), n.note(F3, self.e),
+            n.note(D3, self.s), n.note(D3, self.s), n.note(F3, self.s),
+            n.note(E3, self.e), rest(self.e + self.s),
+            n.note(D3, self.q)
+        ]
+
+
+        return \
+            ma +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m5 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m5 +\
+            \
+            m6 +\
+            m7 +\
+            m6 +\
+            m7 +\
+            \
+            m6 +\
+            m7 +\
+            m6 +\
+            m8
 
     
     def strings(self, part=""):

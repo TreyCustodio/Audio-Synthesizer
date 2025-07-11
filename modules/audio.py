@@ -313,6 +313,101 @@ def slur(freq1, freq2, duration, wait):
 
         return add_waves(wave1, wave2)
 
+def slur_notes(note1, note2, wait: float, dur: float, crossfade_samples: int = 100) -> np.ndarray:
+    """Slurs 2 notes together.\n
+    note1 -> The first note\n
+    note2 -> The second note\n
+    wait -> The amount of time that passes before the note is slurred\n
+    dur -> the total duration of the slurred note
+    """
+    #   Call both notes to get their data array #
+    note1 = note1()
+    note2 = note2()
+
+    #   Initialize silent waves to keep track of the length of both parts of the final wave #
+    wave1 = sine_wave(0, wait) # Total region of Note 1
+    wave2 = sine_wave(0, dur - wait) # Total region of Note 2
+
+    region_1 = len(wave1) - crossfade_samples // 2
+    region_2 = crossfade_samples
+    region_3 = len(wave2) - crossfade_samples // 2
+
+    #   Initialize the final wave #
+    ##  Use python's list append function to save time
+    final = []
+
+
+    """
+    #   Build Note 1's Region #
+    index = 0
+    for i in range(region_1):
+        final.append(note1[i])
+        index += 1
+    
+    #   Build Crossfade Region  #
+    for i in range(region_2):
+        alpha = i / crossfade_samples
+        
+        fade_out = 1 - alpha
+        fade_in = alpha
+
+        ##  Calculate the time sample based on the alpha. #
+        ##  At alpha = 0, the sample will only be the sample data from note1 at the current index.   #
+        ##  At alpha = 1, the sample will only be the sample data from note2 at the current index.   #
+        
+        
+        sample = ((fade_out) * note1[index]) \
+                + (fade_in * note2[index])
+        final.append(sample)
+
+        index += 1
+
+    for i in range(region_3):
+        final.append(note2[i])
+        index += 1
+    """
+
+
+
+    
+    #   Append time samples from note1 until we reach crossfade time #
+    for i in range(len(wave1) - (crossfade_samples)):
+        final.append(note1[i])
+
+    #   Generate the crossfade region   #
+    ##  Smoothly transition from note1 to note2 #
+    for i in range(crossfade_samples):
+        ##  Mind the indices of both notes. #
+        ##  We start at the end of note1's portion, #
+        ##  and increment up to the end of the crossfade region.    #
+        ##  
+        ##  Linearly transition from note1's time samples  #
+        ##  to note2's time samples using an alpha value   #
+        alpha = i / crossfade_samples
+        
+        fade_out = 0.5 * (1 + np.cos(np.pi * alpha))
+        fade_in = 1 - fade_out
+
+        ##  Calculate the time sample based on the alpha. #
+        ##  At alpha = 0, the sample will only be the sample data from note1 at the current index.   #
+        ##  At alpha = 1, the sample will only be the sample data from note2 at the current index.   #
+        sample = ((fade_out) * note1[len(wave1) - crossfade_samples + i]) \
+                + (fade_in * note2[len(wave1) - crossfade_samples + i])
+        
+        ##  Append the sample to final  #
+        final.append(sample)
+    
+    #   Append the rest of note2's time samples  #
+    for i in range(crossfade_samples, len(wave2)):
+        final.append(note2[i])
+    
+
+
+    #   Convert final into an ndarray and return it   #
+    final = np.array(final)
+    return final
+
+
 def bitcrush(wave, bits=4):
     max_val = np.max(np.abs(wave))
     levels = 2 ** bits
