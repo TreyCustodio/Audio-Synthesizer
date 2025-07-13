@@ -48,7 +48,7 @@ def main():
 
 
     #   Run the Interface   #
-    interface.main()
+    # interface.main()
     
 
     #   Test the Sampler    #

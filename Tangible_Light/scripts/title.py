@@ -19,7 +19,7 @@ class Title(Beat):
             3: [Tangible_Light.Title_Bass, self.bass("v1", Tangible_Light.Title_Bass(amp=2.0, freq_mod = 2))],
             
             #   Percussion  #
-            4: [KickBass, self.kick("v1")],
+            #4: [KickBass, self.kick("v1")],
             5: [None, self.drums("v1")]
         }
 
@@ -47,9 +47,6 @@ class Title(Beat):
         ]
 
 
-        m3 = [
-            
-        ]
         return \
         [rest(self.whole)] +\
         \
@@ -65,6 +62,16 @@ class Title(Beat):
         \
         m1 +\
         m1 +\
+        m1 +\
+        m1 +\
+        \
+        m2 +\
+        m2 +\
+        m1 +\
+        m1 +\
+        \
+        m2 +\
+        m2 +\
         m1 +\
         m1 +\
         \
@@ -310,7 +317,18 @@ class Title(Beat):
             m5 +\
             m6b +\
             m7 +\
-            m8
+            m8 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 
+            
                 
 
 
@@ -427,7 +445,17 @@ class Title(Beat):
             m6 +\
             m7 +\
             m6 +\
-            m8
+            m8 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m4 +\
+            \
+            m1 +\
+            m2 +\
+            m3 +\
+            m5
 
     
     def strings(self, part=""):
@@ -459,48 +487,6 @@ class Title(Beat):
 
 
 
-
-    def produce(self):      
-        #   Gather Each Section of the song    #
-        b1 = self.bass('v1')
-        
-        k1 = self.keys("v1")
-        k2 = self.keys("v2")
-
-        d1 = self.drums("v1")
-        d2 = self.drums("v5")
-        d3 = self.drums("v3")
-        d4 = self.drums("v4")
-
-        
-        #   Mix Some Sections together  #
-        k1 = combine(k1, b1)
-        k2 = combine(k1, b1)
-
-        #   Produce the song    #
-        v0 = b1
-
-        v1 = k1
-
-        v2 = combine(k2, d1)
-
-        v3 = combine(k1, d2)
-
-        v4 = combine(v3, d3)
-
-        v5 = combine(v3, d4)
-    
-        prod = build_measure(
-            v0, v1, 
-            v2, v3,
-            v4, v5
-        )
-
-
-
-        self.save(prod, "01_Title", norm = False)
-        return prod
-        
 
 def main():
    beat = Title(36)

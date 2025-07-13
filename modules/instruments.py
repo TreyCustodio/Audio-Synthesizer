@@ -241,7 +241,7 @@ class Tangible_Light:
             self.func = func
         
     class Title_Bass(Instrument):
-        def __init__(self, amp = 1.0, low = 350, dist = 0.0, freq_mod = 1):
+        def __init__(self, amp = 1.0, low = 350, dist = 0.0, freq_mod = 1, punchy=True):
             self.a = 0.1
             self.d = 0.6
             self.s = 0.0
@@ -249,33 +249,45 @@ class Tangible_Light:
 
 
             def func(freq, dur):
+                #   Decide whether to make these punchy or not by modifying atk #
+
                 freq /= freq_mod
 
-                base1 = sine_wave(freq, dur)
+                base1 = sine_wave(freq /2, dur)
 
-                base2 = sine_wave(freq /2, dur)
+                base2 = sine_wave(freq, dur)
 
-                base3 = sine_wave(freq /4, dur)
+                base3 = sine_wave(freq * 0.5, dur)
 
+                noise = np.random.normal(0, 0.1, base1.shape) #* np.exp(-t * 50)
 
+                #   (1) Punchy  #
+                if punchy:
+                    wave1 = envelope(base1,
+                    0.005, dur - 0.005, 0.0, 0.0)
 
+                    wave2 = envelope(base2,
+                    0.005, dur - 0.005 - 0.01, 0.5, 0.01)
 
-                wave1 = envelope(base1,
-                0.05, dur - 0.05, 0.0, 0.0)
+                    wave3 = envelope(base3,
+                    0.01, dur - 0.1, 0.3, 0.01)
 
-                wave2 = envelope(base2,
-                0.05, dur - 0.05, 0.0, 0.0) * 2.0
+                #   (2) Longer Atk and Release
+                else:
+                    wave1 = envelope(base1,
+                    0.01, dur - 0.05, 0.0, 0.0)
 
+                    wave2 = envelope(base2,
+                    0.05, dur - 0.05 - 0.1, 0.5, 0.1)
 
-                wave3 = envelope(base3,
-                0.0, 0.4 * dur, 0.3, 0.0)
-
+                    wave3 = envelope(base3,
+                    0.1, dur - 0.2, 0.3, 0.1)
 
 
                 final = mix(
                     wave1,
                     wave2,
-                    #wave3
+                    wave3
                     )
 
                 if dist > 0.0:
