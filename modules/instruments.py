@@ -8,8 +8,12 @@ from synthesizer import synthesize, log, exp, lin, bass_harms, inv
 
 class Note:
     """A class that represents a note and allows the user to easily access a note's pitch"""
-    def __init__(self, waveform, pitch):
-        self.wave = waveform
+    def __init__(self, waveform, pitch, stereo = False):
+        if stereo:
+            self.wave = np.column_stack((waveform, waveform))
+        else:
+            self.wave = waveform
+    
         self.pitch = pitch
 
     def __call__(self):
@@ -297,6 +301,9 @@ class Tangible_Light:
         
             self.func = func
 
+        def get_name(self):
+            return "TL Bass"
+        
     class Title_String(Instrument):
         def __init__(self, amp = 1.0, dist = 0.0, atk = 5, freq_mod = 1):
 
@@ -398,18 +405,23 @@ Samples
 """
 
 class Hey(Instrument):
-    def __init__(self):
+    def __init__(self, amp=1.0):
         self.a = 0.0
         self.d = 0.0
         self.s = 1.0
         self.r = 0.0
 
         def func(frequency, duration):
-            return Sampler.sample(os.path.join("samples", "Navi", "hey.wav"))
+            return Sampler.sample(os.path.join("samples", "Navi", "hey.wav"), duration) * amp
 
         self.func = func
 
+class Look(Instrument):
+    def __init__(self, amp=1.0):
+        def func(frequency, duration):
+            return Sampler.sample(os.path.join("samples", "Navi", "look.wav"), duration) * amp
 
+        self.func = func
 """
 Percussion and Bass
 """
@@ -641,7 +653,7 @@ class KickBass2(Instrument):
         self.func = func
 
 class Cymbal(Instrument):
-    def __init__(self):
+    def __init__(self, amp=1.0, atk1 = 5, atk2 = 15, dist=0.0):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
@@ -655,15 +667,20 @@ class Cymbal(Instrument):
             wave = np.zeros_like(t)
             for freq in freqs:
                 wave += np.sin(2 * np.pi * freq * t)
+            
+            #wave *= np.exp(-t * atk1)
+            wave = sine_wave(0, dur)
+            wave = white_noise(wave, 0.5)
+            wave = envelope(wave,
+                             0.001, dur - 0.01, 0.0, 0.0)
+            
 
-            wave = white_noise(wave, 1.0)
+            #wave *= np.exp(-t * atk2)
 
-            wave = wave * np.exp(-t * 5)
-            #wave = distort(wave, 0.5)
-            #wave = envelope(wave, 0.0, 0.1 * dur, 0.7, 0.3 * dur)
+            if dist != 0.0:
+                wave = distort(wave, dist)
 
-            wave = wave / np.max(np.abs(wave))
-            return wave * 2.0
+            return wave * amp
 
 
         self.func = func

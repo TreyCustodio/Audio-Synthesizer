@@ -74,6 +74,38 @@ class Composer:
                 (69, 17), 4, 3, 0
             )
 
+            ##  Blit the instrument name with an outline effect ##
+
+            count = 0
+            for frame in frames:
+                #   (1) Get the Text Image  #
+                font = pygame.font.Font(None, 36)
+
+                if count == 0:
+                    text = font.render(instruments[i][0].get_name(), True, (255,255,255))
+                elif count == 1:
+                    text = font.render(instruments[i][0].get_name(), True, (251,242,54))
+                elif count == 2:
+                    text = font.render(instruments[i][0].get_name(), True, (245,21,34))
+                count += 1
+                
+                outline = font.render(instruments[i][0].get_name(), True, (0,0,0))
+
+                img = Surface((text.get_width() + 2, text.get_height() + 2), pygame.SRCALPHA)
+
+                ### Outline double for loop ###
+                for dx in [-2, -1, 0, 1, 2]:
+                    for dy in [-2, -1, 0, 1, 2]:
+                        if dx != 0 or dy != 0:
+                            img.blit(outline, (dx+1, dy+1))
+                img.blit(text, (1,1))
+
+                #   (2) Blit the text images to the background  #
+                x,y = img.get_size()
+                frame_x,frame_y = frame.get_size()
+                frame.blit(img, vec(frame_x // 2 - x // 2, frame_y // 2 - y // 2))
+
+
             button = (Pressable((8, 96 * (i + 1)), frames))
 
             Composer.INSTRUMENTS.append(button)

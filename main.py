@@ -42,13 +42,13 @@ def main():
     #second.main()
     #trap.main()
     #how.main()
-    title.main()
+    #title.main()
     #new.main()
     #training.main()
 
 
     #   Run the Interface   #
-    # interface.main()
+    interface.main()
     
 
     #   Test the Sampler    #

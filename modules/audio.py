@@ -614,7 +614,7 @@ def slurrysynth_down(frequency, duration):
     return sound
     
 
-def write(effect, folder: str = "", name: str = "", stereo=True, norm=True, volume_factor=10_000):
+def write(effect, folder: str = "", name: str = "", stereo=True, norm=True, volume_factor=10_000, sample_rate=SAMPLE_RATE):
     """Save a sound as a .wav file.
     Final step in the audio generation process.
     (1) Generate and manipulate sine waves in float64 format
@@ -642,7 +642,7 @@ def write(effect, folder: str = "", name: str = "", stereo=True, norm=True, volu
     with wave.open(file, 'w') as wf:
         ## Set the channels and framerate
         wf.setnchannels(2)
-        wf.setframerate(SAMPLE_RATE)
+        wf.setframerate(sample_rate)
 
         ##  Convert to PCM format and find sample width
         effect *= volume_factor

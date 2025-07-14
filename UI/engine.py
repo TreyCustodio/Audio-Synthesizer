@@ -38,10 +38,11 @@ class Engine:
         self.bpm = 85
 
         #   Instrument   #
-        #self.instrument = Snare(attack=25, amp=0.6, low=0, high=0, dist=28.0, noise_amount=3.8)
-        self.instrument = HipSkirt(attack=85, amp=0.2, low=0, high=0, dist=8.0, noise_amount=0.6)
-        self.instrument = KickBass(amp=2.5, attack=85, bass_dist = 0.0, bass_amp = 0.0)
-        
+        #self.instrument = HipSkirt(attack=85, amp=0.2, low=0, high=0, dist=8.0, noise_amount=0.6)
+        #self.instrument = KickBass(amp=2.5, attack=85, bass_dist = 0.0, bass_amp = 0.0)
+        #self.instrument = Tangible_Light.Title_Bass(amp=0.6, freq_mod = 2)
+        self.instrument = Cymbal(atk1 = 15, atk2 = 3)
+
         #   Octave   #
         self.octave = 1
 

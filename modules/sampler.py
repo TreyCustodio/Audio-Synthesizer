@@ -1,14 +1,27 @@
 from .audio import *
 import pygame
+import wave
+import scipy.io.wavfile as wav
 
 SAMPLE_FOLDER = "samples"
 
 class Sampler:
-    def sample(sound):
+    def sample(sound, dur = 1.0, sample_rate=44100):
         """Convert a sound file to a numpy array using pygame's mixer.
         Returns a stereo audio file.
         """
+        samples, data = wav.read(sound)  
+        samples = int(sample_rate * dur)
+        data = np.array(data)
 
+        stretched = np.interp(
+            np.linspace(0, len(data), num=samples, endpoint=False),
+            np.arange(len(data)),
+            data
+        )
+
+        return stretched
+    
         #   Initialize pygame mixer
         pygame.mixer.init()
 
@@ -21,10 +34,7 @@ class Sampler:
         #   Convert to mono -- Not used
         sound = pygame.sndarray.make_sound(sound_data)
 
-        mono = [arr[0] for arr in sound_data]
-        mono = np.column_stack((mono, mono))
-
-        return sound_data
+        return np.array(sound_data)
 
     def sample_env(sampled_sound, attack=0.0, decay=0.0, sustain=1.0, release=0.0):
         """Convert a sound file to a numpy array and apply an envelope"""
@@ -64,31 +74,35 @@ class Sampler:
 
 def main():
     """Main function to test sample()"""
+    pygame.mixer.init()
 
     #   Load the sound file
     sound = os.path.join(SAMPLE_FOLDER, "Navi", "hey.wav")
 
     #   Convert the sound to a numpy array
     sampled_sound = Sampler.sample(sound)
+    write(sampled_sound[0], "", "Hey!", volume_factor = 1, sample_rate=8000)
+
+
 
 
     #   Manipulate the numpy array
 
     ##  Apply an envelope to the sounds
-    sampled_sound = Sampler.sample_env(sampled_sound)
+    #sampled_sound = Sampler.sample_env(sampled_sound)
     
     ##  Adjust the pitch and speed of the sound
-    sampled_sound = Sampler.shift_pitch_and_speed(sampled_sound, -6)  # Shift pitch up by 2 semitones
+    #sampled_sound = Sampler.shift_pitch_and_speed(sampled_sound, -6)  # Shift pitch up by 2 semitones
 
     ##  Adjust the length of the sound based on a bpm
 
 
     #   Convert the numpy array back to a pygame sound object
-    sampled_sound = pygame.sndarray.make_sound(sampled_sound.astype(np.int16))
+    # sampled_sound = pygame.sndarray.make_sound(sampled_sound)
 
-    #   Play the sound
-    sampled_sound.play()
+    # #   Play the sound
+    # sampled_sound.play()
 
-    #   Wait until the sound finishes playing
-    while pygame.mixer.get_busy():
-        pass
+    # #   Wait until the sound finishes playing
+    # while pygame.mixer.get_busy():
+    #     pass

@@ -101,6 +101,14 @@ class Beat:
         
         self.production = prod
 
+    def add_lib(self, wave):
+        print("prod", self.production)
+        print("adlib", wave)
+
+        self.production = mix(
+            self.production, wave
+        )
+        
     def save(self):
         write(self.fileName)
 

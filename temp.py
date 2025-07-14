@@ -1,27 +1,36 @@
-#   playr Button:
-        ##  Sprite Size: (46, 12)
-        ##  Sheet Size: (96, 12)
-        scale = 4
-        size = (46, 12)
-        play_full = pygame.image.load(os.path.join("UI", "images", "main", "play.png"))
-        
-        #   Frame 1 of play  #
-        play_1 = pygame.Surface((46, 12))
-        for y in range(12):
-            for x in range(46):
-                play_1.blit(
-                    play_full, (x, y), pygame.Rect((x,y), (1,1))
-                    )
-        
-        self.play_1 = pygame.transform.scale(play_1, (size[0] * scale, size[1] * scale))
+m9 = [
+            n.note(F3, e) + n.note(D3, self.e), n.note(G3, e) + n.note(E3, self.e), # 1
+            n.note(B3, s) + n.note(G3, s), n.note(A3, e) + n.note(F3, e), # 1.75
 
+            n.note(F3, e) + n.note(D3, self.e), n.note(G3, e) + n.note(E3, self.e), # 2.75
+            n.note(F3, s) + n.note(D3, self.s), n.note(B3, e) + n.note(G3, e), # 2.75
+            n.note(A3, e) + n.note(F3, e),
+        ]
 
-        #   Frame 2 of play (Mouse Hovering Over)    #
-        play_2 = pygame.Surface((46, 12))
-        for y in range(12):
-            for x in range(46, 96):
-                play_2.blit(
-                    play_full, (x - 46, y), pygame.Rect((x,y), (1,1))
-                    )
-        
-        self.play_2 = pygame.transform.scale(play_2, (size[0] * scale, size[1] * scale))
+        m10 = [
+            n.note(F3, e) + n.note(D3, self.e), n.note(G3, e) + n.note(E3, self.e), # 1
+            n.note(B3, s) + n.note(G3, s), n.note(A3, e) + n.note(F3, e), # 1.75
+
+            n.note(B3, e) + n.note(G3, self.e), n.note(A3, s) + n.note(F3, s), n.note(G3, s) + n.note(E3, s), # 2.75
+            
+            n.note(F3, s) + n.note(D3, self.s), n.note(G3, s) + n.note(E3, s), n.note(A3, s) + n.note(F3, s),
+            n.note(D3, s) + n.note(B2, self.s), n.note(E3, s) + n.note(C3, self.s),
+            
+        ]
+
+        m11 = [
+            n.note(F3 , e) + n.note(D3, self.e), n.note(G3, e) + n.note(E3, self.e), # 1
+            n.note(G3, e) + n.note(E3, self.e), # 1.5
+            n.note(E3, s) + n.note(C3, self.s), n.note(F3, e) + n.note(D3, self.e), # 2.25
+            n.note(G3, e) + n.note(E3, self.e), n.note(G3, e) + n.note(E3, self.e), # 3.25
+            rest(self.s * 3)
+        ]
+
+        m12 = [
+            n.note(F3 , e) + n.note(D3, self.e), n.note(G3, e) + n.note(E3, self.e), # 1
+            n.note(G3, e) + n.note(E3, self.e), # 1.5
+            n.note(E3, s) + n.note(C3, self.s), n.note(F3, e) + n.note(D3, self.e), # 2.25
+            n.note(G3, e) + n.note(E3, self.e), n.note(G3, e) + n.note(E3, self.e), # 3.25
+            rest(self.s), 
+            n.note(D3, s) + n.note(B2, s), n.note(E3, s) + n.note(C3, s),
+        ]
