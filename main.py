@@ -1,7 +1,7 @@
 from modules import audio, instruments, sampler
 #from beats import digital_storytelling, dress, firstup
-from beatsnew import firstup, second, trap, how, new, training
-from Tangible_Light.scripts import title
+# from beatsnew import firstup, second, trap, how, new, training
+from Tangible_Light.scripts import title, journal, firstup
 
 from UI import interface
 from os import path
@@ -18,37 +18,52 @@ def text_sounds():
     #   (1) Generate the sounds
     close = audio.text_close()
     interact = audio.text_next()
-    text = audio.text()
+    # text = audio.text()
     done = audio.text_done()
-    sad = audio.text_sad()
-    angry = audio.text_angry()
+    # sad = audio.text_sad()
+    # angry = audio.text_angry()
 
 
     #   (2) Save the sounds
     audio.write(close, "game" ,"text_close1")
     audio.write(interact, "game", "text_next1" )
-    audio.write(text, "game", "text_2" )
+    # audio.write(text, "game", "text_2" )
     audio.write(done, "game", "text_done1" )
-    audio.write(sad, "game", "text_sad1" )
-    audio.write(angry, "game", "text_angry1" )
+    # audio.write(sad, "game", "text_sad1" )
+    # audio.write(angry, "game", "text_angry1" )
 
 
 
 def main():
     """Main Function: Create any sounds you want"""
+    
+    #   Run the Interface
+    # interface.main()
+    # text_sounds()
 
-    #   Produce a beat  #
+    #   Ask the User if they want to run the interface  #
+    # print("Run interface? y/n: ", end="")
+    # prompt = input()
+    # if prompt == "y" or prompt == "Y":
+    #     ##   Run the Interface   #
+    #     interface.main()
+    # elif prompt == "n" or prompt == "N":
+    #     pass
+    # else:
+    #     print("\nInput Error: Please type 'Y', 'y', 'N', or 'n'")
+
+        
     #firstup.main()
     #second.main()
     #trap.main()
     #how.main()
-    #title.main()
+    # title.main()
+    # journal.main()
     #new.main()
-    #training.main()
+    # training.main()
+    firstup.main()
 
-
-    #   Run the Interface   #
-    interface.main()
+    
     
 
     #   Test the Sampler    #

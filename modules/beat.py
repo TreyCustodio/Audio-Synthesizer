@@ -93,6 +93,12 @@ class Beat:
 
                 #final = add_waves(final, notes[i]())
 
+            if len(self.instruments[key]) > 2:
+                flag = self.instruments[key][2]
+                if flag == "fade_in":
+                    print("A")
+                    final = fade_in(final, self.instruments[key][3])
+            
             #   Mix the waveform with the prod  #
             prod = mix(
                 prod,

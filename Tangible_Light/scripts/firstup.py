@@ -6,278 +6,343 @@ import pygame.mixer
 
 class First(Beat):
     def __init__(self, bpm):
+        """Hardcoded beat; not optimized for use in the editor"""
         super().__init__(bpm)
+        
+        #   Bass    #
+        self.bass1 = Bass(amp=0.3)
+        self.bass2 = Bass()
 
-    
-    def save(self, sound, name = ""):
-        """Save the sound to the desired folder"""
+        #   Synths  #
+        self.synth1 = First4()
+        self.synth2 = Church(amp = 0.5)
 
-        write(sound, os.path.join("beatsnew", "firstup"), name)
+        #   Drums   #
+        self.drum1 = Skirt()
+        self.drum2 = Hi_Hat(amp=2.0)
+        self.drum3 = Snare()
+        self.drum4 = Bass()
+
+        #   Instrument Dictionary   #
+        self.instruments = {
+            0: [self.bass1, self.bass()],
+            1: [self.bass2, self.high_bass()],
+            2: [self.bass2, self.high_bass2()],
+            3: [None, self.islands()],
+            4: [None, self.drums()],
+            5: [self.synth1, self.synth_1()],
+            6: [self.synth2, self.synth_2()]
+
+
+
+        }
     
     
     def bass(self):
-        b = Bass()
+        b = self.bass1
+
+        m1 = [
+            b.note(C1, self.q),
+            rest(self.e), b.note(C1, self.s),
+            b.note(C1, self.e), b.note(C1, self.s),
+            rest(self.e), b.note(C1, self.e), rest(self.e)
+        ]
+
+        m2 = [
+            b.note(C1, self.e), rest(self.h + self.s),
+            b.note(C1, self.s), b.note(C1, self.e), b.note(C1, self.s), rest(self.s)
+        ]
         
-        #m1 = fade_out(build_measure(b.q_c, b.q_c, b.q_c, b.q_c), 4)
-        m1 = build_measure(b.note(C1, self.quarter),
-                           rest(self.eighth), b.note(C1, self.s),
-                           b.note(C1, self.e), b.note(C1, self.s),
-                           rest(self.eighth), b.note(C1, self.e), rest(self.eighth))
+        v1 = m1 + m1 + m1 + m1
 
-        m2 = build_measure(b.note(C1, self.e), rest(self.half + self.sixteenth), # 2.5
-                           b.note(C1, self.s), b.note(C1, self.e), b.note(C1, self.s), rest(self.sixteenth)
-                           )
+        return \
+        v1 +\
+        m2
 
-        v1 = build_measure(m1, m1, m1, m1) * 1.4
-        v2 = build_measure(m2) * 1.4
+    def high_bass(self):
+        f = self.bass1
 
-        
-        return v1, v2
+        m1 = [
+            delaycombo(f.note(D2, self.e), f.note(F2, self.e), 0.05), rest(self.e - 0.05),
+            rest(self.trey - self.e),
+            f.note(D2, self.e) + f.note(F2, self.e),
+        ]
 
+        m2 = [
+            f.note(D2, self.e) + f.note(F2, self.e), 
+            rest(self.trey),
+            f.note(D2, self.e) + f.note(F2, self.e)
+        ]
 
-    def funk(self):
-        f = First4()
-        c = Church()
+        m3 = [
+            delaycombo(f.note(C2, self.e), f.note(E2, self.e), 0.05), rest(self.e - 0.05), # 1
+            rest(self.trey), # 3
+        ]
 
+        m4 = [
+            f.note(C2, self.e) + f.note(E2, self.e), f.note(C2, self.e) + f.note(E2, self.e), 
+            rest(self.trey - self.e),
+            f.note(C2, self.e) + f.note(E2, self.e)
+        ]
 
-        #   V1 -- Unused    #
+        m5 = [
+            delaycombo(f.note(C2, self.e), f.note(E2, self.e), 0.05), rest(self.e - 0.05), # 1
+            rest(self.trey - self.e), # 3
+            f.note(C2, self.e) + f.note(E2, self.e),
+        ]
+
+        m6 = [
+            f.note(C2, self.e) + f.note(E2, self.e), 
+            rest(self.trey),
+            f.note(C2, self.e) + f.note(E2, self.e)
+        ]
+
+        v1 = m1 + m2 + m3 + m4
+        v2 = m1 + m2 + m5 + m6
+
+        return \
+        [rest(self.whole * 4)] +\
+        [rest(self.whole)] +\
+        \
+        v1 +\
+        v1 +\
+        \
+        v1 +\
+        v1
+
+    def high_bass2(self):
+        f = self.bass1
+
+        m7 = [
+            rest(self.q), 
+            f.note(D2, self.e), 
+            f.note(C2, self.s), f.note(D2, self.e),
+            rest(self.s + self.e + self.q)
+        ]
+
+        m8 = [
+            rest(self.q),
+            f.note(E2, self.e), 
+            f.note(D2, self.s), f.note(E2, self.e),
+            rest(self.s + self.q + self.e)
+        ]
+
+        m9 = [
+            rest(self.q),
+            f.note(E2, self.e), 
+            f.note(D2, self.s), f.note(E2, self.e),
+            
+            rest(self.s), # 2.5
+            f.note(D2, self.s), f.note(D2, self.s), # 3
+            f.note(D2, self.s), f.note(D2, self.s), #3.5
+            f.note(D2, self.s), f.note(D2, self.s), # 4
+        ]
+
+        v1 = m7 + m7 + m8 + m8
+        v2 = m7 + m7 + m8 + m9
+
+        return \
+        [rest(self.whole *4)] +\
+        [rest(self.whole)] +\
+        \
+        v1 +\
+        v2 +\
+        \
+        v1 +\
+        v2
+
+    def intro_drums(self):
+        d = self.drum1
+
+        intro = rest(self.whole * 5)
         m1 = build_measure(
-        f.note(C4, self.e), # .5
-        f.note(B3, self.s), # .75
-        f.note(A3, self.s), # 1
-        f.note(C4, self.q), # 2
-        rest(self.s), # 2.25
-        f.note(A3, self.s), # 2.5
-        f.note(B3, self.e), # 3
-        f.note(C4, self.q), # 4
+            d.note(C3, self.e)(), d.note(C3, self.e)(),
+            d.note(C5, self.e)(), d.note(C3, self.s)(), d.note(C5, self.s)(),
+            d.note(C3, self.s)(), d.note(C5, self.s)(), d.note(C5, self.e)(),
+            d.note(B4, self.e),
+            rest(self.e)
         )
 
-        m2 = build_measure( # Tone shift -2 full tones
-        f.note(A3, self.e), # .5
-        f.note(G3, self.s), # .75
-        f.note(F3, self.s), # 1
-        f.note(A3, self.q), # 2
-        rest(self.s), # 2.25
-        f.note(F3, self.s), # 2.5
-        f.note(G3, self.e), # 3
-        f.note(A3, self.q), # 4
+        v1 = build_measure(
+            m1, m1, m1, m1
         )
 
+        v1 = fade_in(v1, 1.0)
 
-        amp = 0.5
-        v1 = build_measure(m1, m1, m2, m2) * amp
-        
+        final = add_waves(intro, v1)
 
-        #   V2 -- Alternate version of V1   ##
-        v2 = build_measure(m2, m2, m2, m2) * amp
-        
-
-
-        #   V3  -- Hook #
-        m3 = build_measure(f.note(F3, self.e), f.note(A3, self.s),
-        f.note(B3, self.e), f.note(C4, self.e),
-        f.note(D4, self.e), f.note(C4, self.s),
-        f.note(B3, self.e), f.note(A3, self.q)
-        )
-
-        m3b = build_measure(f.note(F3, self.e), f.note(A3, self.s),
-        f.note(B3, self.e), f.note(C4, self.e),
-        f.note(D4, self.e), f.note(C4, self.s),
-        f.note(B3, self.e), f.note(A3, self.e), f.note(G3, self.e)
-        )
-
-        #   Pause at the start
-        m3c = build_measure(rest(self.e), f.note(A3, self.s),
-        f.note(B3, self.e), f.note(C4, self.e),
-        f.note(D4, self.e), f.note(C4, self.s),
-        f.note(B3, self.e), f.note(A3, self.e), f.note(G3, self.e)
-        )
-
-        m4 = build_measure(f.note(E3, self.e), f.note(G3, self.s),
-        f.note(A3, self.e), f.note(B3, self.e),
-        f.note(C4, self.e), f.note(B3, self.s),
-        f.note(A3, self.e), f.note(G3, self.q)
-        )
-
-        m4b = build_measure(f.note(E3, self.e), f.note(G3, self.s),
-        f.note(A3, self.e), f.note(B3, self.e),
-        f.note(C4, self.e), f.note(B3, self.s),
-        f.note(A3, self.e), f.note(G3, self.e), f.note(F3, self.e)
-        )
-
-        #   Pause at the start
-        m4c = build_measure(rest(self.e), f.note(G3, self.s),
-        f.note(A3, self.e), f.note(B3, self.e),
-        f.note(C4, self.e), f.note(B3, self.s),
-        f.note(A3, self.e), f.note(G3, self.e), f.note(F3, self.e)
-        )
-
-        ##  Add Churches    ##
-        c3 = build_measure(c.note(F3, self.e), c.note(A3, self.s),
-        c.note(B3, self.e), c.note(C4, self.e),
-        c.note(D4, self.e), c.note(C4, self.s),
-        c.note(B3, self.e), c.note(A3, self.q)
-        )
-
-        c3b = build_measure(
-        rest(self.whole)
-        # c.note(F3, self.e), c.note(A3, self.s),
-        # c.note(B3, self.e), c.note(C4, self.e),
-        # c.note(D4, self.e), c.note(C4, self.s),
-        # c.note(B3, self.e), c.note(A3, self.e), c.note(G3, self.e)
-        )
-
-        c4 = build_measure(c.note(E3, self.e), c.note(G3, self.s),
-        c.note(A3, self.e), c.note(B3, self.e),
-        c.note(C4, self.e), c.note(B3, self.s),
-        c.note(A3, self.e), c.note(G3, self.q)
-        )
-
-        c4b = build_measure(c.note(E2, self.e), c.note(G2, self.s),
-        c.note(A2, self.e), c.note(B2, self.e),
-        c.note(C3, self.e), c.note(B2, self.s),
-        c.note(A2, self.e), c.note(G2, self.e), c.note(F2, self.e)
-        )
-
-
-        v3 = build_measure(m3, m3c, m4, m4c)
-        v3c = build_measure(c3, c3b, c4, c4b) * 0.3
-        v3 = combine(v3, v3c)
-
-
-
-
-
-
-        #   V4  -- Unused; Possibly Verse 2 #
-        m5 = build_measure(f.note(D3, self.e), rest(self.e),
-                           f.note(F3, self.e), rest(self.e),
-                           f.note(D3, self.e), f.note(F3, self.e),
-                           rest(self.quarter),)
-        
-        m6 = build_measure(f.note(D3, self.e), rest(self.e),
-                           f.note(F3, self.e), rest(self.e),
-                           f.note(F3, self.e), rest(self.e),
-                           f.note(E3, self.e), rest(self.e))
-                           
-        
-        m7 = build_measure(f.note(C3, self.e), rest(self.e),
-                           f.note(E3, self.e), rest(self.e),
-                           f.note(C3, self.e), f.note(E3, self.e),
-                           rest(self.quarter),)
-        
-        m8 = build_measure(f.note(C3, self.e), rest(self.e),
-                           f.note(E3, self.e), rest(self.e),
-                           f.note(E3, self.e), rest(self.e),
-                           f.note(D3, self.e), rest(self.e))
-
-        v4 = build_measure(m5, m6, m7, m8)
-
-        return v1, v2, v3 * 0.75, v4
+        return final
     
+    def islands(self):
+        d = self.drum1
 
-    def drums(self, variation = ""):
-        d = Skirt()
-        c = Cymbal()
-        s = Snare()
-        b = Bass()
-
-        m1 = build_measure(
-            d.note(C3, self.e),
-            d.note(C3, self.s), d.note(C3, self.s), # 1
-
-            d.note(C3, self.e), d.note(C3, self.s), # 1.75
-            d.note(C3, self.e), # 2.25
-            d.note(C3, self.s), # 2.5
-
-            d.note(C3, self.e), d.note(C3, self.e), #3.5
-            d.note(C3, self.s), d.note(C3, self.s) # 4
-
-        )
-
-        m1c = build_measure(
-            c.note(C2, self.e),
-            c.note(C2, self.s), c.note(C2, self.s), # 1
-
-            c.note(C2, self.e), c.note(C2, self.s), # 1.75
-            c.note(C2, self.e), # 2.25
-            c.note(C2, self.s), # 2.5
-
-            c.note(C2, self.e), c.note(C2, self.e), #3.5
-            c.note(C2, self.s), c.note(C2, self.s) # 4
-
-        )
-        #m1 = m1 + m1c
-
-
-        v1 = build_measure(m1, m1, m1, m1) * 3.0
-
-
-        #   Island Drum Beat  #
-        m2 = build_measure(
+        intro = [rest(self.whole * 5)]
+        m1 = [
             d.note(C3, self.e), d.note(C3, self.e),
             d.note(C5, self.e), d.note(C3, self.s), d.note(C5, self.s),
             d.note(C3, self.s), d.note(C5, self.s), d.note(C5, self.e),
             d.note(B4, self.e),
             rest(self.e)
-        )
+        ]
 
-        m2b = build_measure(
-            b.note(C1, self.e), b.note(C1, self.e),
-            b.note(C1, self.e), b.note(C1, self.s),
-            b.note(C1, self.e), b.note(C1, self.s),
-            b.note(C1, self.e),
-            b.note(C1, self.e),
-            rest(self.e)
-        )
-
-        # m2 = combine(m2, m2b)
-
-        v2 = build_measure(m2, m2, m2, m2) * 3.0
-
-
-        #   Snares, Cymbals, and Bass #
-        m3 = build_measure(
-            s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C3, self.e) + s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e),
-            c.note(C3, self.e) + s.note(C3, self.e),
-            rest(self.e),
-        )
-
-        m4 = build_measure(
-            s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C3, self.e) + s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e),
-            c.note(C3, self.e) + s.note(C3, self.e),
-            c.note(C2, self.e) + s.note(C2, self.e),
-        )
-
-        v3 = build_measure(m3, m4, m3, m4) * 3.0
+        v1 = m1 + m1 + m1 + m1
         
+        off_verse = [rest(self.whole*4)]
 
-        #   c, s, d, b
-        intro_tings = build_measure(
-            d.note(B4, self.e),
-            )
+        return \
+        intro +\
+        \
+        v1 +\
+        v1 +\
+        \
+        v1 +\
+        v1 +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1
+    
+
+    def drums(self):
+        d = self.drum1
+        c = self.drum2
+        s = self.drum3
+        b = self.drum4
+
+        intro = [rest(self.whole*5)]
+        off_bar = [rest(self.whole)]
+        off_verse = [rest(self.whole*4)]
+
+        m1 = [
+            s.note(C2, self.e), s.note(C2, self.e),
+            c.note(C2, self.e) + s.note(C3, self.e), s.note(C2, self.s),
+            s.note(C3, self.e), s.note(C2, self.s),
+            s.note(C3, self.e),
+            c.note(C2, self.e) + s.note(C3, self.e),
+            rest(self.e),
+        ]
+
+        m2 = [
+            s.note(C2, self.e), s.note(C2, self.e),
+            c.note(C2, self.e) + s.note(C3, self.e), s.note(C2, self.s),
+            s.note(C3, self.e), s.note(C2, self.s),
+            s.note(C3, self.e),
+            c.note(C2, self.e) + s.note(C3, self.e),
+            c.note(C2, self.e) + s.note(C2, self.e),
+        ]
+
+        v1 = m1 + m2 + m1 + m2
+        hook = v1
+
+        return \
+        intro +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1 +\
+        \
+        v1 +\
+        v1 +\
+        \
+        v1 +\
+        v1
 
 
-        if variation == "refrain1":
-            #   Kick drum with noise    #
-            return build_measure(
-                rest(self.e + self.s), 
-                s.note(C3, self.s), c.note(D3, self.e), s.note(C3, self.s),
-                rest(self.half - self.s) * 3.0
-            )
+    def synth_1(self):
+        f = self.synth1
 
+        m1 = [
+            f.note(F3, self.e), f.note(A3, self.s),
+            f.note(B3, self.e), f.note(C4, self.e),
+            f.note(D4, self.e), f.note(C4, self.s),
+            f.note(B3, self.e), f.note(A3, self.q)
+        ]
 
-        elif variation == "intro":
-            return build_measure(m1, m1, m1, m1)
+        m2 = [
+            rest(self.e), f.note(A3, self.s),
+            f.note(B3, self.e), f.note(C4, self.e),
+            f.note(D4, self.e), f.note(C4, self.s),
+            f.note(B3, self.e), f.note(A3, self.e), f.note(G3, self.e)
+        ]
 
-        #   Island Beat with Snares, Cymbals, and Bass
-        return v1, v2, v3
+        m3 = [
+            f.note(E3, self.e), f.note(G3, self.s),
+            f.note(A3, self.e), f.note(B3, self.e),
+            f.note(C4, self.e), f.note(B3, self.s),
+            f.note(A3, self.e), f.note(G3, self.q)
+        ]
+
+        m4 = [
+            rest(self.e), f.note(G3, self.s),
+            f.note(A3, self.e), f.note(B3, self.e),
+            f.note(C4, self.e), f.note(B3, self.s),
+            f.note(A3, self.e), f.note(G3, self.e), f.note(F3, self.e)
+        ]
+
+        v1 = m1 + m2 + m3 + m4
+        intro = [rest(self.whole * 5)]
+        off_verse = [rest(self.whole * 4)]
+        
+        return \
+        intro +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1
+
+    def synth_2(self):
+        f = self.synth2
+
+        m1 = [
+            f.note(F3, self.e), f.note(A3, self.s),
+            f.note(B3, self.e), f.note(C4, self.e),
+            f.note(D4, self.e), f.note(C4, self.s),
+            f.note(B3, self.e), f.note(A3, self.q)
+        ]
+
+        m2 = [
+            rest(self.whole)
+        ]
+
+        m3 = [
+            f.note(E3, self.e), f.note(G3, self.s),
+            f.note(A3, self.e), f.note(B3, self.e),
+            f.note(C4, self.e), f.note(B3, self.s),
+            f.note(A3, self.e), f.note(G3, self.q)
+        ]
+
+        m4 = [
+            rest(self.e), f.note(G3, self.s),
+            f.note(A3, self.e), f.note(B3, self.e),
+            f.note(C4, self.e), f.note(B3, self.s),
+            f.note(A3, self.e), f.note(G3, self.e), f.note(F3, self.e)
+        ]
+
+        v1 = m1 + m2 + m3 + m4
+        intro = [rest(self.whole * 5)]
+        off_verse = [rest(self.whole * 4)]
+        
+        return \
+        intro +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1
+
 
     def plucks(self, variation = ""):
         # l, l, s, s, s, l x2 then go down
@@ -507,7 +572,6 @@ class First(Beat):
 
 
         #   V1 - supporting tenor in Chorus/Verse   #
-        # 1 2 5 6
         m1 = build_measure(
             delaycombo(f.note(D2, self.e), f.note(F2, self.e), 0.05), rest(self.e - 0.05),
             rest(self.trey - self.e),
@@ -964,11 +1028,14 @@ class First(Beat):
         return
     
 
+    def save(self, sound, name = "", norm=True):
+        """Save the sound to the desired folder"""
+
+        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
+
 
 def main():
-    First(62).produce()
-    #First(62).intro()
-    #First(62).chorus1()
-    #First(62).refrain1()
-    #First(62).verse2()
+    beat = First(62)
+    beat.produce_full()
+    beat.save(beat.production, "03_First Up")
 

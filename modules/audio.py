@@ -259,8 +259,8 @@ def mix(*waves):
 
 def delaycombo(wave1, wave2, rest_time = 0.1, silence = True):
     """Combines 2 waves but adds the rest time to the beginning of wave2"""
-    wave1 = wave1.copy()
-    second = add_waves(rest(rest_time), wave2)
+    wave1 = wave1().copy()
+    second = add_waves(rest(rest_time), wave2().copy())
 
     #   Find where Wave 2 begins
     index = 0
@@ -1856,27 +1856,27 @@ def pianotreble(frequency, duration):
 def skirt(frequency, duration):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration))
     
-    # 1. Core metallic resonance (FM synthesis)
-    carrier_freq = frequency * 112 # Base frequency (Hz)
-    mod_freq = 120       # Modulation frequency (Hz)
-    mod_index = 8        # Modulation intensity
-    fm_wave = np.sin(2 * np.pi * carrier_freq * t + 
+    #   Metallic Sound    #
+    metal_freq = frequency * 112
+    mod_freq = 120
+    mod_index = 8
+    base = np.sin(2 * np.pi * metal_freq * t + 
                     mod_index * np.sin(2 * np.pi * mod_freq * t))
     
-    # 2. Noise transient layer (attack)
+    #   Noise #
     noise = np.random.normal(0, 0.5, len(t)) * np.exp(-t * 50)
-    fm_wave += noise
+    base += noise
 
-    # 3. Bandpass filtering for tonal shaping
-    fm_wave = bandpass(fm_wave, 2000, 6000)
+    #   Bandpass filtering for tonal shaping
+    # fm_wave = bandpass(fm_wave, 2000, 6000)
     
-    # 4. Amplitude envelope (sharp attack/decay)
+    #   Amplitude envelope (sharp attack/decay) #
     env = np.exp(-t * 25) * (1 - np.exp(-t * 200))
-    processed = fm_wave * env
-    
-    # 5. Add lo-fi texture (bit-crush effect)
+    base *= env
+
+    #   Bit Crush   #
     bit_depth = 10
-    processed = np.round(processed * (2**bit_depth)) / (2**bit_depth)
+    base = np.round(base * (2**bit_depth)) / (2**bit_depth)
     
     # # Add comb filtering for "springy" resonance
     # delay_time = 1/8000  # 8kHz delay line
@@ -1891,7 +1891,7 @@ def skirt(frequency, duration):
     # stereo_skirt = np.vstack([left, right]).T
     
     # Normalize and return
-    return processed / np.max(np.abs(processed))
+    return final
     
 def skirt2(frequency, duration):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration))
@@ -1939,75 +1939,59 @@ def interact(frequency = 400, duration = 0.3, sample_rate = SAMPLE_RATE):
     wave_2 = percussion(frequency=frequency-100, duration=duration, sample_rate=sample_rate + 1000)
     return distort(join_waves(wave, wave_2), 2.0)
 
-def text_next():
-    return envelope(interact(400), 0.3 * 0.01, 0.3 * 0.2, 0.4, 0.3 * 0.1)
-
+def text_next(freq1 = 300, freq2 = 200, dur = 0.3):
+    base = sine_wave(freq1, 0.3)
+    base2 = sine_wave(freq2, 0.3)
+    wave = envelope(base,
+                    0.01, 0.2, 0.4, 0.1 - 0.01)
+    
+    wave2 = envelope(base2,
+                     0.01, 0.05, 0.3, 0.25)
+    
+    final = mix(wave, wave2)
+    return final
 
 def text_close():
-    duration = 0.3
 
     #   Wave 1 - High
-    wave_1 = interact(400)
+    wave_1 = text_next(400)
 
     #   Wave 2 - Low
-    wave_2 = interact(350)
+    wave_2 = text_next(250)
 
     #   Wave 3 - Mid
-    wave_3 = interact(300)
-    wave_3a = interact(500)
-    
-    #   Shorten Wave 2 and 3
-    wave_4 = wave_2[:-8000]
-    wave_5 = wave_3[:-9000]
+    wave_3 = text_next(200)
 
-    #   Combine Wave 4 and 5
-    wave_6 = add_waves(wave_4, wave_5, position=0)
+    final = build_measure(wave_3, wave_2, wave_1)
+    return final
 
-    #   Combine Wave 1 and 3; Combine Wave 6 with the new wave
-    final = add_waves(wave_6, (wave_3a + wave_1) * 0.5)
-    
-    return envelope(final, 0.01 * duration, 0.1 * duration, 1.0, 0.8 * duration)
+    # return envelope(final, 0.01 * duration, 0.1 * duration, 1.0, 0.8 * duration)
 
 def text_done():
-    duration = 0.3
-    #   Wave 1 - High
-    wave_1 = interact(300)
-
     #   Wave 2 - Low
-    wave_2 = interact(300)
+    wave_2 = text_next(250)
 
     #   Wave 3 - Mid
-    wave_3 = interact(400 / 2)
-    
-    #   Shorten Wave 2 and 3
-    wave_4 = wave_2[:-8000]
-    wave_5 = wave_3[:-9000]
+    wave_3 = text_next(200)
 
-    #   Combine Wave 4 and 5
-    wave_6 = add_waves(wave_5, wave_4, position=0)
-
-    #   Combine Wave 1 and 3; Combine Wave 6 with the new wave
-    final = add_waves(wave_6, (wave_1  + wave_3) * 0.5, -1)
-    
-    return envelope(final, 0.01 * duration, 0.1 * duration, 1.0, 0.1 * duration)
+    final = build_measure(wave_2, wave_3)
+    return final
 
 
-def text(frequency = 400, duration = 0.25, decrement = 200, amp_factor = 0.8):
+def text(frequency = 200, duration = 0.25, decrement = 100, amp_factor = 0.8):
     """Create a text sound inspired by Twilight Princess"""
 
     #   (1) Create a string tone
     base = pluck(frequency, 0.25)
-    #base = distort(base, 4.0)
 
 
     #   (2) Create a lower string tone
     base_2 = pluck(ensure_1(frequency-decrement), 0.25)
-    #base_2 = distort(base_2, 4.0)
 
 
     #   (3) Combine the tones and wrap them in a snare envelope
     final = base + base_2
-    final = envelope(final, 0.01 * 0.25, 0.2 * 0.25, 0.5, 0.01 * 0.25) * amp_factor
+    final = envelope(final, 0.001, 0.2, 0.5, 0.03) * amp_factor
 
     return final
 

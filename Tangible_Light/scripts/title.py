@@ -1,7 +1,4 @@
-from modules.beat import *
-from modules.instruments import *
-from modules.audio import *
-
+from . import *
 import pygame.sndarray
 import pygame.mixer
 
@@ -21,7 +18,7 @@ class Title(Beat):
         self.instr4 = KickBass(amp=3.5, attack=85, bass_dist = 0.0, bass_amp = 0.0)
         self.instr5 = HipSkirt(attack=35, amp=0.2, low=0, high=0, dist=8.0, noise_amount=0.6)
         self.instr6 = HipSkirt(attack=75, amp=0.2, low=0, high=0, dist=15.0, noise_amount=1.4)
-        self.instr7 = Cymbal(amp=0.3, atk1 = 10, atk2 = 3, dist=0.0)
+        self.instr7 = HipSkirt(attack=20, amp=0.2, low=0, high=0, dist=12.0, noise_amount=1.0)
 
         self.instr8 = Hey()
 
@@ -40,7 +37,7 @@ class Title(Beat):
             6: [self.instr6, self.crash("v1")],
 
             #   Adlibs  #
-            #8: [self.instr8, self.navi()]
+            # 8: [self.instr8, self.navi()]
         }
 
 
@@ -131,15 +128,17 @@ class Title(Beat):
         d = self.instr4
 
         m1 = [
-            d.note(C1, self.e), rest(self.e),
-            d.note(D1, self.e), rest(self.e),
-            rest(self.s), d.note(C1, self.s), rest(self.e),
-            d.note(C1, self.e), d.note(D1, self.e)
+            d.note(C1, self.e), rest(self.e), # 1
+            d.note(D1, self.e), rest(self.e), # 2
+            rest(self.s), d.note(C1, self.s), rest(self.e), # 3
+            d.note(C1, self.e), d.note(D1, self.e) # 4
         ]
         
+        intro = [rest(self.whole * 4)]
         v1 = m1 + m1 + m1 + m1
+
         return \
-        v1 +\
+        intro +\
         \
         v1 +\
         \
@@ -151,17 +150,18 @@ class Title(Beat):
         c = self.instr7
 
         m1 = [
-            rest(self.q),
-            rest(self.e), d.note(C1, self.s), c.note(C2, self.e),
-            rest(self.s),
-            rest(self.s), rest(self.e),
-            rest(self.s), c.note(C2, self.e),
+            rest(self.q), # 1
+            rest(self.e), d.note(C1, self.s), c.note(C2, self.s), rest(self.s),# 2.25
+            rest(self.s), # 2.5
+            rest(self.s), rest(self.e), # 3.25
+            rest(self.s), c.note(C2, self.e), # 4
         ]
 
+        intro = [rest(self.whole*4)]
         v1 = m1 + m1 + m1 + m1
         
         return \
-        v1 +\
+        intro +\
         \
         v1 +\
         \

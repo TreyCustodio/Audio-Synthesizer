@@ -303,7 +303,32 @@ class Tangible_Light:
 
         def get_name(self):
             return "TL Bass"
-        
+    
+    class Ice_Synth(Instrument):
+        def __init__(self, amp=1.0, sustain=0.1):
+            def func(freq, dur):
+                base = sine_wave(freq, dur)
+                base2 = sine_wave(freq/2, dur)
+
+
+                wave1 = envelope(base,
+                                0.0, 0.05, sustain, 0.01)
+                
+                wave2 = envelope(base2,
+                                0.0, 0.1, 0.5, 0.01)
+                
+                wave3 = envelope(base,
+                                0.1, 0.1, 0.7, 0.01)
+                
+                final = mix(wave1, wave2, wave3)
+                return final
+            
+            self.func = func
+
+                
+
+    
+    
     class Title_String(Instrument):
         def __init__(self, amp = 1.0, dist = 0.0, atk = 5, freq_mod = 1):
 
@@ -399,6 +424,35 @@ class Tangible_Light:
                 return wave1
             
             self.func = func
+    
+    class Journ(Instrument):
+
+        def __init__(self, amp = 1.0, freq_mod = 1):
+            def func(freq, dur):
+                freq /= freq_mod
+                base = sine_wave(freq, dur)
+                base2 = sine_wave(freq/2, dur)
+                base3 = sine_wave(freq*2, dur)
+
+
+
+                wave1 = envelope(base,
+                    0.001, dur/4, 0.3, 0.1)
+                
+                wave2 = envelope(base2,
+                    dur / 4, dur / 4, 0.4, dur / 4)
+                
+                wave3 = envelope(base3,
+                    0.001, dur / 4, 0.3, 0.1) * 0.3
+                
+                
+                final = mix(wave1, 
+                            wave2, 
+                            wave3
+                            )
+                return final * amp
+            
+            self.func = func
 
 """
 Samples
@@ -425,9 +479,99 @@ class Look(Instrument):
 """
 Percussion and Bass
 """
+class Tap(Instrument):
+    """A simple, percussive wave defined by an attack value"""
+    def __init__(self, amp = 1.0, atk = 90):
 
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+            base = sine_wave(freq, dur)
+
+            wave1 = base * np.exp(-t * atk)
+
+            final = mix(wave1)
+
+            return final * amp
+        
+        self.func = func
+
+class Tap2(Instrument):
+    def __init__(self, amp = 1.0, atk = 90):
+        """A simple, percussive wave created by slurring the frequency down to 0
+        and wrapping the wave in an attack envelope"""
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+            base = swell(freq, 0, dur)
+
+            wave1 = base * np.exp(-t * atk)
+
+            final = mix(wave1)
+
+            return final * amp
+        
+        self.func = func
+    
+class Tap3(Instrument):
+    """A simple, percussive wave created with noise and an attack"""
+    def __init__(self, amp: float = 1.0, attack: int = 90, noise_amount: float = 0.5):
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+            base = sine_wave(freq, dur)
+            noise = np.random.normal(0, noise_amount, base.shape)
+            noise *= np.exp(-t * attack)
+
+            wave1 = base * np.exp(-t * attack)
+
+            final = mix(wave1, noise)
+
+            return final * amp
+        
+        self.func = func
+
+
+class Tap4(Instrument):
+    def __init__(self, amp: float = 1.0, attack: int = 90, noise_amount: float = 0.5):
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+            base = sine_wave(freq, dur)
+            noise = np.random.normal(0, noise_amount, base.shape)
+            
+
+            final = mix(base, noise)
+            final = envelope(final,
+                0.001, dur / 14, 0.0, 0.00)
+            
+            return final * amp
+        
+        self.func = func
+
+class Hi_Hat(Instrument):
+    def __init__(self, amp=1.0, noise_amount = 0.05):
+
+        def func(freq, dur):
+            wave1 = sine_wave(freq, dur)
+            noise = white_noise(wave1, noise_amount)
+
+            noise = envelope(noise,
+                             0.0, dur - 0.05, 0.0, 0.0)
+            
+            final = envelope(wave1,
+                             0.0, 0.05, 0.1, 0.01)
+            
+            final = mix(final, noise)
+            return final * amp
+        
+        self.func = func
+        
 class Skirt(Instrument):
-    def __init__(self):
+    def __init__(self, amp=1.0, noise_amount=0.5, attack = 50):
         self.a = 0.01
         self.d = 0.0
         self.s = 0.75
@@ -447,59 +591,54 @@ class Skirt(Instrument):
             wave = np.sin(2 * np.pi * base * t + 
                         mod_index * np.sin(2 * np.pi * mod * t))
             
-            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
+            noise = np.random.normal(0, noise_amount, wave.shape) * np.exp(-t * 50)
             
 
             #   Apply an exponential decay to the wave and noise    #
-            wave *= np.exp(-t * 50)
-            noise *= np.exp(-t * 50)
             wave += noise
+            wave *= np.exp(-t * attack)
+            noise *= np.exp(-t * attack)
 
 
             #   Wrap the wave in an envelope    #
             wave = envelope(wave, self.a, self.d, self.s, self.r)
 
-            return wave
+            return wave * amp
         
         self.func = func
 
-class Skirt2(Instrument):
-    def __init__(self):
-        self.a = 0.01
-        self.d = 0.0
-        self.s = 0.75
-        self.r = 0.01
-        
-        def func(frequency, duration):
-            """Create a skirt sound by combining a metallic, modulated wave with noise"""
+class Space_Skirt(Instrument):
+    def __init__(self, amp = 1.0, metal_factor=-5, mod_freq = 120, mod_index = 12, noise_amount = 0.5, bit_depth = 6):
+        def skirt(frequency, duration):
+            t = np.linspace(0, duration, int(SAMPLE_RATE * duration))
             
-            #   Generate a time array for the duration of the sound    #
-            t = np.linspace(0, duration, int(44100 * duration), endpoint=False)
+            #   Metallic Sound    #
+            metal_freq = frequency / (12 * 2)
 
-            #   Create a modulated sine wave and noise   #
-            base = frequency * 85
-            mod = 120
-            mod_index = 0.2
-
-            wave = np.sin(2 * np.pi * base * t + 
-                        mod_index * np.sin(2 * np.pi * mod * t))
+            base = np.sin(2 * np.pi * metal_freq * t + 
+                            mod_index * np.sin(2 * np.pi * mod_freq * t))
             
-            noise = np.random.normal(0, 0.5, wave.shape) * np.exp(-t * 50)
+            #   Noise #
+            noise = np.random.normal(0, noise_amount, len(t)) * np.exp(-t * 50)
+            base += noise
+
+            #   Bandpass filtering for tonal shaping
+            base = bandpass(base, 2000, 6000)
+            
+            #   Amplitude envelope (sharp attack/decay) #
+            base = envelope(base,
+                0.001, 0.05, 0.0, 0.0
+            )
+
+            #   Bit Crush   #
+            base = np.round(base * (2**bit_depth)) / (2**bit_depth)
             
 
-            #   Apply an exponential decay to the wave and noise    #
-            wave *= np.exp(-t * 70)
-            noise *= np.exp(-t * 50)
+            final = base
+
+            return final * amp
         
-            wave += noise
-
-
-            #   Wrap the wave in an envelope    #
-            wave = envelope(wave, self.a, self.d, self.s, self.r)
-
-            return wave
-        
-        self.func = func
+        self.func = skirt
 
 class HipSkirt(Instrument):
     def __init__(self, attack = 15, amp = 1.0, low = 4000, high=0, dist = 6.0, noise_amount = 1.0):
@@ -654,28 +793,26 @@ class KickBass2(Instrument):
 
 class Cymbal(Instrument):
     def __init__(self, amp=1.0, atk1 = 5, atk2 = 15, dist=0.0):
-        self.a = 0.0
+        self.a = 0.001
         self.d = 0.1
-        self.s = 0.7
-        self.r = 0.3
+        self.s = 0.3
+        #self.r = dur / 6
 
         def func(freq, dur):
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
-
-            freqs = np.random.uniform(freq, freq / 4, 20)
             
-            wave = np.zeros_like(t)
-            for freq in freqs:
-                wave += np.sin(2 * np.pi * freq * t)
-            
-            #wave *= np.exp(-t * atk1)
-            wave = sine_wave(0, dur)
-            wave = white_noise(wave, 0.5)
+            wave = sine_wave(15_000, dur)
             wave = envelope(wave,
-                             0.001, dur - 0.01, 0.0, 0.0)
+                            0.001, 0.0, 0.3, dur / 6)
             
 
-            #wave *= np.exp(-t * atk2)
+            noise = white_noise(sine_wave(1, dur), 0.5)
+
+            noise - distort(noise, 2.0)
+            noise = envelope(noise,
+                             0.001, 0.0, 0.3, dur / 6)
+            
+            wave += noise
 
             if dist != 0.0:
                 wave = distort(wave, dist)
@@ -1493,14 +1630,14 @@ class LowSynth(Instrument):
 
 class Church(Instrument):
     """Church-like ambience"""
-    def __init__(self):
+    def __init__(self, amp=1.0):
         self.a = 0.4
         self.d = 0.1
         self.s = 0.7
         self.r = 0.4
 
         def func(freq, dur):
-            return synthesize(freq, dur, 0,
+            final = synthesize(freq, dur, 0,
                               10, 1,
                               bass_harms(2), None,
                               self.a, self.d, self.s, self.r) +\
@@ -1508,6 +1645,8 @@ class Church(Instrument):
                                10, 1,
                                exp(2), None,
                                self.a, self.d, self.s, self.r)
+            
+            return final * amp
         
         self.func = func
 
@@ -2420,10 +2559,10 @@ class Old:
         def __init__(self, octave, measure, type = ""):
             super().__init__(octave, measure, symbol)
 
-    # class Skirt(Instrument):
-    #     def __init__(self, octave, measure):
-    #         super().__init__(octave, measure, skirt)
+    class Skirt(Instrument):
+        def __init__(self):
+            self.func = skirt
 
-    # class Skirt2(Instrument):
-    #     def __init__(self, octave, measure):
-    #         super().__init__(octave, measure, skirt2)
+    class Skirt2(Instrument):
+        def __init__(self):
+            self.func = skirt2
