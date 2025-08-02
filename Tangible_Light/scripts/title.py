@@ -1,6 +1,4 @@
 from . import *
-import pygame.sndarray
-import pygame.mixer
 
 class Title(Beat):
     def __init__(self, bpm):

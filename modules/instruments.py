@@ -2,17 +2,17 @@
 generate every possible note for each instrument."""
 
 from .audio import *
-from .sampler import Sampler
+# from .sampler import Sampler
 from synthesizer import synthesize, log, exp, lin, bass_harms, inv
 
 
 class Note:
     """A class that represents a note and allows the user to easily access a note's pitch"""
-    def __init__(self, waveform, pitch, stereo = False):
+    def __init__(self, waveform, pitch, amp = 1.0, stereo = False):
         if stereo:
-            self.wave = np.column_stack((waveform, waveform))
+            self.wave = np.column_stack((waveform, waveform)) * amp
         else:
-            self.wave = waveform
+            self.wave = waveform * amp
     
         self.pitch = pitch
 
@@ -196,12 +196,15 @@ class Instrument:
         return self.loop(pitch * coeff, dur)
 
 
-    def note(self, pitch: str = "", dur: float = 0.0):
+    def note(self, pitch: str = "", dur: float = 0.0, amp=1.0):
         """Get a note based on a pitch and a duration"""
 
-        # return self.func(pitch, dur)
+        return Note(self.func(pitch, dur), pitch, amp)
+    
+    def n(self, pitch: str = "", dur: float = 0.0, amp=1.0):
+        """Get a note based on a pitch and a duration"""
 
-        return Note(self.func(pitch, dur), pitch)
+        return Note(self.func(pitch, dur), pitch, amp)
 
 
 """
@@ -475,6 +478,60 @@ class Look(Instrument):
         def func(frequency, duration):
             return Sampler.sample(os.path.join("samples", "Navi", "look.wav"), duration) * amp
 
+        self.func = func
+
+
+"""
+Plucks
+"""
+
+class Acoustic(Instrument):
+    def __init__(self, amp=1.0, freq_mod = 1, dist = 0.0):
+        def func(freq, dur):
+            freq *= freq_mod
+
+            #   Fundamental Waveforms   #
+            base1 = sine_wave(freq, dur)
+            base2 = sine_wave(freq * 1.5, dur)
+            base3 = sine_wave(freq * 2, dur)
+
+            base4 = sine_wave(freq / 1.5, dur)
+
+
+
+            met1 = sine_wave(freq*9, dur)
+
+
+            #   Apply envelopes to fundamental waves    #
+            wave1 = envelope(base1,
+                             0.02, 0.1, 0.2, 0.05)
+            
+            
+            wave2 = envelope(base2,
+                             0.04, 0.1, 0.2, 0.05) * 0.6
+
+            
+            wave3 = envelope(base3,
+                             0.05, 0.1, 0.1, 0.05) * 0.1
+            
+            wave4 = envelope(base4,
+                             0.01, 0.1, 0.1, 0.05) * 0.5
+            
+            #   Mix the final sound together    #
+            final = mix(
+                wave1,
+                wave2,
+                wave3,
+                # wave4,
+                # wave5,
+                # wave6
+            )
+
+            #   Apply the amp and return the wave   #
+            if dist > 0:
+                final = distort(final, dist)
+            return final * amp
+        
         self.func = func
 """
 Percussion and Bass
@@ -1477,13 +1534,12 @@ class DontTell(Instrument):
             freq *= octave_shift
 
             #   Wave Foundation #
-            fundamental = sine_wave(freq, dur)
+            base1 = sine_wave(freq, dur)
+            base2 = sine_wave(freq * 2, dur)
 
-            wave1 = fundamental.copy()
-            wave1 *= np.exp(-t * 10)
+            wave1 = base1 * np.exp(-t * 10)
 
-            wave2 = sine_wave(freq * 2, dur)
-            wave2 *= np.exp(-t * 7)
+            wave2 = base2 * np.exp(-t * 7)
             wave2 *= 0.3
 
 
@@ -1499,7 +1555,40 @@ class DontTell(Instrument):
 
     def get_name(self):
         return "Dont Tell Em Bout My Synth"
-    
+
+class Plucky(Instrument):
+    def __init__(self, amp = 1.0, octave_shift = 1):
+        self.a = 0.0
+        self.d = 0.1
+        self.s = 0.7
+        self.r = 0.3
+
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur))
+            freq *= octave_shift
+
+            #   Wave Foundation #
+            base1 = sine_wave(freq, dur)
+            base2 = sine_wave(freq * 2, dur)
+
+            wave1 = envelope(base1,
+                             0.01, dur - 0.01, 0.0, 0.0)
+            
+            wave2 = envelope(base2,
+                             0.1, dur - 0.1, 0.0, 0.0) * 0.3
+
+
+
+            final = mix(
+                wave1, 
+                wave2
+            )
+
+            return final * amp
+        
+        self.func = func
+
 class Clean_Synth(Instrument):
     def __init__(self, amp = 1.0,):
         self.a = 0.0

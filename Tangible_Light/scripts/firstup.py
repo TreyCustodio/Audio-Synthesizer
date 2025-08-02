@@ -1,8 +1,6 @@
 from modules.beat import *
 from modules.instruments import *
 from modules.audio import *
-import pygame.sndarray
-import pygame.mixer
 
 class First(Beat):
     def __init__(self, bpm):

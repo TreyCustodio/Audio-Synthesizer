@@ -1,9 +1,9 @@
-from modules import audio, instruments, sampler
+from modules import audio, instruments
 #from beats import digital_storytelling, dress, firstup
 # from beatsnew import firstup, second, trap, how, new, training
-from Tangible_Light.scripts import title, journal, firstup
+from Tangible_Light.scripts import title, journal, firstup, o4
 
-from UI import interface
+# from UI import interface
 from os import path
 
 
@@ -61,7 +61,8 @@ def main():
     # journal.main()
     #new.main()
     # training.main()
-    firstup.main()
+    # firstup.main()
+    o4.main()
 
     
     

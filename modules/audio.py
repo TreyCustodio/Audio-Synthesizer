@@ -736,6 +736,9 @@ def add_waves(wave_1, wave_2, position=-1, buffer = False, rest_time=0.0, times 
 
     return final
 
+
+# def add_waves(self, wave_1, wave_2):
+
 def create_measure(duration, waves : list):
     """Produce a measure given a series of waves,
     and the duration of each measure."""
