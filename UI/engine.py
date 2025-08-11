@@ -35,14 +35,10 @@ class Engine:
         self.load_piano_images()
 
         #   Bpm   #
-        self.bpm = 85
+        self.bpm = 38
 
         #   Instrument   #
-        #self.instrument = HipSkirt(attack=85, amp=0.2, low=0, high=0, dist=8.0, noise_amount=0.6)
-        #self.instrument = KickBass(amp=2.5, attack=85, bass_dist = 0.0, bass_amp = 0.0)
-        # self.instrument = Tangible_Light.Journ()
-        self.instrument = Tangible_Light.Journ()
-        # self.instrument = Cymbal(atk1 = 15, atk2 = 3)
+        self.instrument = WhinyString(amp=0.2)
 
         #   Octave   #
         self.octave = 1
@@ -257,7 +253,7 @@ class Engine:
             font = pygame.font.SysFont(None, 36)  # None for default font, 36 is the size
             
             octave = font.render(f"Octave: {self.octave}", True, (0, 0, 0))
-            instrument = font.render(f"Instrument: Synth", True, (0, 0, 0))
+            instrument = font.render(f"Instrument: " + self.instrument.get_name(), True, (0, 0, 0))
 
             octave_bg = octave.get_rect(topleft=(WIDTH // 2 - octave.get_size()[0] // 2, 50))
             instrument_bg = instrument.get_rect(topleft=(WIDTH // 2 - instrument.get_size()[0] // 2, 10))
@@ -700,7 +696,7 @@ class Engine:
         
     def play_note(self, note):
         #note = self.dynamic(note)
-        note = self.instrument.create_note_octave(note, get_quarter(self.bpm), self.octave)
+        note = self.instrument.create_note_octave(note, get_eighth(self.bpm), self.octave)
         
         note = write(note, "", "note")
         #note = (note / np.max(np.abs(note)) * 32767).astype(np.int16)

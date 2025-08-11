@@ -68,43 +68,55 @@ class Beat:
             self.instruments[key][1]
         )
     
-    def produce_full(self):
+    def convert_notes(self, notes: list):
+        """Take a python list of audio signals and combines them into one signal"""
+        #   Initialize the array to be returned #
+        ##  If the data types are Notes, just call them to convert them to ndarrays ##
+        if issubclass(Note, type(notes[0])):
+            final = notes[0]()
+        else:
+            final = notes[0]
+
+        #  Add the rest of the notes to the wave #
+        for i in range(1, len(notes)):
+            ##  Call the Note objects to get their arrays    ##
+            if issubclass(Note, type(notes[i])):
+                final = add_waves(final, notes[i]())
+            else:
+                final = add_waves(final, notes[i])
+        
+        return final
+    
+    def produce_one(self, key):
+        """Produce one instrument"""
+        self.produce_full(self.instruments[key])
+
+        
+    def produce_full(self, instruments: dict = {}) -> None:
+        """Combine each part of the song and produce the full beat"""
+
         #   Initialize the prod with 1 millisecond of silence   #
         prod = sine_wave(0, 0.001)
 
+        #   Get the instruments to combine  #
+        if instruments == {}:
+            instruments = self.instruments
+
         #   Loop through each instrument    #
-        for key in self.instruments:
+        for key in instruments:
+            #   Get the instrument's notes from the dict    #
+            notes = instruments[key][1]
 
-            #   Calculate the instrument's waveform #
-            notes = self.instruments[key][1] # A list of lists
-
-            ##  Set the final waveform to the first note    #
-            if issubclass(Note, type(notes[0])):
-                final = notes[0]()
-            else:
-                final = notes[0]
-
-            ##  Add the rest of the notes into the wave #
-            for i in range(1, len(notes)):
-                if issubclass(Note, type(notes[i])):
-                    final = add_waves(final, notes[i]())
-                else:
-                    final = add_waves(final, notes[i])
-
-                #final = add_waves(final, notes[i]())
-
-            if len(self.instruments[key]) > 2:
-                flag = self.instruments[key][2]
-                if flag == "fade_in":
-                    print("A")
-                    final = fade_in(final, self.instruments[key][3])
+            #   Convert the notes into an ndarray   #
+            final = self.convert_notes(notes)
             
-            #   Mix the waveform with the prod  #
+            #   Add the converted notes to the production  #
             prod = mix(
                 prod,
                 final
             )
         
+        #   Set the production value    #
         self.production = prod
 
     def add_lib(self, wave):
@@ -114,10 +126,13 @@ class Beat:
         self.production = mix(
             self.production, wave
         )
-        
-    def save(self):
-        write(self.fileName)
 
+
+    def save(self, sound, name = "", norm=True, convert=True, path=""):
+        """Save the sound to the desired folder"""
+        if convert:
+            sound = self.convert_notes(sound)
+        write(sound, path, name, norm=norm, volume_factor=10_000)
 
     def save_instrument(self, key, notes: list = None):
         self.instruments[key][1] = notes

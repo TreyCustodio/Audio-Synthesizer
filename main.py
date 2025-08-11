@@ -1,9 +1,9 @@
 from modules import audio, instruments
 #from beats import digital_storytelling, dress, firstup
 # from beatsnew import firstup, second, trap, how, new, training
-from Tangible_Light.scripts import title, journal, firstup, o4
+from Tangible_Light.scripts import title, journal, firstup, o4, fpdg, trap
 
-# from UI import interface
+from UI import interface
 from os import path
 
 
@@ -52,18 +52,30 @@ def main():
     # else:
     #     print("\nInput Error: Please type 'Y', 'y', 'N', or 'n'")
 
-        
-    #firstup.main()
-    #second.main()
-    #trap.main()
-    #how.main()
-    # title.main()
-    # journal.main()
-    #new.main()
-    # training.main()
-    # firstup.main()
-    o4.main()
 
+    #   Tangible Light OST  #
+    #   (1) Title   #
+    # title.main()
+
+
+    #   (2) Journaling #
+    # journal.main()
+
+
+    #   (3) First Up #
+    # firstup.main()
+
+
+    #   (4) 04 #
+    # o4.main()
+    
+
+    #   (5) FPDG    #
+    # fpdg.main()
+
+
+    #   (6) Boss Theme  #
+    trap.main()
     
     
 

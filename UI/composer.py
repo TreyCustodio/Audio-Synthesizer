@@ -8,7 +8,7 @@ from .objects import *
 from modules.beat import *
 from modules.instruments import *
 from modules.audio import *
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from beatsnew import training
 

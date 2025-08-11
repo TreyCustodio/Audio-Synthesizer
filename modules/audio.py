@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.signal as signal
 import os
 import wave
 
@@ -257,15 +258,21 @@ def mix(*waves):
     return final
 
 
-def delaycombo(wave1, wave2, rest_time = 0.1, silence = True):
+def delaycombo(wave1, wave2, rest_time = 0.1, silence = True, array = False):
     """Combines 2 waves but adds the rest time to the beginning of wave2"""
-    wave1 = wave1().copy()
-    second = add_waves(rest(rest_time), wave2().copy())
+    if array:
+        wave1 = wave1.copy()
+        wave2 = add_waves(rest(rest_time), wave2.copy())
+
+    else:
+        wave1 = wave1().copy()
+        wave2 = add_waves(rest(rest_time), wave2().copy())
+
 
     #   Find where Wave 2 begins
     index = 0
-    for i in range(len(second)):
-        if second[i] != 0:
+    for i in range(len(wave2)):
+        if wave2[i] != 0:
             index = i
             break
 
@@ -273,7 +280,7 @@ def delaycombo(wave1, wave2, rest_time = 0.1, silence = True):
     if silence:
         wave1[index:] = 0
 
-    return combine(wave1, second)
+    return combine(wave1, wave2)
             
 def delaymix(*waves_and_rests):
     """Expects a tuple in the form (wave, rest_time)
@@ -1046,32 +1053,96 @@ def warp(wave, factor, wrap_around):
     
     return wave
 
+def sinc_filter(wave, cutoff_freq):
+    normalized_cutoff = 2 * cutoff_freq / SAMPLE_RATE
+    
+    sinc_filter = np.sinc(normalized_cutoff * len(wave))
 
-def lowpass(wave, cutoff):
+    window = np.hanning(len(sinc_filter))
+    fir_filter = sinc_filter * window
+    return fir_filter * wave
+
+def fft_filter(wave, cutoff_freq):
+    wave = sinc_filter(wave, cutoff_freq)
+    data = np.fft.fft(wave)
+    frequencies = np.fft.fftfreq(len(data), 1/SAMPLE_RATE)
+
+    rect_window = np.abs(frequencies) < cutoff_freq
+    final = data * rect_window
+    final = np.fft.ifft(final)
+
+    return final.real
+
+def lowpass(wave, cutoff=0.125):
     """Expects a wave and a cutoff; returns the filtered wave"""
-    # frequency = 20 + 20000
-    # x = np.tan()
-    
-    
-    
-    fft_wave = np.fft.fft(wave) # Converts time signal to frequency-domain representation
-    frequencies = np.fft.fftfreq(len(wave), 1/SAMPLE_RATE)
-    # for i in range(len(fft_wave)):
-    #     if np.abs(frequencies) > cutoff:
-    #         fft_wave[i] = 0
-    fft_wave[np.abs(frequencies) > cutoff] = 0
-    final = np.fft.ifft(fft_wave)
 
-    return np.real(final)
+    cutoff_frequency = np.geomspace(cutoff, 1, wave.shape[0])
+    
+    output = np.zeros_like(wave)
+    
+    inner_buffer = 0
 
-def highpass(wave, cutoff):
+
+    for n  in range(wave.shape[0]):
+        break_frequency = cutoff_frequency[n]
+
+        tan = np.tan(np.pi * break_frequency / SAMPLE_RATE)
+        
+        a1 = (tan - 1) / (tan + 1)
+
+        output[n] = a1 * wave[n] + inner_buffer
+
+        inner_buffer = wave[n] - a1 * output[n]
+
+    
+    #   Add the original signal to the allpass output   #
+    final = wave + output
+    final *= 0.5
+    
+    
+    return final
+
+
+def highpass(wave, cutoff=1000):
     """Expects a wave and a cutoff; returns the filtered wave"""
-    fft_wave = np.fft.fft(wave) # Converts time signal to frequency-domain representation
-    frequencies = np.fft.fftfreq(len(wave), 1/SAMPLE_RATE)
-    fft_wave[np.abs(frequencies) <= cutoff] = 0
-    final = np.fft.ifft(fft_wave)
 
-    return np.real(final)
+    #   Implementation by amitkumarusc on github    #
+    #   https://github.com/amitkumarusc/LowPassFilter/blob/master/lowPassFilter.py  #
+    nyq = 0.5 * SAMPLE_RATE
+    normal_cutoff = cutoff / nyq
+    order=5
+    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
+
+    y = signal.lfilter(b, a, wave)
+    return y
+
+
+
+    #   Youtube SoundWolf Implementation    #
+    cutoff_frequency = np.geomspace(cutoff, 1, wave.shape[0])
+    
+    output = np.zeros_like(wave)
+    
+    inner_buffer = 0
+
+
+    for n  in range(wave.shape[0]):
+        break_frequency = cutoff_frequency[n]
+        # break_frequency = cutoff
+
+        tan = np.tan(np.pi * break_frequency / SAMPLE_RATE)
+        
+        a1 = (tan - 1) / (tan + 1)
+
+        output[n] = a1 * wave[n] + inner_buffer
+
+        inner_buffer = wave[n] - a1 * output[n]
+
+    
+    #   Add the original signal to the allpass output   #
+    final = wave - output
+    
+    return final
 
 def limit(wave, cutoff):
 

@@ -13,24 +13,30 @@ class First(Beat):
 
         #   Synths  #
         self.synth1 = First4()
-        self.synth2 = Church(amp = 0.5)
+        self.synth2 = Church(amp = 0.1)
 
         #   Drums   #
-        self.drum1 = Skirt()
-        self.drum2 = Hi_Hat(amp=2.0)
-        self.drum3 = Snare()
-        self.drum4 = Bass()
+        self.skirt1 = Skirt()
+        # self.skirt1 = Tap3(attack=50, noise_amount=0.5)
+        self.clap1 = Hi_Hat(amp=2.0)
+        self.kick1 = Tap3(3.0, 25, noise_amount=0.01)
 
         #   Instrument Dictionary   #
         self.instruments = {
+            #   Baseline    #
             0: [self.bass1, self.bass()],
+
+            #   Middle Synths   #
             1: [self.bass2, self.high_bass()],
             2: [self.bass2, self.high_bass2()],
+            
+            #   Melodic Synths   #
+            5: [self.synth1, self.synth_1()],
+            6: [self.synth2, self.synth_2()],
+
+            #   Percussion  #
             3: [None, self.islands()],
             4: [None, self.drums()],
-            5: [self.synth1, self.synth_1()],
-            6: [self.synth2, self.synth_2()]
-
 
 
         }
@@ -150,7 +156,7 @@ class First(Beat):
         v2
 
     def intro_drums(self):
-        d = self.drum1
+        d = self.skirt1
 
         intro = rest(self.whole * 5)
         m1 = build_measure(
@@ -172,7 +178,7 @@ class First(Beat):
         return final
     
     def islands(self):
-        d = self.drum1
+        d = self.skirt1
 
         intro = [rest(self.whole * 5)]
         m1 = [
@@ -183,7 +189,22 @@ class First(Beat):
             rest(self.e)
         ]
 
-        v1 = m1 + m1 + m1 + m1
+        m2 = [
+            d.note(C3, self.e), d.note(C3, self.e),
+            d.note(C5, self.e), d.note(C3, self.s), d.note(C5, self.s),
+            d.note(C3, self.s), d.note(C5, self.s), d.note(C5, self.e),
+            d.note(B4, self.e),
+            d.note(B4, self.e),
+        ]
+
+        m3 = [
+            d.note(C3, self.e), d.note(C3, self.e),
+            d.note(C5, self.e), rest(self.e),
+            rest(self.e), d.note(C5, self.e),
+            d.note(B4, self.e), rest(self.e), 
+        ]
+
+        v1 = m1 + m2 + m3 + m2
         
         off_verse = [rest(self.whole*4)]
 
@@ -204,10 +225,8 @@ class First(Beat):
     
 
     def drums(self):
-        d = self.drum1
-        c = self.drum2
-        s = self.drum3
-        b = self.drum4
+        c = self.clap1
+        s = self.kick1
 
         intro = [rest(self.whole*5)]
         off_bar = [rest(self.whole)]
@@ -215,23 +234,41 @@ class First(Beat):
 
         m1 = [
             s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C2, self.e) + s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e),
-            c.note(C2, self.e) + s.note(C3, self.e),
+            c.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e),
+            c.note(C2, self.e),
             rest(self.e),
         ]
 
         m2 = [
             s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C2, self.e) + s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e), s.note(C2, self.s),
-            s.note(C3, self.e),
-            c.note(C2, self.e) + s.note(C3, self.e),
+            c.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e),
+            c.note(C2, self.e) + s.note(C2, self.e),
             c.note(C2, self.e) + s.note(C2, self.e),
         ]
 
-        v1 = m1 + m2 + m1 + m2
+        m3 = [
+            s.note(C2, self.e), s.note(C2, self.e),
+            c.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e), s.note(C2, self.s), # 3.5
+
+            c.note(C2, self.e), c.note(C2, self.e), # 2nd half beat 3
+            rest(self.s*2)
+        ]
+
+
+        m4 = [
+            s.note(C2, self.e), s.note(C2, self.e),
+            c.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e) + c.note(C2, self.e),
+            c.note(C2, self.e) + s.note(C2, self.e),
+            c.note(C2, self.e) + s.note(C2, self.e),
+        ]
+        v1 = m1 + m2 + m3 + m4
         hook = v1
 
         return \

@@ -5,56 +5,304 @@ class Title(Beat):
         super().__init__(bpm)
 
         #   Keys    #
-        self.instr0 = LowSynth(amp=0.2, freq_mod=1/2)
-        self.instr1 = DontTell(amp=0.6)
-        #self.instr2 = Tangible_Light.Title_Synth
+        self.synth1 = LowSynth(amp=0.2)
+        self.synth2 = Tangible_Light.Title_Synth(amp=0.3)
+
+
+        # self.horn1 = Horn(amp=0.7)
+        self.string1 = WhinyString(amp=0.2)
 
         #   Bass    #
-        self.instr3 = Tangible_Light.Title_Bass(amp=0.6, freq_mod = 2)
+        self.bass1 = Tangible_Light.Title_Bass(amp=1.0, freq_mod = 2)
         
         #   Percussion  #
-        self.instr4 = KickBass(amp=3.5, attack=85, bass_dist = 0.0, bass_amp = 0.0)
-        self.instr5 = HipSkirt(attack=35, amp=0.2, low=0, high=0, dist=8.0, noise_amount=0.6)
-        self.instr6 = HipSkirt(attack=75, amp=0.2, low=0, high=0, dist=15.0, noise_amount=1.4)
-        self.instr7 = HipSkirt(attack=20, amp=0.2, low=0, high=0, dist=12.0, noise_amount=1.0)
+        self.kick1 = Tap3(amp=5, attack=25, noise_amount=0.0)
+        self.hats1 = HipSkirt(attack=135, amp=0.2, low=0, high=0, dist=8.0, noise_amount=0.6)
+        self.crash1 = Tap3(amp=0.1, attack=10, noise_amount=3.0)
+        self.crash2 = HipSkirt(attack=20, amp=0.1, low=0, high=0, dist=12.0, noise_amount=1.0)
 
+        #   Adlibs  #
         self.instr8 = Hey()
+
+        self.intro = [rest(self.w*2)]
 
         self.instruments = {
             #   Keys    #
-            0: [self.instr0, self.keys("v1")],
-            1: [self.instr1, self.keys("v2")],
-            #2: [self.instr2, self.keys_long("v1")],
+            0: [self.synth1, self.keys("v1")],
+            1: [self.synth2, self.keys("v2")],
+            # 2: [self.horn1, self.horns()],
+            2: [self.string1, self.strings()],
 
             #   Bass    #
-            3: [self.instr3, self.bass("v1")],
+            3: [self.bass1, self.bass("v1")],
             
-            #   Percussion  #
-            4: [self.instr4, self.kick("v1")],
-            5: [self.instr5, self.drums("v1")],
-            6: [self.instr6, self.crash("v1")],
+            #  Percussion  #
+            4: [self.kick1, self.kick()],
+            5: [self.hats1, self.drums()],
+            6: [self.crash1, self.crash()],
 
-            #   Adlibs  #
+
+
+
+            #  Adlibs  #
             # 8: [self.instr8, self.navi()]
         }
 
+        self.intro_instruments = {
+            0: (self.kick1, self.drums_intro()),
+            1: (self.string1, self.strings_intro()),
 
-    def save(self, sound, name = "", norm=True):
+        }
+
+
+    def save(self, sound, name = "", norm=True, convert=True):
         """Save the sound to the desired folder"""
+        super().save(sound, name, norm, convert, os.path.join("Tangible_Light", "ost"))
 
-        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
+    def produce_intro(self):
+        self.instruments = self.intro_instruments
+        self.produce_full()
+        self.save(self.production, "01_intro", convert=False)
+
     
-    def drums(self, part="") -> list:
-        
-        if part == "v1":
-            d = self.instr5
+    def drums_intro(self):
+        d = self.kick1
 
-        elif part == "v2":
-            c = self.instr6
+        m1 = [
+            d.note(C1, self.e), rest(self.e), # 1
+            d.note(D1, self.e), rest(self.e), # 2
+            rest(self.s), d.note(C1, self.s), rest(self.e), # 3
+            d.note(C1, self.e), d.note(D1, self.e) # 4
+        ]
+
+        v1 = m1 + m1
+        self.save(v1, "01_intro_drum")
+
+        return v1
+    
+    def strings_intro(self):
+        amp = 1.0
+        n = self.string1
+        s = self.s
+        e = self.e
+        q = self.q
+
+
+        #   Verse 1 #
+        m2 = [
+            n.n(C4, self.w)
+        ]
+
+        v1 = m2 + m2
+
+        self.save(v1, "01_intro_string")
+
         
-        intro = [
+        
+        return v1
+
+
+    
+    
+
+    def strings(self):
+        s = self.string1
+        amp = 1.0
+
+        m1 = [
+            s.n(F3, self.s*3),
+            s.n(F3, self.s), # 1
+
+            rest(self.s+self.q),
+            s.note(F3, self.s*3),
+            s.note(F3, self.e), s.note(F3, self.e)
+        ]
+
+        m2 = [
+            s.n(F3, self.s*3),
+            s.n(F3, self.s), # 1
+
+            rest(self.s+self.q),
+            s.note(F3, self.s*3),
+            s.note(F3, self.e), s.note(G3, self.e)
+        ]
+
+
+        m3 = [
+            s.n(D3, self.w-self.e, amp),
+            s.n(C3, self.e, amp)
+        ]
+
+        m4 = [
+            s.n(D3, self.w, amp),
+        ]
+
+        v1 = m1 + m2 + m3 + m4
+        
+
+        #   V2  #
+        m5 = [
+            rest(self.e), s.n(D3, self.e), # 1
+            s.n(F3, self.e), s.n(G3, self.s), # 1.75
+            s.n(D3, self.e + self.s),# 2.75
+            s.n(F3, self.e), s.n(G3, self.q), # 4
+        ]
+
+        m5b = [
+            s.n(D3, self.e), # 1
+            s.n(F3, self.e), s.n(G3, self.s), # 1.75
+            s.n(D3, self.e + self.s),# 2.75
+            s.n(F3, self.e), s.n(G3, self.q), # 4
+        ]
+        
+        m6 = [
+            rest(self.e), s.n(C3, self.e), # 1
+            s.n(E3, self.e), s.n(F3, self.s), # 1.75
+            s.n(C3, self.e + self.s),# 2.75
+            s.n(E3, self.e), s.n(F3, self.q), # 4
+        ]
+
+        m6b = [
+            s.n(C3, self.e), # 1
+            s.n(E3, self.e), s.n(F3, self.s), # 1.75
+            s.n(C3, self.e + self.s),# 2.75
+            s.n(E3, self.e), s.n(F3, self.q), # 4
+        ]
+        v2 = m5 + m5 + m6 + m6
+        
+
+        #   V3  #
+        m7 = [
+            rest(self.e), s.n(F3, self.e),
+            s.n(F3, self.q),
+            s.n(E3, self.e + self.s),
+            s.n(E3, self.e + self.s),
+            s.n(E3, self.q)
+        ]
+
+        m8 = [
+            s.n(F3, self.e),
+            s.n(F3, self.q),
+            s.n(E3, self.e + self.s),
+            s.n(E3, self.e + self.s),
+            s.n(D3, self.e)
+        ]
+
+        m9 = [
+            s.n(C3, self.e + self.s), # .75
+            s.n(C3, self.s), s.n(A2, self.e), # 1.5
+
+            s.n(C3, self.e + self.s), # 2.25
+            s.n(C3, self.s), s.n(A2, self.e), # 3
+
+            s.n(C3, self.e), s.n(B2, self.e) # 4
+        ]
+
+        v3 = m7 + m8 + m9 + m9
+        off = [rest(self.w*4)]
+
+        #   V4  #
+        m10 = [
+            rest(self.e), s.n(D3, self.e), # 1
+            s.n(F3, self.e), s.n(G3, self.s), # 1.75
+            s.n(D3, self.e + self.s),# 2.5
+            s.n(F3, self.e), s.n(G3, self.q), # 4
+        ]
+
+        m11 = [
+            rest(self.e), s.n(D3, self.e), # 1
+            s.n(F3, self.e), s.n(G3, self.s), # 1.75
+            s.n(A3, self.e),# 2.25
+            s.n(G3, self.e + self.q + self.s), # 4
+        ]
+
+        m12 = [
+            rest(self.e), s.n(C3, self.e), # 1
+            s.n(E3, self.e), s.n(F3, self.s), # 1.75
+            s.n(C3, self.e + self.s),# 2.75
+            s.n(E3, self.e), s.n(F3, self.q), # 4
+        ]
+
+        m13 = [
+            rest(self.e), s.n(C3, self.e), # 1
+            s.n(E3, self.e), s.n(F3, self.s), # 1.75
+            s.n(D3, self.q + self.s),# 2.75
+            s.n(C3, self.s), s.n(C3, self.s), s.n(C3, self.s), s.n(C3, self.s),# 3.75
+        ]
+        v4 = m10 + m11 + m12 + m13
+
+
+        part =  \
+        self.intro +\
+        v4 +\
+        off +\
+        off +\
+        v3 +\
+        v3 +\
+        off +\
+        v2
+
+        self.save(part, "01_strings")
+
+        return part
+
+    def horns(self):
+
+        s  = self.horn1
+
+        m1 = [s.note(D2, self.s*3), s.note(D2, self.s),  # 1
+              rest(self.q + self.s), # 2
+              s.note(D2, self.s*3), s.note(D2, self.e),
+              s.note(D2, self.e),
+              ]
+        
+        m2 = [s.note(C2, self.s*3), s.note(C2, self.s),  # 1
+              rest(self.q + self.s), # 2
+              s.note(C2, self.s*3), s.note(C2, self.e),
+              s.note(C2, self.e),
+              ]
+        
+        v1 = m1  + m1 + m2 + m2
+
+
+        m3 = [
+            s.n(D2, self.s*3), s.n(D2, self.s), s.n(A1, self.e),
+            s.n(D2, self.e + self.s), s.n(D2, self.s), s.n(A1, self.e),
+            s.n(D2, self.e), s.n(C2, self.e), # 3
+        ]
+        
+        m4 = [
+            s.n(As1, self.s*3), s.n(As1, self.s), s.n(G1, self.e),
+            s.n(As1, self.e + self.s), s.n(As1, self.s), s.n(G1, self.e),
+            s.n(As1, self.e), s.n(A1, self.e),
 
         ]
+        v2 = m3 + m3 + m4 + m4
+        part =  \
+        self.intro +\
+        v1 +\
+        \
+        v1 +\
+        \
+        v1 +\
+        \
+        v2 +\
+        \
+        v1 +\
+        \
+        v2 +\
+        \
+        v1
+
+
+        self.save(part, "01_horns")
+        return part
+
+    def drums(self) -> list:
+        
+        d = self.hats1
+        
+
 
         m1 = [
            d.note(Cs1, self.e), d.note(Cs1, self.e), # 1
@@ -97,8 +345,8 @@ class Title(Beat):
         v1 = m1 + m1 + m1 + m1
         v2 = m2 + m2 + m1 + m1
 
-        return \
-        intro +\
+        part =  \
+        self.intro +\
         \
         [rest(self.whole)] +\
         [rest(self.whole)] +\
@@ -122,8 +370,11 @@ class Title(Beat):
         \
         refrain
     
-    def kick(self, part="") -> list:
-        d = self.instr4
+        self.save(part, "01_drums")
+        return part
+    
+    def kick(self) -> list:
+        d = self.kick1
 
         m1 = [
             d.note(C1, self.e), rest(self.e), # 1
@@ -135,97 +386,59 @@ class Title(Beat):
         intro = [rest(self.whole * 4)]
         v1 = m1 + m1 + m1 + m1
 
-        return \
-        intro +\
+        refrain = [rest(self.whole * 2)]
+
+        part = \
+        self.intro +\
+        v1 +\
         \
         v1 +\
         \
-        v1
-
-
-    def crash(self, part="") -> list:
-        d = self.instr6
-        c = self.instr7
-
-        m1 = [
-            rest(self.q), # 1
-            rest(self.e), d.note(C1, self.s), c.note(C2, self.s), rest(self.s),# 2.25
-            rest(self.s), # 2.5
-            rest(self.s), rest(self.e), # 3.25
-            rest(self.s), c.note(C2, self.e), # 4
-        ]
-
-        intro = [rest(self.whole*4)]
-        v1 = m1 + m1 + m1 + m1
-        
-        return \
-        intro +\
+        v1 +\
+        \
+        v1 +\
+        \
+        v1 +\
         \
         v1 +\
         \
         v1
     
-    def keys_long(self, part="") -> list:
-        n = Tangible_Light.Title_Synth(amp=0.65)
-        d = DontTell(amp=3.5)
-        
+        self.save(part, "01_kick")
+        return part
+
+    def crash(self) -> list:
+        d = self.crash1
+        c = self.crash2
+
         m1 = [
-            fade_out(n.note(A4, self.w)(), 12.0),
-            #n.note(A4, self.h),
+            rest(self.q), # 1
+            rest(self.e), c.note(C2, self.s), d.note(C3, self.e),# 2.25
+            rest(self.s), # 2.5
+            rest(self.e),# 3.0
+            c.note(C2, self.e), d.note(C3, self.s), rest(self.s)# 4
         ]
 
-        m2 = [
-            rest(self.h),
-            n.note(B4, self.q),
-            delaycombo(n.note(A4, self.q)(), n.note(G4, self.e)() * 1.2, self.e, False),
-            #n.note(A4, self.e), n.note(G4, self.e),
-        ]
+        off_verse = [rest(self.whole*4)]
+        v1 = m1 + m1 + m1 + m1
+        
+        part =  \
+        self.intro +\
+        off_verse +\
+        \
+        off_verse +\
+        \
+        v1 +\
+        \
+        off_verse +\
+        v1 +\
+        \
+        off_verse +\
+        v1
 
-        m3 = [
-            delaycombo(n.note(G4, self.h)(), n.note(A4, self.q)(), self.q, False),
-            delaycombo(n.note(G4, self.h)(), n.note(A4, self.q)(), self.q, False),
-        ]
-
-        m4 = [
-            delaycombo(n.note(G4, self.h)(), n.note(A4, self.q)(), self.q, False),
-            n.note(A4, self.q),
-            n.note(G4, self.q)
-        ]
-
-        m5 = [
-            d.note(F2, self.e), rest(self.e),
-            rest(self.e), d.note(F2, self.e), 
-            d.note(F2, self.e), rest(self.e),
-            rest(self.q)
-        ]
-
-        return \
-            [rest(self.whole)] +\
-            \
-            [rest(self.whole)] +\
-            [rest(self.whole)] +\
-            [rest(self.whole)] +\
-            [rest(self.whole)] +\
-            \
-            m1 +\
-            m2 +\
-            m3 +\
-            m4 +\
-            \
-            m1 +\
-            m2 +\
-            m3 +\
-            m4 +\
-            \
-            m5 +\
-            m5 +\
-            m5 +\
-            m5 +\
-            \
-            m5 +\
-            m5 +\
-            m5 +\
-            m5
+        self.save(part, "01_crash")
+        return part
+  
 
     def keys(self, part="") -> list:
         e = self.e
@@ -233,10 +446,10 @@ class Title(Beat):
         s = self.s
 
         if part == "v1":
-            k = self.instr0
+            k = self.synth1
 
         elif part == "v2":
-            k = self.instr1
+            k = self.synth2
         
 
         #   Intro   -- Silent --   #
@@ -249,14 +462,14 @@ class Title(Beat):
 
         #   Verse 1 #
         m1 = [
-            delaycombo(k.note(A3, q)(), k.note(F3, q - 0.08)(), 0.08, silence = False),
+            delaycombo(k.note(A3, q), k.note(F3, q - 0.08), 0.08, silence = False),
 
-            delaycombo(k.note(G3, q)(), k.note(B3, q - 0.08)(), 0.08, silence = False),
+            delaycombo(k.note(G3, q), k.note(B3, q - 0.08), 0.08, silence = False),
 
-            delaycombo(k.note(F3, s)(), k.note(A3, s - 0.04)(), 0.04, silence = False), delaycombo(k.note(G3, e)(), k.note(B3, e - 0.06)(), 0.06, False),
+            delaycombo(k.note(F3, s), k.note(A3, s - 0.04), 0.04, silence = False), delaycombo(k.note(G3, e), k.note(B3, e - 0.06), 0.06, False),
             
-            delaycombo(k.note(A3, e)(), k.note(C4, e - 0.06)(), 0.06, False),
-            delaycombo(k.note(B3, e + s)(), k.note(D4, e + s - 0.07)(), 0.07, False),
+            delaycombo(k.note(A3, e), k.note(C4, e - 0.06), 0.06, False),
+            delaycombo(k.note(B3, e + s), k.note(D4, e + s - 0.07), 0.07, False),
         ]
 
         m2 = [
@@ -392,29 +605,32 @@ class Title(Beat):
         #   Refrain #
         refrain = [rest(self.whole * 2)]
 
-        return \
-            intro +\
-            \
-            bass_solo +\
-            \
-            v1 +\
-            \
-            v1 +\
-            \
-            v2 +\
-            \
-            v2b+\
-            \
-            v3 +\
-            \
-            v3 +\
-            \
-            refrain
-                
+        part =  \
+        self.intro +\
+        intro +\
+        \
+        bass_solo +\
+        \
+        v1 +\
+        \
+        v1 +\
+        \
+        v2 +\
+        \
+        v2b+\
+        \
+        v3 +\
+        \
+        v3 +\
+        \
+        refrain
+        
+        self.save(part, "01_keys")
+        return part
 
 
     def bass(self, part=""):
-        n = self.instr3
+        n = self.bass1
 
         s = self.s
         e = self.e
@@ -558,7 +774,11 @@ class Title(Beat):
 
         #   Refrain #
         refrain = [rest(self.whole * 2)]
-        return \
+
+
+
+        part = \
+            self.intro +\
             intro +\
             \
             v1 +\
@@ -575,7 +795,9 @@ class Title(Beat):
             \
             v3 +\
             refrain
-
+        
+        self.save(part, "01_bass")
+        return part
 
     def navi(self, part=""):
         return []
@@ -594,11 +816,11 @@ class Title(Beat):
         
 
 
-
+ 
 
 def main():
-   beat = Title(38)
-   # 42 also works
+    beat = Title(38)
+    # 42 also works
 
-   beat.produce_full()
-   beat.save(beat.production, "01_Title")
+    # beat.produce_full()
+    # beat.save(beat.production, "01_Title", convert=False)

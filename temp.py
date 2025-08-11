@@ -1,13 +1,18 @@
 m1 = [
-            d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s),
-            d.n(C5, self.e), d.n(C5, self.e), 
-            d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s),
-            d.n(C5, self.e), rest(self.e)
+            b.n(C3, self.e), b.n(C3, self.e),
+            b.n(C3, self.e),
+            rest(self.e),
+            rest(self.e), b.n(C3, self.e),
+
+            # rest(self.s), b.n(C2, self.e), rest(self.s),
+            b.n(C3, self.e), rest(self.e)
         ]
 
         m2 = [
-            d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s),
-            d.n(C5, self.e), d.n(C5, self.e), 
-            d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s),
-            d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s), d.n(C5, self.s),
+            b.n(C3, self.e), b.n(C3, self.e),
+            b.n(C3, self.e),
+            rest(self.e),
+            rest(self.e), b.n(C3, self.e),
+
+            rest(self.s), b.n(C3, self.e), rest(self.s)
         ]

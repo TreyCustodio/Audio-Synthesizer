@@ -6,29 +6,73 @@ class Journal(Beat):
 
         self.instr1 = Tangible_Light.Journ()
         self.instr2 = Church()
-        self.instr3 = Tangible_Light.Title_Bass()
-        # self.instr4 = FirstP(amp=0.2)
+        self.bass1 = Tangible_Light.Title_Bass()
+        self.beep1 = FirstP(amp=0.2)
 
-        self.instr5 = KickBass(amp=2.0)
-        self.instr6 = Skirt(amp=1.5, noise_amount=0.1, attack=10)
-        self.instr7 = Tap2(amp=2.0, atk=150)
-        self.instr8 = Skirt(amp=5.0, noise_amount=0.1, attack=50)
+        self.tap1 = KickBass(amp=1.5)
+        # self.tap1 = Tap(amp=11.0, atk = 40)
+        self.skirt1 = Skirt(amp=1.5, noise_amount=0.1, attack=10)
+        self.skirt2 = Skirt(amp=5.0, noise_amount=0.1, attack=50)
+
+        self.start = [rest(self.w*4)]
 
         self.instruments = {
+            # -1: [None, self.intro()],
+
             0: [self.instr1, self.synth(1)],
-            # 1: [self.instr2, self.synth(2)],
-            2: [self.instr3, self.bass()],
-            3 :[self.instr4, self.beeps()],
-            4: [self.instr5, self.kicks()],
-            5: [self.instr6, self.skirts()],
-            6: [self.instr7, self.taps()]
+            # # 1: [self.instr2, self.synth(2)],
+            2: [self.bass1, self.bass()],
+            3 :[self.beep1, self.beeps()],
+            4: [self.tap1, self.kicks()],
+            5: [self.skirt1, self.skirts()],
+            "i": [None, self.intro()],
+
         }
+
+
+    def save(self, sound, name = "", norm=True, convert=True):
+        """Save the sound to the desired folder"""
+        if convert:
+            sound = self.convert_notes(sound)
+        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
+
+    def intro(self):
+        n = self.bass1
+        m1 = [
+            n.note(G2, self.q), rest(self.e),
+            n.note(F2, self.s), n.note(G2, self.e),
+            rest(self.s + self.e + self.q)
+        ]
+
+        m2 = [
+            n.note(G2, self.q), # 1
+            rest(self.e), n.note(F2, self.s), n.note(G2, self.e), # 2.25
+            rest(self.s + self.e), # 3
+            n.note(F2, self.q), # 4
+        ]
+
+        m3 = [
+            n.note(E2, self.q), rest(self.e),
+            n.note(D2, self.s), n.note(E2, self.e),
+            rest(self.s + self.e + self.q)
+        ]
+
+        m4 = [
+            n.note(E2, self.q), rest(self.e),
+            n.note(D2, self.s), n.note(E2, self.e),
+            rest(self.s + self.e),
+            n.note(F2, self.q),
+        ]
+        v1 = m1 + m2 + m3 + m4
+
+        self.save(v1, "02_intro_bass")
+        return v1
 
     def synth(self, part=""):
         if part == 1:
             n = self.instr1
         elif part == 2:
-            n = self.instr3
+            n = self.bass1
 
         #   Verse 1 #
         m1 = [
@@ -96,13 +140,17 @@ class Journal(Beat):
 
         v2 = m5 + m6 + m7 + m8
 
-        return \
+        part =  \
+        empty +\
         empty +\
         \
         v2
+
+        self.save(part, "02_synth")
+        return part
     
     def bass(self, part=""):
-        n = self.instr3
+        n = self.bass1
         m1 = [
             n.note(G2, self.q), rest(self.e),
             n.note(F2, self.s), n.note(G2, self.e),
@@ -130,13 +178,17 @@ class Journal(Beat):
         ]
         v1 = m1 + m2 + m3 + m4
 
-        return \
+        part = \
+        self.start +\
         v1 +\
         v1
 
+        self.save(part, "02_bass")
+        return part
+
 
     def beeps(self, part=0):
-        n = self.instr4
+        n = self.beep1
 
         m1 = [
             rest(self.e),
@@ -166,31 +218,47 @@ class Journal(Beat):
         empty = [rest(self.whole)]
         v1 = empty + empty + m1 + empty
 
-        return \
+        part = \
+        self.start +\
         v1 +\
         v1
 
+        self.save(part, "02_beeps")
+        return part
 
     def kicks(self, part=0):
-        n = self.instr5
+        n = self.tap1
         intro = [rest(self.whole*4)]
-        
+        amp=1.4
+
         m1 = [
-            n.note(C1, self.e), rest(self.e),
+            rest(self.e), rest(self.e),
+            rest(self.q),
+            n.note(C1, self.e, amp), n.note(C1, self.e, amp),
+            rest(self.q)
+        ]
+
+        m2 = [
+            rest(self.e), rest(self.e),
             rest(self.q),
             n.note(C1, self.e), n.note(C1, self.e),
             rest(self.q)
         ]
-
         v1 = m1 + m1 + m1 + m1
 
-        return \
+        v2 = m2 + m2 + m2 + m2
+
+        part = \
+        self.start +\
         v1 +\
-        v1
+        v2
+
+        self.save(part, "02_kicks")
+        return part
     
     def skirts(self, part=0):
-        n = self.instr6
-        n2 = self.instr8
+        n = self.skirt1
+        n2 = self.skirt2
         intro = [rest(self.whole*4)]
         
         m1 = [
@@ -204,7 +272,7 @@ class Journal(Beat):
             rest(self.q),
             n.note(C4, self.q),
             rest(self.q),
-            n2.note(C4, self.e), n.note(C4, self.e),
+            n2.note(C4, self.e), n.note(C4, self.e, 1.5),
         ]
 
         m3 = [
@@ -218,37 +286,19 @@ class Journal(Beat):
             rest(self.q),
             n.note(C4, self.q),
             rest(self.q),
-            n2.note(C4, self.s), n2.note(C4, self.s), n.note(C4, self.e),
+            n2.note(C4, self.s), n2.note(C4, self.s), n.note(C4, self.e, 1.5),
         ]
         v1 = m1 + m2 + m3 + m4
 
-        return \
+        part = \
+        self.start +\
         v1 +\
         v1
-    
-    def taps(self, part=0):
-        n = self.instr7
-        m1 = [
-            rest(self.q),
-            rest(self.q),
-            n.note(C3, self.s), n.note(C3, self.s), n.note(C3, self.s), n.note(C3, self.s),
-            rest(self.q)
-        ]
 
-        intro = [rest(self.whole*4)]
-        v1 = m1 + m1 + m1 + m1
+        self.save(part, "02_skirts")
+        return part
 
-        return \
-        v1 +\
-        v1
-    
-    def save(self, sound, name = "", norm=True):
-        """Save the sound to the desired folder"""
-
-        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
 
 
 def main():
     beat = Journal(41)
-    beat.produce_full()
-    beat.save(beat.production, "02_Journal")
