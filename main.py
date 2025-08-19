@@ -1,7 +1,7 @@
 from modules import audio, instruments
 #from beats import digital_storytelling, dress, firstup
 # from beatsnew import firstup, second, trap, how, new, training
-from Tangible_Light.scripts import title, journal, firstup, o4, fpdg, trap
+from Tangible_Light.scripts import title, journal, firstup, o4, o5, fpdg, trap
 
 from UI import interface
 from os import path
@@ -71,11 +71,11 @@ def main():
     
 
     #   (5) FPDG    #
-    # fpdg.main()
+    o5.main()
 
 
     #   (6) Boss Theme  #
-    trap.main()
+    # trap.main()
     
     
 

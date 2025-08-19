@@ -300,6 +300,10 @@ def delaymix(*waves_and_rests):
     #   Return the final mix    #
     return final
 
+def geometric_decay(wave: np.ndarray) -> None:
+    amplitudes = np.geomspace(1.0, 0.01, num=wave.size)
+    wave *= amplitudes
+    
 def swell(note1, note2, duration, dynamic = False):
     """Slur a note"""
 

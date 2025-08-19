@@ -38,7 +38,11 @@ class Engine:
         self.bpm = 38
 
         #   Instrument   #
-        self.instrument = WhinyString(amp=0.2)
+        # self.instrument = WhinyString(amp=0.2)
+        # self.instrument = Clean_Pluck()
+        self.instrument = Bass()
+        # self.instrument = Tangible_Light.Bell()
+        # self.instrument = Tangible_Light.Title_Bass()
 
         #   Octave   #
         self.octave = 1

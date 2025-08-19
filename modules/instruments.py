@@ -348,7 +348,69 @@ class Tangible_Light:
 
         def get_name(self):
             return "TL Bass"
-        
+    
+    class Whine(Instrument):
+        def __init__(self, amp=1.0, freq_mod = 1, noise_amount=0.0):
+
+            def func(freq, dur):
+                t = np.linspace(0, dur, int(44100 * dur))
+                freq *= freq_mod
+
+                #   Wave Foundation #
+                base1 = sine_wave(freq, dur)
+                base2 = sine_wave(freq / 2, dur)
+                base3 = sine_wave(freq *2, dur)
+            
+                wave3 = envelope(base3,
+                                0.2, 0.05, 0.4, 0.1) * 0.01
+                
+                wave1 = envelope(base1,
+                                0.1, 0.05, 0.4, 0.1)
+
+                wave2 = envelope(base2,
+                                0.02, 0.05, 0.4, 0.1)
+
+
+
+                final = mix(
+                    wave1, 
+                    wave2,
+                    wave3
+                )
+
+                # geometric_decay(final)
+                # final = fade_out(final, 4)
+
+                return final * amp
+
+            
+            self.func = func
+
+
+    class Bell(Instrument):
+        def __init__(self, amp=1.0, freq_mod = 1, noise_amount=0.0):
+
+            def func(freq, dur):
+                freq *= freq_mod
+                base = sine_wave(freq, dur)
+                noise = white_noise(base, noise_amount)
+
+                base = mix(
+                    base,
+                    noise
+                )
+
+                
+                geometric_decay(base)
+
+                # base = envelope(base,
+                #                 0.01, 0.1, 0.3, 0.01
+                # )
+
+                return base * amp
+            
+            self.func = func
+            
     class Ice_Synth(Instrument):
         def __init__(self, amp=1.0, sustain=0.1):
             def func(freq, dur):
@@ -868,6 +930,60 @@ class Tap5(Instrument):
             return final * amp
         
         self.func = func
+
+class PercussiveNoise(Instrument):
+    def __init__(self, amp: float = 1.0, attack: int = 90, noise_start = 0.0, noise_amount: float = 0.5, dist = 0.0, low=0, high=0):
+
+        def func(freq, dur):
+            t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+            base = sine_wave(0, dur)
+
+            noise = np.random.normal(noise_start, noise_amount, base.shape)
+            noise *= np.exp(-t * attack)
+
+
+            final = noise
+            
+            if dist > 0.0:
+                final  = distort(final, dist)
+
+            if low > 0:
+                final = lowpass(final, low)
+
+            if high > 0:
+                final = highpass(final, high)
+
+            return final * amp
+        
+        self.func = func
+
+# class Cymbal(Instrument):
+#     """A simple, percussive wave created with noise and an attack"""
+#     def __init__(self, amp: float = 1.0, attack: int = 90, noise_start = 0.0, noise_amount: float = 0.5, dist = 0.0, low=0, high=0):
+
+#         def func(freq, dur):
+#             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
+
+#             base = sine_wave(freq, dur)
+#             noise = np.random.normal(noise_start, noise_amount, base.shape)
+#             noise *= np.exp(-t * attack)
+
+#             wave1 = base * np.exp(-t * attack)
+
+#             final = mix(wave1, noise)
+
+#             if dist > 0.0:
+#                 final  = distort(final, dist)
+
+#             if low > 0:
+#                 final = lowpass(final, low)
+
+#             if high > 0:
+#                 final = highpass(final, high)
+
+#             return final * amp
+        
+#         self.func = func
 
 class Hi_Hat(Instrument):
     def __init__(self, amp=1.0, noise_amount = 0.05):
@@ -2110,6 +2226,38 @@ class Clean_Pluck(Instrument):
                 base += envelope(sine_wave(f, dur),
                                  0.01, dur - 0.01, 0.0, 0.0) * amps[count]            
                 count += 1
+            return base * amp
+        self.func = func
+
+class Clean_Key(Instrument):
+    def __init__(self, amp = 1.0, freq_mod=1.0):
+        self.a = 0.0
+        self.d = 0.4
+        self.s = 0.0
+        self.r = 0.0
+
+
+        def func(freq, dur):
+            freq *= freq_mod
+            # freq *= 1.75
+            harmonics = 1
+            base = envelope(sine_wave(freq, dur),
+                                 0.01, dur - 0.01, 0.0, 0.0)
+
+            # t = np.linspace(0, dur, int(SAMPLE_RATE * dur))
+            # base = np.zeros_like(t)
+
+            # freqs = np.linspace(freq, freq/harmonics, harmonics)
+
+            # amps = np.geomspace(1.0, 0.01, harmonics)
+            
+
+            # count = 0
+            # for f in freqs:
+            #     base += envelope(sine_wave(f, dur),
+            #                      0.01, dur - 0.01, 0.0, 0.0) * amps[count]            
+            #     count += 1
+            
             return base * amp
         self.func = func
 

@@ -3,6 +3,9 @@ from modules.instruments import *
 from modules.audio import *
 
 class First(Beat):
+    
+
+
     def __init__(self, bpm):
         """Hardcoded beat; not optimized for use in the editor"""
         super().__init__(bpm)
@@ -14,35 +17,50 @@ class First(Beat):
         #   Synths  #
         self.synth1 = First4()
         self.synth2 = Church(amp = 0.1)
+        self.synth3 = Tangible_Light.Bell()
 
         #   Drums   #
         self.skirt1 = Skirt()
-        # self.skirt1 = Tap3(attack=50, noise_amount=0.5)
-        self.clap1 = Hi_Hat(amp=2.0)
+        self.skirt2 = Skirt()
+
+        self.clap1 = Tap3(1.0, 40, 0.0, 0.7)
         self.kick1 = Tap3(3.0, 25, noise_amount=0.01)
 
         #   Instrument Dictionary   #
-        self.instruments = {
+        self.instruments = {}
+    
+
+    def get_instruments(self, save = False):
+        """Get each instrument's part. If save, then save each instrument."""
+        instruments = {
             #   Baseline    #
-            0: [self.bass1, self.bass()],
+            0: [self.bass1, self.bass(save)],
 
             #   Middle Synths   #
-            1: [self.bass2, self.high_bass()],
-            2: [self.bass2, self.high_bass2()],
+            1: [self.bass2, self.high_bass(save)],
+            2: [self.bass2, self.high_bass2(save)],
             
             #   Melodic Synths   #
-            5: [self.synth1, self.synth_1()],
-            6: [self.synth2, self.synth_2()],
+            3: [self.synth1, self.synth_1(save)],
+            4: [self.synth2, self.synth_2(save)],
+            5: [self.synth3, self.synth_3(save)],
+
 
             #   Percussion  #
-            3: [None, self.islands()],
-            4: [None, self.drums()],
-
+            6: [self.skirt1, self.skirts(save)],
+            7: [self.skirt2, self.bongo(save)],
+            8: [self.skirt2, self.chime(save)],
+            9: [self.clap1, self.claps(save)],
+            10: [self.kick1, self.kicks(save)],
 
         }
+
+        return instruments
     
-    
-    def bass(self):
+    def set_instruments(self, save = False):
+        self.instruments = self.get_instruments(save)
+
+    def bass(self, save=False):
         b = self.bass1
 
         m1 = [
@@ -59,11 +77,15 @@ class First(Beat):
         
         v1 = m1 + m1 + m1 + m1
 
-        return \
+        part = \
         v1 +\
         m2
 
-    def high_bass(self):
+        if save:
+            self.save(part, "03_bass")
+        return part
+
+    def high_bass(self, save = False):
         f = self.bass1
 
         m1 = [
@@ -104,7 +126,7 @@ class First(Beat):
         v1 = m1 + m2 + m3 + m4
         v2 = m1 + m2 + m5 + m6
 
-        return \
+        part =  \
         [rest(self.whole * 4)] +\
         [rest(self.whole)] +\
         \
@@ -114,7 +136,11 @@ class First(Beat):
         v1 +\
         v1
 
-    def high_bass2(self):
+        if save:
+            self.save(part, "03_highbass_1")
+        return part
+
+    def high_bass2(self, save = False):
         f = self.bass1
 
         m7 = [
@@ -145,7 +171,7 @@ class First(Beat):
         v1 = m7 + m7 + m8 + m8
         v2 = m7 + m7 + m8 + m9
 
-        return \
+        part =  \
         [rest(self.whole *4)] +\
         [rest(self.whole)] +\
         \
@@ -155,7 +181,11 @@ class First(Beat):
         v1 +\
         v2
 
-    def intro_drums(self):
+        if save:
+            self.save(part, "03_highbass_2")
+        return part
+
+    def intro_drums(self, save=False):
         d = self.skirt1
 
         intro = rest(self.whole * 5)
@@ -175,32 +205,180 @@ class First(Beat):
 
         final = add_waves(intro, v1)
 
-        return final
+        part = final
+        if save:
+            self.save(part, "03_intro_drums")
+        return part
     
-    def islands(self):
+    
+    
+    def skirts(self, save = False):
         d = self.skirt1
+        amps = np.geomspace(0.1, 1.0, 16*4)
+        intro = [rest(self.whole * 5)]
+        m1 = [
+            d.note(C3, self.e, amps[0]), d.note(C3, self.e, amps[2]),
+            rest(self.e), d.note(C3, self.s, amps[6]), rest(self.s),
+            d.note(C3, self.s, amps[8]), rest(self.s), rest(self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+        m2 = [
+            d.note(C3, self.e, amps[16]), d.note(C3, self.e, amps[18]),
+            rest(self.e), d.note(C3, self.s, amps[22]), rest(self.s),
+            d.note(C3, self.s, amps[24]), rest(self.s), rest(self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+        m3 = [
+            d.note(C3, self.e, amps[32]), d.note(C3, self.e, amps[34]),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e), 
+        ]
+
+        m4 = [
+            d.note(C3, self.e, amps[48]), d.note(C3, self.e, amps[50]),
+            rest(self.e), d.note(C3, self.s, amps[54]), rest(self.s),
+            d.note(C3, self.s, amps[56]), rest(self.s), rest(self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+
+        v0 = m1 + m2 + m3 + m4
+
+        m5 = [
+            d.note(C3, self.e), d.note(C3, self.e),
+            rest(self.e), d.note(C3, self.s), rest(self.s),
+            d.note(C3, self.s), rest(self.s), rest(self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+        m6 = [
+            d.note(C3, self.e), d.note(C3, self.e),
+            rest(self.e), d.note(C3, self.s), rest(self.s),
+            d.note(C3, self.s), rest(self.s), rest(self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+        m7 = [
+            d.note(C3, self.e), d.note(C3, self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e), 
+        ]
+
+        m8 = [
+            d.note(C3, self.e), d.note(C3, self.e),
+            rest(self.e), d.note(C3, self.s), rest(self.s),
+            d.note(C3, self.s), rest(self.s), rest(self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+        v1 = m5 + m6 + m7 + m8
+
+        off_verse = [rest(self.whole*4)]
+
+        part =  \
+        intro +\
+        \
+        v0 +\
+        v1 +\
+        \
+        v1 +\
+        v1 +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1
+
+        if save:
+            self.save(part, "03_skirts")
+        return part
+    
+    def bongo(self, save = False):
+        d = self.skirt2
 
         intro = [rest(self.whole * 5)]
         m1 = [
-            d.note(C3, self.e), d.note(C3, self.e),
-            d.note(C5, self.e), d.note(C3, self.s), d.note(C5, self.s),
-            d.note(C3, self.s), d.note(C5, self.s), d.note(C5, self.e),
+            rest(self.e), rest(self.e),
+            d.note(C5, self.e), rest(self.s), d.note(C5, self.s),
+            rest(self.s), d.note(C5, self.s), d.note(C5, self.e),
+            rest(self.e),
+            rest(self.e)
+        ]
+
+        m2 = [
+            rest(self.e), rest(self.e),
+            d.note(C5, self.e), rest(self.s), d.note(C5, self.s),
+            rest(self.s), d.note(C5, self.s), d.note(C5, self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+        m3 = [
+            rest(self.e), rest(self.e),
+            d.note(C5, self.e), rest(self.e),
+            rest(self.e), d.note(C5, self.e),
+            rest(self.e), rest(self.e), 
+        ]
+
+        v1 = m1 + m2 + m3 + m2
+        
+        off_verse = [rest(self.whole*4)]
+
+        part =  \
+        intro +\
+        \
+        v1 +\
+        v1 +\
+        \
+        v1 +\
+        v1 +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1
+
+        if save:
+            self.save(part, "03_bongo")
+        return part
+    
+
+    def chime(self, save = False):
+        d = self.skirt2
+
+        intro = [rest(self.whole * 5)]
+        m1 = [
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.s), rest(self.s),
+            rest(self.s), rest(self.s), rest(self.e),
             d.note(B4, self.e),
             rest(self.e)
         ]
 
         m2 = [
-            d.note(C3, self.e), d.note(C3, self.e),
-            d.note(C5, self.e), d.note(C3, self.s), d.note(C5, self.s),
-            d.note(C3, self.s), d.note(C5, self.s), d.note(C5, self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.s), rest(self.s),
+            rest(self.s), rest(self.s), rest(self.e),
             d.note(B4, self.e),
             d.note(B4, self.e),
         ]
 
         m3 = [
-            d.note(C3, self.e), d.note(C3, self.e),
-            d.note(C5, self.e), rest(self.e),
-            rest(self.e), d.note(C5, self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
             d.note(B4, self.e), rest(self.e), 
         ]
 
@@ -208,7 +386,7 @@ class First(Beat):
         
         off_verse = [rest(self.whole*4)]
 
-        return \
+        part =  \
         intro +\
         \
         v1 +\
@@ -222,56 +400,121 @@ class First(Beat):
         \
         v1 +\
         v1
-    
 
-    def drums(self):
+        if save:
+            self.save(part, "03_chime")
+        return part
+
+    def claps(self, save = False):
         c = self.clap1
-        s = self.kick1
 
         intro = [rest(self.whole*5)]
-        off_bar = [rest(self.whole)]
         off_verse = [rest(self.whole*4)]
+        
 
         m1 = [
-            s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C2, self.e), s.note(C2, self.s),
-            s.note(C2, self.e), s.note(C2, self.s),
-            s.note(C2, self.e),
+            rest(self.e), rest(self.e),
+            c.note(C2, self.e), rest(self.s),
+            rest(self.e), rest(self.s),
+            rest(self.e),
             c.note(C2, self.e),
             rest(self.e),
         ]
 
         m2 = [
+            rest(self.e), rest(self.e),
+            c.note(C2, self.e), rest(self.s),
+            rest(self.e), rest(self.s),
+            rest(self.e),
+            c.note(C2, self.e),
+            c.note(C2, self.e),
+        ]
+
+        m3 = [
+            rest(self.e), rest(self.e),
+            c.note(C2, self.e), rest(self.s),
+            rest(self.e), rest(self.s), # 3.5
+
+            c.note(C2, self.e), c.note(C2, self.e), # 2nd half beat 3
+            rest(self.s*2)
+        ]
+
+        m4 = [
+            rest(self.e), rest(self.e),
+            c.note(C2, self.e), rest(self.s),
+            rest(self.e), rest(self.s),
+            c.note(C2, self.e),
+            c.note(C2, self.e) + rest(self.e),
+            c.note(C2, self.e) + rest(self.e),
+        ]
+
+        v1 = m1 + m2 + m3 + m4
+
+        part = \
+        intro +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1 +\
+        \
+        v1 +\
+        v1 +\
+        \
+        v1 +\
+        v1
+
+        if save:
+            self.save(part, "03_claps")
+        return part
+    
+    def kicks(self, save = False):
+        s = self.kick1
+
+        intro = [rest(self.whole*5)]
+        off_verse = [rest(self.whole*4)]
+
+        m1 = [
             s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C2, self.e), s.note(C2, self.s),
+            rest(self.e), s.note(C2, self.s),
             s.note(C2, self.e), s.note(C2, self.s),
             s.note(C2, self.e),
-            c.note(C2, self.e) + s.note(C2, self.e),
-            c.note(C2, self.e) + s.note(C2, self.e),
+            rest(self.e),
+            rest(self.e),
+        ]
+
+        m2 = [
+            s.note(C2, self.e), s.note(C2, self.e),
+            rest(self.e), s.note(C2, self.s),
+            s.note(C2, self.e), s.note(C2, self.s),
+            s.note(C2, self.e),
+            s.note(C2, self.e),
+            s.note(C2, self.e),
         ]
 
         m3 = [
             s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C2, self.e), s.note(C2, self.s),
-            s.note(C2, self.e), s.note(C2, self.s), # 3.5
+            rest(self.e), s.note(C2, self.s),
+            s.note(C2, self.s),s.note(C2, self.s), s.note(C2, self.s), # 3.5
 
-            c.note(C2, self.e), c.note(C2, self.e), # 2nd half beat 3
+            rest(self.e), rest(self.e), # 2nd half beat 3
             rest(self.s*2)
         ]
 
 
         m4 = [
             s.note(C2, self.e), s.note(C2, self.e),
-            c.note(C2, self.e), s.note(C2, self.s),
+            rest(self.e), s.note(C2, self.s),
             s.note(C2, self.e), s.note(C2, self.s),
-            s.note(C2, self.e) + c.note(C2, self.e),
-            c.note(C2, self.e) + s.note(C2, self.e),
-            c.note(C2, self.e) + s.note(C2, self.e),
+            s.note(C2, self.e),
+            s.note(C2, self.e),
+            s.note(C2, self.e),
         ]
-        v1 = m1 + m2 + m3 + m4
-        hook = v1
 
-        return \
+        v1 = m1 + m2 + m3 + m4
+
+        part =  \
         intro +\
         \
         off_verse +\
@@ -286,8 +529,12 @@ class First(Beat):
         v1 +\
         v1
 
+        if save:
+            self.save(part, "03_kicks")
+        return part
 
-    def synth_1(self):
+
+    def synth_1(self, save = False):
         f = self.synth1
 
         m1 = [
@@ -322,7 +569,7 @@ class First(Beat):
         intro = [rest(self.whole * 5)]
         off_verse = [rest(self.whole * 4)]
         
-        return \
+        part =  \
         intro +\
         \
         off_verse +\
@@ -334,7 +581,11 @@ class First(Beat):
         v1 +\
         v1
 
-    def synth_2(self):
+        if save:
+            self.save(part, "03_synth_1")
+        return part
+
+    def synth_2(self, save = False):
         f = self.synth2
 
         m1 = [
@@ -366,7 +617,7 @@ class First(Beat):
         intro = [rest(self.whole * 5)]
         off_verse = [rest(self.whole * 4)]
         
-        return \
+        part =  \
         intro +\
         \
         off_verse +\
@@ -378,8 +629,65 @@ class First(Beat):
         v1 +\
         v1
 
+        if save:
+            self.save(part, "03_synth_2")
+        return part
 
-    def plucks(self, variation = ""):
+
+    def synth_3(self, save = False):
+        s = self.synth3
+
+        m1 = [
+            s.n(C4, self.e), s.n(D4, self.e),
+            s.n(E4, self.e), rest(self.e),
+            s.n(C4, self.e), s.n(D4, self.s),
+            s.n(E4, self.e), rest(self.e + self.s)
+        ]
+
+        m2 = [
+            s.n(C4, self.e), s.n(D4, self.e),
+            s.n(E4, self.e), s.n(C4, self.e),
+            s.n(E4, self.q),
+            s.n(D4, self.e + self.s),
+            rest(self.s*1)
+        ]
+
+        m3 = [
+            s.n(B3, self.e), s.n(C4, self.e),
+            s.n(D4, self.e), rest(self.e),
+            s.n(B3, self.e), s.n(C4, self.s),
+            s.n(D4, self.e), rest(self.e + self.s)
+        ]
+
+        m4 = [
+            s.n(B3, self.e), s.n(C4, self.e),
+            s.n(D4, self.e), s.n(B3, self.e),
+            s.n(D4, self.q),
+            s.n(C4, self.e + self.s), rest(self.s*1)
+        ]
+
+        v1 = m1 + m2 + m3 + m4
+        intro = [rest(self.whole * 5)]
+        off_verse = [rest(self.whole * 4)]
+        
+        part =  \
+        intro +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        off_verse +\
+        off_verse +\
+        \
+        v1 +\
+        v1
+
+        if save:
+            self.save(part, "03_synth_3")
+        return part
+    
+
+    def whistles_old(self, variation = ""):
         # l, l, s, s, s, l x2 then go down
 
         p = First2()
@@ -413,12 +721,6 @@ class First(Beat):
             p.note(B4, self.s),
             p.note(A4, self.s), p.note(G4, self.e), rest(self.s)
         )
-
-
-        
-
-        
-
 
         v1 = build_measure(m1, m2, m3, m4) * 0.2
 
@@ -570,10 +872,11 @@ class First(Beat):
 
         return v1
 
-    def synth(self, variation = ""):
-        f = Bass()
-        
 
+
+
+    def synth_old(self, variation = ""):
+        f = Bass()
         #   Notes to be sung    #
         # m1 = build_measure(
         #     f.note(D2, self.q),
@@ -772,7 +1075,7 @@ class First(Beat):
             return v1, v2
 
 
-    def drums2(self, variation=""):
+    def drums2_old(self, variation=""):
         c = Cymbal()
         s = Snare()
         b = Bass()
@@ -790,287 +1093,21 @@ class First(Beat):
         if variation == "refrain":
             return m0 * 3.0
 
-    def navi(self):
-        n1 = Hey()
-        
-        m1 = build_measure(n1.note(), n1.note(), n1.note(), n1.note())
-
-        return m1
-
-    def intro(self):
-
-        #   Gather Instruments  #
-        b1, b2 = self.bass()
-        b1 *= 2.0
-        b2 *= 2.0
-
-        f1, f2, f3, f4 = self.funk()
-        d1, d2, d3 = self.drums()
-        n1 = self.navi() * 0.05
-        s1, s2 = self.synth()
-        s1b = self.synth("v1b")
-
-
-        #   Produce each section    #
-        v0 = b1
-
-        v1 = combine(b1, d1)
-
-        v2 = b2
-        v2 = combine(v2, self.drums('refrain1'))
-        
-        
-        v3 = s1b * 0.6
-        v3a = combine(v3, fade_in(d2, 1.0))
-        v3b = combine(s1 * 0.6, d2)
-
-        #v2 = combine(b1, n1)
-        #v2 = combine(v2, d1)
-
-        prod = build_measure(
-            v0, v1,
-
-            #   Refrain #
-            v2,
-            
-            v3a, v3b
-        )
-
-
-        #   Save the production #
-        self.save(prod, "intro")
-        return prod
-
-
-    def chorus1(self):
-
-        #   Gather Instruments  #
-        b1, b2 = self.bass()
-        #f1, f2, f3, f4 = self.funk()
-        s1, s2 = self.synth()
-        p1 = self.plucks()
-        s1b = self.synth("v1b")
-        d1, d2, d3 = self.drums()
-
-
-        #   Produce each section    #
-        v1 = s1 * 0.6
-        #v1 = combine(v1, p1)
-        v1 = combine(v1, d2)
-        v1 = combine(v1, d3)
-
-        v1b = combine(s1b * 0.6, d2)
-        #v1b = combine(v1b, p1)
-        v1b = combine(v1b, d3)
-
-        #v1 = combine(d1, v1)
-        #v1 = combine(v1, b1)
-
-        prod = build_measure(v1b, v1)
-
-        self.save(prod, "chorus1")
-        return prod
-
-    def hook1(self):
-        b1, b2 = self.bass()
-        f1, f2, f3, f4 = self.funk()
-        s1, s2 = self.synth()
-        d1, d2, d3 = self.drums()
-
-
-        v2 = s2
-        v2 = combine(v2, f3)
-        v2_b = build_measure(b2, b2, b2, b2)
-        v2 = combine(v2, v2_b)
-        v2 = combine(v2, d3)
-
-        prod = build_measure(v2, v2)
-
-        self.save(prod, "hook1")
-        return prod
-
-
-    def verse1(self):
-        #   Gather Instruments  #
-        b1, b2 = self.bass()
-        #f1, f2, f3, f4 = self.funk()
-        s1, s2 = self.synth()
-        p1 = self.plucks()
-        s1b = self.synth("v1b")
-        d1, d2, d3 = self.drums()
-
-
-        #   Produce each section    #
-        v1 = s1 * 0.6
-        v1 = combine(v1, p1)
-        v1 = combine(v1, d2)
-        v1 = combine(v1, d3)
-
-        v1b = combine(s1b * 0.6, d2)
-        v1b = combine(v1b, p1)
-        v1b = combine(v1b, d3)
-
-
-        prod = build_measure(
-                            v1b, v1,
-                            v1b, v1
-                            )
-
-        self.save(prod, "verse1")
-        return prod
-
-    def refrain1(self):
-        """4-bar refrain"""
-        d1, d2, d3 = self.drums()
-        s1 = self.synth("refrain")
-
-        prod = combine(d3, s1)
-
-        self.save(prod, "drum refrain")
-        return prod
-
-    def refrain2(self):
-        """4-bar refrain"""
-        d1, d2, d3 = self.drums()
-
-        prod = d3
-
-        self.save(prod, "drum refrain")
-        return prod
-
-    def verse2(self):
-        """Chopped up plucks"""
-
-        r = self.drums2("refrain")
-
-        #   Gather Instruments  #
-        b1, b2 = self.bass()
-        s1, s2 = self.synth()
-
-        ##  Chopped Plucks --------
-        p1 = self.plucks("chopped")
-        p2 = self.plucks("chopped2")
-        p3 = self.plucks("chopped3")
-        p4 = self.plucks("chopped4")
-        ##  -----------------------
-
-        s1b = self.synth("v1b")
-        d1, d2, d3 = self.drums()
-
-
-        #   Produce each section    #
-        base = combine(s1 * 0.6, d2)
-        base = combine(base, d3)
-
-        baseb = combine(s1b * 0.6, d2)
-        baseb = combine(baseb, d3)
-
-
-        ##  Add Plucks -------
-        v1b = combine(baseb, p1)
-        ##  ------------------
-
-        ##  Add Plucks -------
-        v1 = combine(base, p2)
-        ##  ------------------
-
-        ##  Add Plucks -------
-        v2b = combine(baseb, p3)
-        ##  ------------------
-
-        ##  Add Plucks -------
-        v2 = combine(base, p4)
-        ##  ------------------
-
-
-
-
-        prod = build_measure(
-                            r,
-                            v1b, v1,
-                            v2b, v2
-                            )
-
-        self.save(prod, "verse2")
-        return prod
-
-        
-
-    def produce(self):
-        #   Gather Each Section of the song    #
-        intro = self.intro()
-        chorus = self.chorus1()
-        hook = self.hook1()
-        verse1 = self.verse1()
-        verse2 = self.verse2()
-        refrain1 = self.refrain1()
-        refrain2 = self.refrain2()
-
-
-        #   Save the production #
-        prod = build_measure(
-            #   Intro   #
-            intro,
-
-            #   Chorus  #
-            chorus,
-
-            #   Hook    #
-            hook,
-
-            #   I...   #
-            rest(self.h),
-
-            #   Verse 1 #
-            verse1,
-
-            #   Refrain #
-            refrain1,
-
-            #  Hook   #
-            hook,
-
-            #   Chorus  #
-            chorus,
-
-            #   Verse 2 #
-            verse2,
-
-            #   Refrain1    #
-            refrain2,
-
-            #   Keys Solo (Play hook to refrain beat)   #
-            refrain2,
-        
-            #   Hook (Saxophone Solo)    #
-            hook,
-
-            #   Chorus (Sax + sung) #
-            chorus
-        )
-
-        # prod = (prod / np.max(np.abs(prod)) * 32767).astype(np.int16)
-        # prod = np.column_stack((prod, prod))
-        # sound = pygame.sndarray.make_sound(prod)
-        # sound.play()
-        # while pygame.mixer.get_busy():
-        #     pass
-
-        #   Save the production #
-
-        self.save(prod, "firstup")
-
-        return
     
 
-    def save(self, sound, name = "", norm=True):
+    def save(self, sound, name = "", convert = True):
         """Save the sound to the desired folder"""
-
-        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
-
+        super().save(sound, name, True, convert, os.path.join("Tangible_Light", "ost", "03"))
+        
 
 def main():
     beat = First(62)
-    beat.produce_full()
-    beat.save(beat.production, "03_First Up")
+
+    #   Export each instrument  #
+    beat.get_instruments(save=True)
+
+    #   Export the full beat    #
+    # beat.set_instruments(save=False)
+    # beat.produce_full()
+    # beat.save(beat.production, "03_First Up", convert=False)
 
