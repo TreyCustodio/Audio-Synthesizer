@@ -11,7 +11,7 @@ class O5(Beat):
         super().__init__(bpm)
         
         #   Bass    #
-        self.bass1 = Tangible_Light.Title_Bass(amp=1.0, punchy=True)
+        self.bass1 = Tangible_Light.Title_Bass(amp=1.0, punchy=True, freq_mod=4)
 
         #   Synths  #
         self.synth1 = Tangible_Light.Whine(amp=0.4)
@@ -38,7 +38,7 @@ class O5(Beat):
         """Get each instrument's part. If save, then save each instrument."""
         instruments = {
             #   Bass    #
-            # 0: [self.bass1, self.bass(save)],
+            0: [self.bass1, self.bass(save)],
 
             #   Middle Synths   #
             
@@ -54,8 +54,8 @@ class O5(Beat):
             # 2: [self.clap1, self.claps(save)],
             # 3: [self.clap1, self.cymbal(save)],
             # 4: [self.synth1, self.bell(save)],
-            7: [self.chime1, self.chime(save, "v1")],
-            8: [self.chime2, self.chime(save, "v2")],
+            # 7: [self.chime1, self.chime(save, "v1")],
+            # 8: [self.chime2, self.chime(save, "v2")],
 
 
             # 5: [self.chime1, self.],
@@ -219,7 +219,7 @@ class O5(Beat):
             rest(self.s), rest(self.s), rest(self.s), rest(self.s),
             c.n(C1, self.s), rest(self.s), rest(self.s), rest(self.s),
             rest(self.s), rest(self.s), rest(self.s), rest(self.s),
-            c.n(C1, self.s), c.n(C1, self.s), c.n(C1, self.s), c.n(C1, self.s),
+            c.n(C1, self.s), rest(self.s), rest(self.s), c.n(C1, self.s), 
         ]
 
         m4 = [
@@ -232,7 +232,6 @@ class O5(Beat):
         
 
         v0 = [rest(self.w)] + m0
-        # v1 = m5 + m1 + m5 + m4
         v1 = m1 + m2 + m3 + m4
 
 
@@ -376,27 +375,67 @@ class O5(Beat):
         return part
     
     def bass(self, save = False):
-        c = self.bass1
-        note = C2
+        s = self.bass1
         
-        m3 = [
-            rest(self.q),
-            c.n(note, self.q),
-            rest(self.q),
-            c.n(note, self.q),
+        m1 = [
+            s.n(F4, self.e), s.n(F4, self.e), # 1
+            s.n(F4, self.e), rest(self.s), # 1.75
+            s.n(F4, self.e), s.n(F4, self.e), # 2.75
+            s.n(F4, self.e), # 3.5
+            s.n(G4, self.e + self.s),# 4
         ]
-        m4 = [
-            rest(self.q),
-            c.n(note, self.q),
-            rest(self.s), rest(self.s), rest(self.s), c.n(note, self.s),
-            c.n(note, self.s*2), c.note(note, self.s), rest(self.s)
-        ]
-        
-        off = [rest(self.w*4)]
-        v0 = [rest(self.w*2)]
-        v1 =  m3 + m4 + m3 + m4
 
-        part = v0 + off + v1 + off
+        m2 = [
+            s.n(E4, self.e), s.n(E4, self.e),
+            s.n(E4, self.e), rest(self.s),
+            s.n(E4, self.e), s.n(E4, self.e),
+            s.n(E4, self.s), rest(self.e),
+            s.n(E4, self.e),
+        ]
+
+        m3 = [
+            s.n(F4, self.e), rest(self.s), # 1
+            s.n(F4, self.e), rest(self.e), # 1.75
+
+            s.n(F4, self.e), s.n(F4, self.e), # 2.75
+            s.n(F4, self.e), rest(self.s), # 3.5
+            s.n(F4, self.e)
+        ]
+
+        m4 = [
+            s.n(E4, self.e),  s.n(E4, self.e), # 1
+            s.n(E4, self.e), # 2
+            rest(self.s),  rest(self.s), # 2.75
+            s.n(E4, self.e),
+            rest(self.s), # 3.25
+            s.n(G4, self.e),
+            rest(self.s), # 3.5
+            s.n(E4, self.e),# 4
+        ]
+        
+        m5 = [
+            s.n(F4, self.e), rest(self.s), #.75
+            s.n(F4, self.e), rest(self.s), #1.5
+            s.n(E4, self.e), # 2
+            s.n(F4, self.e), rest(self.s), # 2.75
+            s.n(F4, self.e), #3.5
+            rest(self.s), s.n(F4, self.e)
+        ]
+        
+        m6 = [
+            s.n(E4, self.e),  s.n(E4, self.e), # 1
+            s.n(E4, self.e), rest(self.e), # 2
+            s.n(E4, self.e), rest(self.s),# 2.75
+            s.n(E4, self.e), rest(self.s), # 3.5
+            s.n(E4, self.e),
+        ]
+
+        v0 = [rest(self.w*2)]
+        v1 = m3 + m4 + m5 + m6
+        v2 = m1 + m2 + m3 + m4
+
+        part = v0 + v1 + v1 + v2
+
         if save:
             self.save(part, "bass")
         return part
