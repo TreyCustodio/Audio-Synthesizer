@@ -27,7 +27,8 @@ class O5(Beat):
         self.clap1 = PercussiveNoise(4.0, 14, 0.0, 0.1)
         self.kick1 = Tap3(3.0, 25, noise_amount=0.01)
         self.cymbal1 = PercussiveNoise(1.0, 7, noise_amount=0.04) 
-        self.chime1 = Tap3()
+        self.chime1 = Tap3(attack=25, noise_amount=0.01)
+        self.chime2 = Acoustic1()
 
         #   Instrument Dictionary   #
         self.instruments = {}
@@ -44,15 +45,19 @@ class O5(Beat):
             #   Melodic Synths   #
 
             #   Stringy Synths  #
-            5: [self.synth2, self.synth_1(save)],
-            5.5: [self.synth3, self.synth_3(save)],
-            6: [self.reg, self.reggae(save)],
+            # 5: [self.synth2, self.synth_1(save)],
+            # 5.5: [self.synth3, self.synth_3(save)],
+            # 6: [self.reg, self.reggae(save)],
 
             #   Percussion  #
             # 1: [self.kick1, self.kicks(save)],
             # 2: [self.clap1, self.claps(save)],
             # 3: [self.clap1, self.cymbal(save)],
-            4: [self.synth1, self.bell(save)],
+            # 4: [self.synth1, self.bell(save)],
+            7: [self.chime1, self.chime(save, "v1")],
+            8: [self.chime2, self.chime(save, "v2")],
+
+
             # 5: [self.chime1, self.],
         }
 
@@ -66,6 +71,13 @@ class O5(Beat):
         """Save the sound to the desired folder"""
         super().save(sound, name, True, convert, os.path.join("Tangible_Light", "ost", "05"))
     
+    # def cow(self, save = False):
+    #     s = self.skirt2
+
+    #     m1 = [
+    #         s.n()
+    #     ]
+    #     return
     def reggae(self, save = False):
         c = self.reg
         m1 = [
@@ -144,7 +156,7 @@ class O5(Beat):
             k.n(C1, self.s), rest(self.s), rest(self.s), k.n(C1, self.s), 
             k.n(C1, self.s), rest(self.s),rest(self.s), k.n(C1, self.s), # 2
             k.n(C1, self.s), k.n(C1, self.s), rest(self.s), k.n(C1, self.s),
-            k.n(C1, self.s), rest(self.e), k.n(C1, self.s), 
+            k.n(C1, self.s), rest(self.e), rest(self.s), 
 
         ]
 
@@ -162,13 +174,13 @@ class O5(Beat):
             k.n(C1, self.s), k.n(C1, self.s), k.n(C1, self.s), k.n(C1, self.s),
         ]
 
-        v1 =  m1 + m4 + m1 + m5
+        v1 =  m1 + m2 + m1 + m4
         v2 = m1 + m4 + m1 + m6
 
         v0 = [rest(self.w)] + m0
         off = [rest(self.w*4)]
 
-        part = v0 + v2 + off + v1
+        part = v0 + v1 + v1 + off
         if save:
             self.save(part, "kicks")
         return part
@@ -236,7 +248,7 @@ class O5(Beat):
         v2 = [rest(self.w*2)] + m7 + m4
 
 
-        part = v0 + v1 + v2 + v1
+        part = v0 + v1 + v1 + v2
         if save:
             self.save(part, "claps")
         return part 
@@ -259,29 +271,62 @@ class O5(Beat):
             self.save(part, "cymbal")
         return part
     
-    def chime(self, save = False):
-        c = self.chime1
-        note = C7
+    def chime(self, save = False, variant = "v1"):
+        if variant == "v1":
+            c = self.chime1
+        elif variant == "v2":
+            c = self.chime2
+
+        note = C3
         m1 = [
             rest(self.w - (self.s*3)),
             c.n(note, self.s), c.n(note, self.s), c.n(note, self.s),
         ]
 
         m2 = [
-            rest(self.w - (self.s *2)),
+            rest(self.w - (self.s*3)), c.n(note, self.s),
             c.n(note, self.s/2), c.n(note, self.s/2), c.n(note, self.s),
         ]
 
-        v1 =  m1 + m2 + m1 + m2
+        m4 = [
+            rest(self.w - (self.s*2)),
+            c.n(note, self.s/2), c.n(note, self.s/2), c.n(note, self.s),
+        ]
+
+        v1 =  m1 + m2 + m1 + m4
         
+        #   Variant 2   #
+        m5 = [
+            rest(self.w - (self.s*3)),
+            rest(self.s), c.n(note, self.e),
+        ]
+
+        m6 = [
+            rest(self.w - (self.s*4)), c.n(note, self.s), rest(self.s),
+            c.n(note, self.e),
+        ]
+
+        m8 = [
+            rest(self.w - (self.s*2)),
+            c.n(note, self.s/2), c.n(note, self.s/2), c.n(note, self.s),
+        ]
+
+        v2 = m5 + m6 + m5 + m6
+
+
         v0 = [rest(self.w*2)]
-        part = v0 + v1 + v1 + v1
+        part = v0 + v1 + v1 + v2
+
+        if save:
+            if variant == "v1":
+                self.save(part, "chime 1")
+            elif variant == "v2":
+                self.save(part, "chime 2")
 
         return part
     
     def bell(self, save = False):
         c = self.synth1
-        note = C2
         m1 = [
             rest(self.s), rest(self.s), c.n(G4, self.s), rest(self.s), rest(self.s),
             rest(self.e), rest(self.s),
@@ -315,17 +360,17 @@ class O5(Beat):
         v1 =  m1 + m2 + m3 + m4
 
         #   V2  #
-        m3 = [
+        m5 = [
             rest(self.w)
         ]
-        m4 = [
+        m6 = [
             rest(self.t),
-            rest(self.e), c.note(F4, self.s), rest(self.s)
+            rest(self.e), c.note(F4, self.e)
         ]
 
-        v2 = m3 + m4 + m3 + m4
+        v2 = m5 + m6 + m6 + m6
 
-        part = v0 + v1 + v2 + v1
+        part = v0 + v1 + v1 + v2
         if save:
             self.save(part, "bell")
         return part
@@ -426,7 +471,7 @@ class O5(Beat):
         v1 = m3 + m4 + m5 + m6
         v2 = m1 + m2 + m3 + m4
 
-        part = v0 + v1 + v2 + v1
+        part = v0 + v1 + v1 + v2
 
         if save:
             self.save(part, "synth")
@@ -502,7 +547,7 @@ class O5(Beat):
         v1 = m3 + m4 + m5 + m6
         v2 = m1 + m2 + m3 + m4
 
-        part = v0 + v1 + v2 + v1
+        part = v0 + v1 + v1 + v2
 
         if save:
             self.save(part, "synth 2")

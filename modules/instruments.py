@@ -673,7 +673,7 @@ class Acoustic1(Instrument):
 
             
             wave3 = envelope(base4,
-                             0.08, 0.1, 0.1, 0.001) * 0.01
+                             0.06, 0.1, 0.1, 0.001) * 0.01
             
             
             
