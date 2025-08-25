@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 
 from modules.audio import *
 from modules.instruments import *
@@ -11,7 +12,22 @@ from .composer import *
 import numpy as np
 
 class Engine:
+    """
+    The Engine draws the graphical elements,
+    handles input from the user,
+    and updates the display accordingly.
     
+    --- Mouse Events ---
+    1. Check the user's mouse position
+        a. Check if that position overlaps a button
+        b. Set that button's state to hovered if so
+    2. Check if the user has clicked a mouse button
+        a. Check if any of the buttons on screen are being hovered over
+        b. Set the button's state to held if so
+    3. Check if the user has released a mouse button
+        a. Check if any of the buttons on screen are being held
+        b. Release the button and perform its operation if so
+    """
     
     def __init__(self):
         #   States  #
@@ -38,11 +54,13 @@ class Engine:
         self.bpm = 38
 
         #   Instrument   #
-        # self.instrument = WhinyString(amp=0.2)
-        # self.instrument = Clean_Pluck()
-        self.instrument = Bass()
-        # self.instrument = Tangible_Light.Bell()
-        # self.instrument = Tangible_Light.Title_Bass()
+        self.instrument = Bass_1()
+        # self.instrument = First4()
+        # self.instrument = Acoustic3(harmonics=12,
+        #                         vol_1 = 0.01, vol_2 = 0.01, vol_3 = 0.000000000001, vol_4=1.0, vol_5 = 0.01, vol_6 = 0.01, vol_7 = 0.01, vol_8 = 0.01)
+
+        # self.instrument = Key_Harms(harmonics=30,
+        #                             attack=0.1, decay = 0.05)
 
         #   Octave   #
         self.octave = 1
@@ -147,6 +165,9 @@ class Engine:
 
     def load_piano_images(self):
         """Load images needed to display the piano"""
+        frames = load_row(pygame.image.load(os.path.join("UI","images", "piano", "select.png")), (104, 17), 1, 3, 0)
+        self.select = Pressable(vec(WIDTH - 104, 0), frames)
+
         self.piano = pygame.image.load(os.path.join("UI","images", "piano", "piano.png"))
 
         self.piano_white = pygame.image.load(os.path.join("UI","images", "piano", "piano_white.png"))
@@ -217,7 +238,7 @@ class Engine:
 
     def draw(self, surf):
         """Draw routine"""
-
+        #   Main Menu   #
         if self.state == "main":
             # Background Color    #
             surf.fill((30, 70, 100))
@@ -240,7 +261,7 @@ class Engine:
             
 
 
-
+        #   Piano Player    #
         elif self.state == "piano":
             #   Draw some background 
             surf.fill((230, 230, 230))
@@ -294,22 +315,25 @@ class Engine:
             #   Draw the Back Button   #
             self.back.draw(surf)
 
+            #   Draw the Instruments button #
+            self.select.draw(surf)
+
+
+        #   Composer    #
         elif self.state == "composer":
             Composer.draw(surf)
             if Composer.STATE == "view":
                 self.back2.draw(surf)
 
+        #   Synthesizer #
         elif self.state == "synthesizer":
             return
     
 
 
-    """
-    Mouse Tracking
-    """
     def handle_event(self, event):
-        
-        #   Global Events   #
+        """Handle input from the user"""
+        #   Global events that should be handled in any state   #
         ## Track the mouse position  #
         if event.type == pygame.MOUSEMOTION:
             self.check_mouse(event.__dict__['pos'])
@@ -322,6 +346,9 @@ class Engine:
         elif event.type == pygame.MOUSEBUTTONUP:
             self.press_up(event)
         
+        elif event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            pygame.quit()
+            sys.exit()
 
         #   State-specific Events   #
         else:
@@ -615,6 +642,7 @@ class Engine:
         
         elif self.state == "piano":
             self.back.check_hovering(pos)
+            self.select.check_hovering
         
         elif self.state == "composer":
             if Composer.STATE == "view":
@@ -637,6 +665,9 @@ class Engine:
         elif self.state == "piano":
             if self.back.get_hovered():
                 self.back.hold()
+
+            if self.select.get_hovered():
+                self.select.hold()
 
         elif self.state == "composer":
             if self.back2.get_hovered():
@@ -668,6 +699,10 @@ class Engine:
             if self.back.get_held():
                 self.state = "main"
                 self.back.release()
+
+            #   Open instrument selecter    #
+            elif self.select.get_held():
+                self.select.release()
 
         elif self.state == "composer":
             if self.back2.get_held():

@@ -12,19 +12,22 @@ class O5(Beat):
         
         #   Bass    #
         self.bass1 = Tangible_Light.Title_Bass(amp=1.0, punchy=True, freq_mod=4)
+        self.bass2 = Bass()
 
         #   Synths  #
         self.synth1 = Tangible_Light.Whine(amp=0.4)
         # self.synth1 = DontTell2()
         self.synth2 = Clean_Key(amp=1.0)
-        self.synth3 = Clean_Key(amp=0.5, freq_mod=1)
+        self.synth3 = Clean_Key(amp=0.5, freq_mod=1.0,
+                                attack = 0.01, decay = 0.0, sustain = 1.0, release = 0.01)
         self.reg = Bass()
 
         #   Percussion   #
         self.skirt1 = Skirt()
         self.skirt2 = Tap3(1.0, 120, 0.0, 0.5)
 
-        self.clap1 = PercussiveNoise(4.0, 14, 0.0, 0.1)
+        # self.clap1 = PercussiveNoise(4.0, 14, 0.0, 0.1)
+        self.clap1 = Hi_Hat()
         self.kick1 = Tap3(3.0, 25, noise_amount=0.01)
         self.cymbal1 = PercussiveNoise(1.0, 7, noise_amount=0.04) 
         self.chime1 = Tap3(attack=25, noise_amount=0.01)
@@ -38,7 +41,7 @@ class O5(Beat):
         """Get each instrument's part. If save, then save each instrument."""
         instruments = {
             #   Bass    #
-            0: [self.bass1, self.bass(save)],
+            # 0: [self.bass1, self.bass(save)],
 
             #   Middle Synths   #
             
@@ -46,7 +49,7 @@ class O5(Beat):
 
             #   Stringy Synths  #
             # 5: [self.synth2, self.synth_1(save)],
-            # 5.5: [self.synth3, self.synth_3(save)],
+            5.5: [self.synth3, self.synth_3(save)],
             # 6: [self.reg, self.reggae(save)],
 
             #   Percussion  #
@@ -516,7 +519,7 @@ class O5(Beat):
             self.save(part, "synth")
         return part
     
-    def synth_3(self, save = False):
+    def synth_3b(self, save = False, note = D4):
         s = self.synth3
 
         m0 = [
@@ -539,11 +542,87 @@ class O5(Beat):
         ]
 
         m2 = [
-            s.n(E4, self.e, 1.5), s.n(E4, self.e, 1.5),
-            s.n(E4, self.e, 1.5), s.n(E4, self.s, 1.5),
-            s.n(E4, self.e, 1.5), s.n(E4, self.e, 1.5),
-            s.n(E4, self.s, 1.5), rest(self.e),
-            s.n(E4, self.e, 1.5),
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e), s.n(E4, self.e, 1.5) + s.n(C4, self.e),
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e), s.n(E4, self.s, 1.5) + s.n(C4, self.s),
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e), s.n(E4, self.e, 1.5) + s.n(C4, self.e),
+            s.n(E4, self.s, 1.5) + s.n(C4, self.s), rest(self.e),
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e),
+        ]
+
+        m3 = [
+            s.n(D4, self.e) + s.n(F4, self.e), s.n(D4, self.e, 1.5), # 1
+            s.n(D4, self.e, 1.5), s.n(C4, self.s, 1.5) + s.n(E4, self.s), # 1.75
+
+            s.n(D4, self.e, 1.5) + s.n(F4, self.e), s.n(D4, self.e, 1.5), # 2.75
+            s.n(D4, self.e, 1.5), s.n(D4, self.s, 1.5), # 3.5
+            s.n(D4, self.e, 1.5) + s.n(F4, self.e)
+        ]
+
+        m4 = [
+            s.n(C4, self.e) + s.n(E4, self.e, 1.5),  s.n(C4, self.e) + s.n(E4, self.e, 1.5), # 1
+            s.n(C4, self.e) + s.n(E4, self.e, 1.5), # 2
+            s.n(E4, self.s, 1.5),  s.n(C4, self.e) + s.n(E4, self.e, 1.5), # 2.75
+            s.n(C4, self.e) + s.n(E4, self.e, 1.5), # 3.25
+            s.n(C4, self.e) + s.n(E4, self.e, 1.5),
+            s.n(D4, self.s, 1.5), # 3.5
+            s.n(C4, self.e) + s.n(E4, self.e, 1.5),# 4
+        ]
+        
+        m5 = [
+            s.n(D4, self.e, 1.5) + s.n(F4, self.e), rest(self.s), #.75
+            s.n(D4, self.e, 1.5) + s.n(F4, self.e), rest(self.s), #1.5
+            s.n(E4, self.e), # 2
+            s.n(D4, self.e, 1.5) + s.n(F4, self.e), rest(self.s), # 2.75
+            s.n(D4, self.e, 1.5) + s.n(F4, self.e), #3.5
+            s.n(D4, self.s) + s.n(F4, self.s), s.n(D4, self.e) + s.n(F4, self.e)
+        ]
+        
+        m6 = [
+            s.n(E4, self.e),  s.n(E4, self.e), # 1
+            s.n(E4, self.e), rest(self.e), # 2
+            s.n(C4, self.s) + s.n(E4, self.s),  s.n(C4, self.e) + s.n(E4, self.e), # 2.75
+            s.n(C4, self.e) + s.n(E4, self.e), s.n(E4, self.s), # 3.5
+            s.n(C4, self.e) + s.n(E4, self.e),
+        ]
+
+        v0 = m0 + m2
+        v1 = m3 + m4 + m5 + m6
+        v2 = m1 + m2 + m3 + m4
+
+        part = v0 + v1 + v1 + v2
+
+        if save:
+            self.save(part, "synth 2")
+        return part
+    
+    def synth_3(self, save = False, note = D4):
+        s = self.synth3
+
+        m0 = [
+            s.n(D4, self.e) + s.n(F4, self.e), s.n(D4, self.e) + s.n(F4, self.e), # 1
+            s.n(D4, self.e) + s.n(F4, self.e), s.n(C4, self.s) + s.n(E4, self.s, 1.5), # 1.75
+            s.n(D4, self.e) + s.n(F4, self.e),
+            s.n(D4, self.e) + s.n(F4, self.e), # 2.75
+            s.n(D4, self.e) + s.n(F4, self.e), # 3.5
+            s.n(D4, self.s) + s.n(F4, self.s),
+            rest(self.s),
+            rest(self.s),
+        ]
+
+        m1 = [
+            s.n(D4, self.e) + s.n(F4, self.e), s.n(D4, self.e) + s.n(F4, self.e), # 1
+            s.n(D4, self.e) + s.n(F4, self.e), s.n(C4, self.s) + s.n(E4, self.s, 1.5), # 1.75
+            s.n(D4, self.e) + s.n(F4, self.e), s.n(D4, self.e) + s.n(F4, self.e), # 2.75
+            s.n(D4, self.e) + s.n(F4, self.e), # 3.5
+            s.n(D4, self.e) + s.n(F4, self.e), rest(self.s),# 4
+        ]
+
+        m2 = [
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e), s.n(E4, self.e, 1.5) + s.n(C4, self.e),
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e), s.n(E4, self.s, 1.5) + s.n(C4, self.s),
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e), s.n(E4, self.e, 1.5) + s.n(C4, self.e),
+            s.n(E4, self.s, 1.5) + s.n(C4, self.s), rest(self.e),
+            s.n(E4, self.e, 1.5) + s.n(C4, self.e),
         ]
 
         m3 = [
