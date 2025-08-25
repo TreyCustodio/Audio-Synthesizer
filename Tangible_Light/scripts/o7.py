@@ -12,7 +12,8 @@ class O7(Beat):
         self.bass1 = Key_Harms(amp=0.4, freq_mod=0.25, harmonics = 1, attack=0.001, decay=0.00, sustain=1.0, release = 0.01, metal = False)
 
         #   Synths  #
-        self.acou1 = Acoustic3(amp=0.3, freq_mod=1.0, sustain=1.0, harmonics = 50)
+        self.acou1 = Acoustic3(amp=0.3, freq_mod=1.0, sustain=1.0,
+                               vol_3 = 1.0, vol_4 = 1.0)
         self.whistle1 = First4(amp=0.1, wave_1=False, wave_2=False)
         self.whistle2 = First4(amp=0.1, freq_mod=4, wave_1=False, wave_2=False)
         self.whistle3 = First4(amp=0.1, freq_mod=0.75, wave_1=False, wave_2=False)
@@ -26,7 +27,8 @@ class O7(Beat):
 
         #   Percussion   #
         self.tap1 = Tap3(1.0, 120, 0.0, 0.5)
-        self.clap1 = PercussiveNoise(4.0, 14, 0.0, 0.2)
+        self.clap1 = Rapping.Snare_1()
+
         self.kick1 = Tap3(3.0, 25, noise_amount=0.01)
         self.cymbal1 = PercussiveNoise(1.0, 7, noise_amount=0.04) 
         self.chime1 = Tap3(attack=25, noise_amount=0.01)
@@ -46,6 +48,8 @@ class O7(Beat):
 
             #   Middle Synths   #
             2: [self.acou1, self.acou_1(save)],
+            22: [self.acou1, self.acou_1(save, "v2")],
+
             3: [self.whistle1, self.punch_1(save)],
             4: [self.punch1, self.whistles(save)],
             5: [self.synth1, self.synth_1(save)],
@@ -160,7 +164,11 @@ class O7(Beat):
         return part
     
     def acou_1(self, save = False, variant = "v1"):
-        s = self.acou1
+        if variant == "v2":
+            s = Acoustic3(amp=0.3, freq_mod=1.0, sustain=1.0,
+                               vol_1 = 1.0, vol_2 = 1.0)
+        else:
+            s = self.acou1
         
         #   Variant 1   #
         m1 = [
@@ -226,7 +234,10 @@ class O7(Beat):
         v1 + v2 + v1 + v2
 
         if save: 
-            self.save(part, "acoustic synth")
+            if variant == "v2":
+                self.save(part, "acoustic synth 2")
+            else:
+                self.save(part, "acoustic synth")
         return part
     
     def whistles(self, save = False, variant = "v1"):
@@ -261,7 +272,10 @@ class O7(Beat):
         off + v1 + off + v1
 
         if save:
-            self.save(part, "whistle synth")
+            if variant == "v2":
+                self.save(part, "whistle synth 2")
+            else:
+                self.save(part, "whistle synth")
         return part
     
     
@@ -552,10 +566,10 @@ def main():
     beat = O7(40)
 
     #   Export each instrument  #
-    # beat.get_instruments(save=True)
+    beat.get_instruments(save=True)
 
     #   Export the full beat    #
-    beat.set_instruments(save=False)
-    beat.produce_full()
-    beat.save(beat.production, "_prod", convert=False)
+    # beat.set_instruments(save=False)
+    # beat.produce_full()
+    # beat.save(beat.production, "_prod", convert=False)
 

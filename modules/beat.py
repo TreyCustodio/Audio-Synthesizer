@@ -92,7 +92,7 @@ class Beat:
         self.produce_full(self.instruments[key])
 
         
-    def produce_full(self, instruments: dict = {}) -> None:
+    def produce_full(self, instruments: dict = {}, export = False) -> None:
         """Combine each part of the song and produce the full beat"""
 
         #   Initialize the prod with 1 millisecond of silence   #
@@ -106,11 +106,14 @@ class Beat:
         for key in instruments:
             #   Get the instrument's notes from the dict    #
             notes = instruments[key][1]
-
+            
+            if export:
+                self.save(notes, str(key))
             #   Convert the notes into an ndarray   #
             final = self.convert_notes(notes)
             
             #   Add the converted notes to the production  #
+            
             prod = mix(
                 prod,
                 final

@@ -12,14 +12,19 @@ class O5(Beat):
         
         #   Bass    #
         self.bass1 = Tangible_Light.Title_Bass(amp=1.0, punchy=True, freq_mod=4)
+        # self.bass1 = Bass_1(freq_mod = 1/8)
         self.bass2 = Bass()
 
         #   Synths  #
         self.synth1 = Tangible_Light.Whine(amp=0.4)
         # self.synth1 = DontTell2()
         self.synth2 = Clean_Key(amp=1.0)
-        self.synth3 = Clean_Key(amp=0.5, freq_mod=1.0,
-                                attack = 0.01, decay = 0.0, sustain = 1.0, release = 0.01)
+        # self.synth3 = Clean_Key(amp=0.5, freq_mod=1.0,
+        #                         attack = 0.01, decay = 0.1, sustain = 0.7, release = 0.01)
+
+        # self.synth3 = Acoustic3(attack=0.01, decay=0.1, sustain=0.7, release=0.01,
+        #                         vol_1=0.01, vol_2 =1.0, vol_3 = 0.01, vol_4 = 0.5, vol_5=0.0,vol_6=0.0, vol_7=0.0, vol_8=0.0)
+        self.synth3 = WhinyString()
         self.reg = Bass()
 
         #   Percussion   #
@@ -28,6 +33,7 @@ class O5(Beat):
 
         # self.clap1 = PercussiveNoise(4.0, 14, 0.0, 0.1)
         self.clap1 = Hi_Hat()
+        self.clap1 = Rapping.Snare_1()
         self.kick1 = Tap3(3.0, 25, noise_amount=0.01)
         self.cymbal1 = PercussiveNoise(1.0, 7, noise_amount=0.04) 
         self.chime1 = Tap3(attack=25, noise_amount=0.01)
@@ -49,12 +55,12 @@ class O5(Beat):
 
             #   Stringy Synths  #
             # 5: [self.synth2, self.synth_1(save)],
-            5.5: [self.synth3, self.synth_3(save)],
+            # 5.5: [self.synth3, self.synth_3(save)],
             # 6: [self.reg, self.reggae(save)],
 
             #   Percussion  #
             # 1: [self.kick1, self.kicks(save)],
-            # 2: [self.clap1, self.claps(save)],
+            2: [self.clap1, self.claps(save)],
             # 3: [self.clap1, self.cymbal(save)],
             # 4: [self.synth1, self.bell(save)],
             # 7: [self.chime1, self.chime(save, "v1")],
@@ -550,11 +556,16 @@ class O5(Beat):
         ]
 
         m3 = [
-            s.n(D4, self.e) + s.n(F4, self.e), s.n(D4, self.e, 1.5), # 1
-            s.n(D4, self.e, 1.5), s.n(C4, self.s, 1.5) + s.n(E4, self.s), # 1.75
+            s.n(D4, self.q) + s.n(F4, self.q), 
+            rest(self.e),
+            # s.n(D4, self.e, 1.5), # 1
+            # s.n(D4, self.e, 1.5), 
 
-            s.n(D4, self.e, 1.5) + s.n(F4, self.e), s.n(D4, self.e, 1.5), # 2.75
-            s.n(D4, self.e, 1.5), s.n(D4, self.s, 1.5), # 3.5
+            s.n(C4, self.s, 1.5) + s.n(E4, self.s), # 1.75
+
+            s.n(D4, self.q + self.e, 1.5) + s.n(F4, self.q + self.e), rest(self.e), # 2.75
+
+            s.n(D4, self.s, 1.5), # 3.5
             s.n(D4, self.e, 1.5) + s.n(F4, self.e)
         ]
 
@@ -578,8 +589,8 @@ class O5(Beat):
         ]
         
         m6 = [
-            s.n(E4, self.e),  s.n(E4, self.e), # 1
-            s.n(E4, self.e), rest(self.e), # 2
+            s.n(E4, self.e) + s.n(C4, self.e),  s.n(E4, self.e) + s.n(C4, self.e), # 1
+            s.n(E4, self.e) + s.n(C4, self.e), rest(self.e), # 2
             s.n(C4, self.s) + s.n(E4, self.s),  s.n(C4, self.e) + s.n(E4, self.e), # 2.75
             s.n(C4, self.e) + s.n(E4, self.e), s.n(E4, self.s), # 3.5
             s.n(C4, self.e) + s.n(E4, self.e),
@@ -626,12 +637,11 @@ class O5(Beat):
         ]
 
         m3 = [
-            s.n(D4, self.e) + s.n(F4, self.e), s.n(D4, self.e, 1.5), # 1
-            s.n(D4, self.e, 1.5), s.n(C4, self.s, 1.5) + s.n(E4, self.s), # 1.75
+            s.n(D4, self.q) + s.n(F4, self.q), # 1
+            rest(self.e), s.n(C4, self.s, 1.5) + s.n(E4, self.s), # 2
 
-            s.n(D4, self.e, 1.5) + s.n(F4, self.e), s.n(D4, self.e, 1.5), # 2.75
-            s.n(D4, self.e, 1.5), s.n(D4, self.s, 1.5), # 3.5
-            s.n(D4, self.e, 1.5) + s.n(F4, self.e)
+            s.n(D4, self.q + self.e, 1.5) + s.n(F4, self.q + self.e), # 3.5
+            s.n(D4, self.e + self.s, 1.5) + s.n(F4, self.e + self.s)
         ]
 
         m4 = [
@@ -654,8 +664,8 @@ class O5(Beat):
         ]
         
         m6 = [
-            s.n(E4, self.e),  s.n(E4, self.e), # 1
-            s.n(E4, self.e), rest(self.e), # 2
+            s.n(E4, self.e) + s.n(C4, self.e),  s.n(E4, self.e) + s.n(C4, self.e), # 1
+            s.n(E4, self.e)+ s.n(C4, self.e), rest(self.e), # 2
             s.n(C4, self.s) + s.n(E4, self.s),  s.n(C4, self.e) + s.n(E4, self.e), # 2.75
             s.n(C4, self.e) + s.n(E4, self.e), s.n(E4, self.s), # 3.5
             s.n(C4, self.e) + s.n(E4, self.e),

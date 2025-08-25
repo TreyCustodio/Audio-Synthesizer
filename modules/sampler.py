@@ -2,6 +2,7 @@ from .audio import *
 import pygame
 import wave
 import scipy.io.wavfile as wav
+from scipy.signal import resample
 
 SAMPLE_FOLDER = "samples"
 
@@ -10,31 +11,37 @@ class Sampler:
         """Convert a sound file to a numpy array using pygame's mixer.
         Returns a stereo audio file.
         """
-        samples, data = wav.read(sound)  
-        samples = int(sample_rate * dur)
-        data = np.array(data)
-
-        stretched = np.interp(
-            np.linspace(0, len(data), num=samples, endpoint=False),
-            np.arange(len(data)),
-            data
-        )
-
-        return stretched
     
         #   Initialize pygame mixer
         pygame.mixer.init()
 
         #   Load the sound file
         sound = pygame.mixer.Sound(sound)
+        
 
         #   Convert the sound to a numpy array
         sound_data = pygame.sndarray.array(sound)
 
-        #   Convert to mono -- Not used
-        sound = pygame.sndarray.make_sound(sound_data)
+        # Check if the sound is stereo (2D array)
+        if len(sound_data.shape) > 1:  # Stereo audio
+            # Convert to mono by averaging the two channels
+            sound_data = sound_data.mean(axis=1).astype(sound_data.dtype)
 
-        return np.array(sound_data)
+
+        index = dur * sample_rate
+        target_length = int(dur * sample_rate)  # Calculate the target number of samples
+        current_length = len(sound_data)
+
+        if current_length > target_length:
+            # Cut the array to the specified duration
+            sound_data = sound_data[:target_length]
+        elif current_length < target_length:
+            # Extend the array with silence (zeros)
+            padding = np.zeros(target_length - current_length, dtype=sound_data.dtype)
+            sound_data = np.concatenate((sound_data, padding))
+        
+        return sound_data
+
 
     def sample_env(sampled_sound, attack=0.0, decay=0.0, sustain=1.0, release=0.0):
         """Convert a sound file to a numpy array and apply an envelope"""

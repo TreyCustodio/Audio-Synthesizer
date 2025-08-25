@@ -168,6 +168,9 @@ class Instrument:
     def getADSR(self):
         return self.a, self.d, self.s, self.r
     
+    def set_name(self, name: str):
+        self.name = name
+    
     def get_name(self):
         return "untitled"
     
@@ -211,6 +214,28 @@ class Instrument:
 """
 Sound Fonts
 """
+class Rapping:
+    class Snare_1(Instrument):
+        def __init__(self, amp = 1.0):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "snares", "snare_1.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Rap Snare"
+        
+
+    class Hat_1(Instrument):
+        def __init__(self, amp = 1.0):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "hats", "hat_1.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Rap Hat"
+
 
 class Tangible_Light:
 
@@ -622,7 +647,7 @@ class Go(Instrument):
         self.r = 0.0
 
         def func(frequency, duration):
-            return Sampler.sample(os.path.join("samples", "go.wav"), duration, sample_rate=44100/20) * amp
+            return Sampler.sample(os.path.join("samples", "go.wav"), duration) * amp
 
         self.func = func
 
@@ -1370,9 +1395,10 @@ class Snare(Instrument):
             self.func = func
 
 class Bass_1(Instrument):
-    def __init__(self, amp = 1.0, attack = 0.01, decay = 0.1, sustain = 0.75, release = 0.2,
+    def __init__(self, amp = 1.0, freq_mod = 1, attack = 0.01, decay = 0.1, sustain = 0.75, release = 0.2,
                  harmonics = 60, coeff = 2, freq_func = None, amp_func = lin(5)):
         def func(freq, dur):
+            freq *= freq_mod
             synth1 = synthesize(freq, dur, 80,
                                     harmonics, coeff,
                                     freq_func, amp_func,
