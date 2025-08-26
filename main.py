@@ -2,7 +2,7 @@ from modules import audio, instruments
 #from beats import digital_storytelling, dress, firstup
 # from beatsnew import firstup, second, trap, how, new, training
 from Tangible_Light.scripts import title, journal, firstup, \
-    o4, o5, o7, o8, fpdg, trap
+    o4, o5, o7, o8, o9, o10, fpdg, trap
 
 from UI import interface
 from os import path
@@ -81,10 +81,14 @@ def main():
     #   (7) Untitled    #
     # o7.main()
 
-    #   (8) Untitled    #
-    o8.main()
+    #   (8) Death by Defualt    #
+    # o8.main()
     
-    
+    #   (9) Surprise    #
+    o9.main()
+
+    #   (10) Surprise    #
+    # o10.main()
 
     #   Test the Sampler    #
     # b = instruments.Bass()

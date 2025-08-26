@@ -90,9 +90,10 @@ class Beat:
     def produce_one(self, key):
         """Produce one instrument"""
         self.produce_full(self.instruments[key])
+        return
 
         
-    def produce_full(self, instruments: dict = {}, export = False) -> None:
+    def produce_full(self, instruments: dict = {}, export = False, stereo = False) -> None:
         """Combine each part of the song and produce the full beat"""
 
         #   Initialize the prod with 1 millisecond of silence   #
@@ -119,16 +120,15 @@ class Beat:
                 final
             )
         
+        if stereo:
+            prod = np.column_stack([prod, prod])
+
+
         #   Set the production value    #
         self.production = prod
 
-    def add_lib(self, wave):
-        print("prod", self.production)
-        print("adlib", wave)
-
-        self.production = mix(
-            self.production, wave
-        )
+    def add_libs(self, wave):
+        return
 
 
     def save(self, sound, name = "", norm=True, convert=True, path=""):

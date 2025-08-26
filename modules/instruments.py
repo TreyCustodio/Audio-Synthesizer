@@ -216,7 +216,7 @@ Sound Fonts
 """
 class Rapping:
     class Snare_1(Instrument):
-        def __init__(self, amp = 1.0):
+        def __init__(self, amp=0.0001):
             def func(frequency, duration):
                 return Sampler.sample(os.path.join("samples", "snares", "snare_1.wav"), duration) * amp
 
@@ -224,19 +224,47 @@ class Rapping:
 
         def get_name(self):
             return "Rap Snare"
-        
+
+    class Snare_2(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "snares", "snare_2.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Rap Snare 2"       
 
     class Hat_1(Instrument):
-        def __init__(self, amp = 1.0):
+        def __init__(self, amp=0.0001):
             def func(frequency, duration):
                 return Sampler.sample(os.path.join("samples", "hats", "hat_1.wav"), duration) * amp
 
             self.func = func
 
         def get_name(self):
-            return "Rap Hat"
+            return "Hi Hat"
 
+    class Drill_Hat(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "hats", "drill_hat.wav"), duration) * amp
 
+            self.func = func
+
+        def get_name(self):
+            return "Drill Hat"
+        
+    class Surprise(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "surprise.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Surprise"
+        
 class Tangible_Light:
 
     class Title_Synth(Instrument):
@@ -639,6 +667,26 @@ class Hey(Instrument):
 
         self.func = func
 
+class Viola_1(Instrument):
+    def __init__(self, amp=0.0001):
+        def func(frequency, duration):
+            return Sampler.sample(os.path.join("samples", "viola", "viola_1.wav"), duration) * amp
+
+        self.func = func
+
+    def get_name(self):
+        return "Viola 1"
+
+class Viola_2(Instrument):
+    def __init__(self, amp=0.0001):
+        def func(frequency, duration):
+            return Sampler.sample(os.path.join("samples", "viola", "viola_2.wav"), duration) * amp
+
+        self.func = func
+
+    def get_name(self):
+        return "Viola 2" 
+    
 class Go(Instrument):
     def __init__(self, amp=1.0):
         self.a = 0.0
@@ -1408,11 +1456,11 @@ class Bass_1(Instrument):
         self.func = func
 
 class Bass(Instrument):
-    def __init__(self, octave=0, measure=0, type="", amp=1.0, freq_mod= 1, dist=0.0):
-        self.a = 0.01
-        self.d = 0.7
-        self.s = 0.75
-        self.r = 0.2
+    def __init__(self, octave=0, measure=0, type="", amp=1.0, freq_mod= 1, dist=0.0, attack=0.01,  sustain = 0.75, release = 0.05):
+        self.a = attack
+        self.d = 0.1
+        self.s = sustain
+        self.r = release
         
         def dress(frequency, duration):
             """DressB"""
@@ -1429,7 +1477,7 @@ class Bass(Instrument):
             synth1 = synthesize(frequency, duration, 80,
                             harmonics, coeff,
                             freq_func, amp_func,
-                            self.a, self.d, self.s, self.r
+                            self.a, self.d, self.s, self.r, custom_env=True
                             )
             
 
@@ -1439,8 +1487,8 @@ class Bass(Instrument):
             coeff = 1
             freq_func = None #exp(2)
             amp_func = exp(6) #log
-            a = 0.001
-            d = 0.5
+            a = attack
+            d = duration / 4
             s = 0.0
             r = 0.0
 
@@ -1453,7 +1501,7 @@ class Bass(Instrument):
                             + synthesize((frequency / 4) * 3, duration, 80,
                             harmonics, coeff,
                             freq_func, amp_func,
-                            a, d, s, r
+                            a, d, s, r, custom_env=True
                             ) * 0.2
 
 
@@ -1461,7 +1509,7 @@ class Bass(Instrument):
             final = synth1 + synth2
             if dist > 0.0:
                 final = distort(final, dist)
-
+            return synth1 * amp
             return (synth1 + synth2) * amp
         
         self.func = dress
@@ -1998,7 +2046,7 @@ class DontMind(Instrument):
 
 
         def func(freq, dur):
-            freq /= freq_mod
+            freq *= freq_mod
 
             t = np.linspace(0, dur, int(44100 * dur))
             n = 0.0
@@ -2049,7 +2097,7 @@ class DontMind2(Instrument):
 
 
         def func(freq, dur):
-            freq /= freq_mod
+            freq *= freq_mod
 
             t = np.linspace(0, dur, int(44100 * dur))
             n = 0.0
@@ -2101,7 +2149,7 @@ class DontMind2(Instrument):
     
 
 class DontTell(Instrument):
-    def __init__(self, amp = 1.0, octave_shift = 1):
+    def __init__(self, amp = 1.0, freq_mod =1, octave_shift = 1):
         self.a = 0.0
         self.d = 0.1
         self.s = 0.7
@@ -2110,7 +2158,7 @@ class DontTell(Instrument):
 
         def func(freq, dur):
             t = np.linspace(0, dur, int(44100 * dur))
-            freq *= octave_shift
+            freq *= freq_mod
 
             #   Wave Foundation #
             base1 = sine_wave(freq, dur)
@@ -2136,10 +2184,12 @@ class DontTell(Instrument):
         return "Dont Tell Em Bout My Synth"
 
 class DontTell2(Instrument):
-    def __init__(self, amp = 1.0, octave_shift = 1,
+    def __init__(self, amp = 1.0, freq_mod = 1, octave_shift = 1,
+                 attack = 0.02,
                  decay = 0.1, release = 0.05):
 
         def func(freq, dur):
+            freq *= freq_mod
             t = np.linspace(0, dur, int(44100 * dur))
             freq *= octave_shift
 
@@ -2149,13 +2199,13 @@ class DontTell2(Instrument):
             base3 = sine_wave(freq *2, dur)
         
             wave3 = envelope(base3,
-                             0.2, decay, 0.1, release) * 0.2
+                             attack * 3, decay, 0.1, release) * 0.2
             
             wave1 = envelope(base1,
-                             0.1, decay, 0.5, release)
+                             attack * 2, decay, 0.5, release)
 
             wave2 = envelope(base2,
-                             0.02, decay, 0.2, release)
+                             attack, decay, 0.2, release)
 
 
 

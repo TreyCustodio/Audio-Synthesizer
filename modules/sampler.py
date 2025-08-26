@@ -12,31 +12,31 @@ class Sampler:
         Returns a stereo audio file.
         """
     
-        #   Initialize pygame mixer
+        #   Initialize pygame mixer #
         pygame.mixer.init()
 
-        #   Load the sound file
+        #   Load the sound file #
         sound = pygame.mixer.Sound(sound)
-        
 
-        #   Convert the sound to a numpy array
+        #   Convert the sound to a numpy array  #
         sound_data = pygame.sndarray.array(sound)
+        write(sound_data, "", "surprise", volume_factor = 1, sample_rate=44100)
 
-        # Check if the sound is stereo (2D array)
+        #   Ensure the sound is monotone    #
         if len(sound_data.shape) > 1:  # Stereo audio
             # Convert to mono by averaging the two channels
             sound_data = sound_data.mean(axis=1).astype(sound_data.dtype)
 
-
-        index = dur * sample_rate
+        #   Cut off or add padding to the sample to achieve the desired duration   #
         target_length = int(dur * sample_rate)  # Calculate the target number of samples
         current_length = len(sound_data)
 
+        ##  Cut the array   #
         if current_length > target_length:
-            # Cut the array to the specified duration
             sound_data = sound_data[:target_length]
+
+        ##  Extend the array    #
         elif current_length < target_length:
-            # Extend the array with silence (zeros)
             padding = np.zeros(target_length - current_length, dtype=sound_data.dtype)
             sound_data = np.concatenate((sound_data, padding))
         
