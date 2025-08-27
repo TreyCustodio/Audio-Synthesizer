@@ -631,7 +631,6 @@ def write(effect, folder: str = "", name: str = "", stereo=True, norm=True, volu
     (1) Generate and manipulate sine waves in float64 format
     (2) Convert to int16 format and save as .wav
     """
-
     #   (1) Create a file name
     if name == "":
         name = input("Enter a name for this file: ")

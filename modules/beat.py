@@ -9,7 +9,7 @@ class Beat:
     FOLDER = "beats"
     
     """Initializing Instance Variables"""
-    def __init__(self, bpm : float = 180.0, name: str = ""):
+    def __init__(self, bpm : float = 180.0, name: str = "", path = os.path.join("Tangible_Light", "ost")):
         #   Bpm
         self.bpm = bpm
         beat = 1 / (bpm / 60)
@@ -37,6 +37,9 @@ class Beat:
 
         #   File Name
         self.fileName = name
+
+        #   Path    #
+        self.path = path
 
         #   Production
         #self.production = np.zeros((1,1), dtype=np.int16)
@@ -109,7 +112,8 @@ class Beat:
             notes = instruments[key][1]
             
             if export:
-                self.save(notes, str(key))
+                self.save(notes, str(key), stereo = True)
+
             #   Convert the notes into an ndarray   #
             final = self.convert_notes(notes)
             
@@ -119,6 +123,7 @@ class Beat:
                 prod,
                 final
             )
+
         
         if stereo:
             prod = np.column_stack([prod, prod])
@@ -131,15 +136,33 @@ class Beat:
         return
 
 
-    def save(self, sound, name = "", norm=True, convert=True, path=""):
-        """Save the sound to the desired folder"""
+    def save(self, sound, name = "", norm=True, convert=True, stereo = True, folder=""):
+        """Save the sound to the desired folder.
+        Set convert to false if *sound* is already an np.ndarray"""
+        path = os.path.join(self.path, folder)
+        sound = sound.copy()
+        
         if convert:
             sound = self.convert_notes(sound)
+
+        if stereo:
+            sound = np.column_stack((sound, sound))
+
         write(sound, path, name, norm=norm, volume_factor=10_000)
 
+    def get_instruments(self):
+        return
+    
     def save_instrument(self, key, notes: list = None):
         self.instruments[key][1] = notes
-        
+    
+
+    def export_full(self):
+        self.get_instruments()
+        self.produce_full(export = True, stereo=True)
+        self.save(self.production, "_prod", convert=False, stereo=False)
+
+
     def metronome(self, bars=1):
         """Return a measure of a metronome"""
         n = Skirt(4, self.whole)

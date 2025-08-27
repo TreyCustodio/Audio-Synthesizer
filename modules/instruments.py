@@ -199,17 +199,28 @@ class Instrument:
         return self.loop(pitch * coeff, dur)
 
 
-    def note(self, pitch: str = "", dur: float = 0.0, amp=1.0):
+    def note(self, pitch: str = "", dur: float = 0.0, amp=1.0, fade = False, fade_amount = 12):
         """Get a note based on a pitch and a duration"""
-
+        if fade:
+            return Note(fade_out(self.func(pitch, dur), fade_amount), pitch, amp)
         return Note(self.func(pitch, dur), pitch, amp)
     
-    def n(self, pitch: str = "", dur: float = 0.0, amp=1.0):
-        """Get a note based on a pitch and a duration"""
-
-        return self.note(pitch, dur, amp)
+    def n(self, pitch: str = "", dur: float = 0.0, amp=1.0, fade = False, fade_amount = 12):
+        """Shortcut for calling note()"""
+        return self.note(pitch, dur, amp, fade, fade_amount)
     
 
+class GlobalSample(Instrument):
+    def __init__(self, file_path, amp=0.001, name = "untitled"):
+        """Sample a sound on-demand"""
+        def func(frequency, duration):
+            return Sampler.sample(file_path, duration) * amp
+
+        self.func = func
+        self.name = name
+
+    def get_name(self):
+        return self.name
 
 """
 Sound Fonts
@@ -235,6 +246,46 @@ class Rapping:
         def get_name(self):
             return "Rap Snare 2"       
 
+    class Snare_3(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "snares", "snare_3.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Rap Snare 3"
+    
+    class Snare_Short(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "snares", "snare_short.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Short Snare"
+        
+    class Crackle_Snare(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "snares", "crackle_snare.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Crackle Snare"     
+    
+    class Lofi_Snare(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "snares", "lofi_snare.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Lo-Fi Snare"    
+        
     class Hat_1(Instrument):
         def __init__(self, amp=0.0001):
             def func(frequency, duration):
@@ -245,6 +296,26 @@ class Rapping:
         def get_name(self):
             return "Hi Hat"
 
+    class Hat_2(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "hats", "hat_2.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Hi Hat 2"
+
+    class Hat_3(Instrument):
+        def __init__(self, amp=0.0001):
+            def func(frequency, duration):
+                return Sampler.sample(os.path.join("samples", "hats", "hat_3.wav"), duration) * amp
+
+            self.func = func
+
+        def get_name(self):
+            return "Closed Hat"
+        
     class Drill_Hat(Instrument):
         def __init__(self, amp=0.0001):
             def func(frequency, duration):
@@ -446,6 +517,9 @@ class Tangible_Light:
             def func(freq, dur):
                 freq *= freq_mod
                 base = sine_wave(freq, dur)
+                base2 = sine_wave(freq * 2, dur)
+                base3 = sine_wave(freq * 4, dur)
+
                 noise = white_noise(base, noise_amount)
 
                 base = mix(
@@ -455,12 +529,13 @@ class Tangible_Light:
 
                 
                 geometric_decay(base)
+                geometric_decay(base2)
+                geometric_decay(base3)
 
-                # base = envelope(base,
-                #                 0.01, 0.1, 0.3, 0.01
-                # )
 
-                return base * amp
+                final = mix(base, base2, base3)
+
+                return final * amp
             
             self.func = func
             
@@ -832,32 +907,13 @@ class Acoustic2(Instrument):
 
 class Acoustic3(Instrument):
     def __init__(self, amp=1.0, freq_mod = 1, dist = 0.0,
-                 attack = 0.02, decay = 0.1, sustain = 0.1, release = 0.01,
+                 attack = 0.02, attack_max = 0.1, decay = 0.1, sustain = 0.1, release = 0.01,
                  harmonics = 4,
                  vol_1 = 0.0, vol_2 = 0.0, vol_3 = 0.0, vol_4 = 0.0, vol_5 = 0.0, vol_6 = 0.0, vol_7 = 0.0, vol_8 = 0.0):
         def func(freq, dur):
             freq *= freq_mod
 
-            #   Fundamental Waveforms   #
-            base1 = sine_wave(freq, dur)
-            base2 = sine_wave(freq * 1.5, dur)
-            base3 = sine_wave(freq * 1.75, dur)
-            base4 = sine_wave(freq * 2, dur)
-            base5 = sine_wave(freq * 4, dur)
-
-
-
-            bass1 = sine_wave(freq / 1.5, dur)
-            met1 = sine_wave(freq*9, dur)
-
-
-            #   Apply envelopes to fundamental waves    #
-            # fain = synthesize(
-            #     freq, dur, 0,
-            #     10, 1, None, None,
-
-            # )
-            attacks = np.geomspace(attack, 0.1, harmonics)
+            attacks = np.geomspace(attack, attack_max, harmonics)
             freqs = np.linspace(freq, freq*harmonics, harmonics)
 
             t = np.linspace(0, dur, int(SAMPLE_RATE*dur), endpoint=False)
@@ -906,29 +962,6 @@ class Acoustic3(Instrument):
                                   attacks[count], decay, sustain, release) * amps[count]
                 count += 1
 
-            # wave1 = envelope(base1,
-            #                  attack, 0.1, sustain, 0.001) * 0.1
-            
-            
-            # wave2 = envelope(base2,
-            #                  attack + 0.02, 0.1, sustain, 0.001) * 0.3
-
-            
-            # wave3 = envelope(base4,
-            #                  attack + 0.04, 0.1, sustain, 0.001) * 0.01
-            
-            
-            
-            #   Mix the final sound together    #
-            # final = mix(
-            #     wave1,
-            #     wave2,
-            #     wave3,
-            # )
-
-            # final = fade_out(final, 6)
-
-            # final = lowpass(final, 500)
             #   Apply the amp and return the wave   #
             if dist > 0:
                 final = distort(final, dist)
@@ -936,15 +969,15 @@ class Acoustic3(Instrument):
 
         self.func = func
 
-    def note(self, pitch, dur, amp = 1.0, fade = False):
+    def note(self, pitch, dur, amp = 1.0, fade = False, fade_amount = 12):
         if fade:
-            return Note(fade_out(self.func(pitch, dur), 12), pitch, amp)
+            return Note(fade_out(self.func(pitch, dur), fade_amount), pitch, amp)
         
         else:
             return super().note(pitch, dur, amp)
     
-    def n(self, pitch, dur, amp = 1.0, fade = False):
-        return self.note(pitch, dur, amp, fade)
+    def n(self, pitch, dur, amp = 1.0, fade = False, fade_amount = 12):
+        return self.note(pitch, dur, amp, fade, fade_amount)
 # class Acoustic4(Instrument):
 
 """
@@ -1444,6 +1477,7 @@ class Snare(Instrument):
 
 class Bass_1(Instrument):
     def __init__(self, amp = 1.0, freq_mod = 1, attack = 0.01, decay = 0.1, sustain = 0.75, release = 0.2,
+                 dist = 0.0,
                  harmonics = 60, coeff = 2, freq_func = None, amp_func = lin(5)):
         def func(freq, dur):
             freq *= freq_mod
@@ -1452,7 +1486,18 @@ class Bass_1(Instrument):
                                     freq_func, amp_func,
                                     attack, decay, sustain, release, custom_env=True
                                     )
-            return synth1 * amp
+            synth1 = distort(synth1, 1.0)
+
+            synth2 = synthesize(freq * 2, dur, 80,
+                                    harmonics, coeff,
+                                    freq_func, amp_func,
+                                    attack, decay, sustain, release, custom_env=True
+                                    ) * 0.1
+            
+            final = mix(synth1, synth2)
+            if dist > 0.0:
+                final = distort(final, dist)
+            return final * amp
         self.func = func
 
 class Bass(Instrument):

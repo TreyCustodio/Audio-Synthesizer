@@ -5,7 +5,7 @@ from modules.audio import *
 class O9(Beat):
     def __init__(self, bpm):
         """Hardcoded beat; not optimized for use in the editor"""
-        super().__init__(bpm)
+        super().__init__(bpm, path = os.path.join("Tangible_Light", "ost", "09"))
 
         #   Bass    #
         self.bass1 = Tangible_Light.Title_Bass(amp=1.0, punchy=True)
@@ -34,7 +34,7 @@ class O9(Beat):
 
         #   Samples #
         self.go = Go(amp=0.001)
-        self.surprise = Rapping.Surprise(amp=0.00000002)
+        self.surprise = Rapping.Surprise(amp=0.00008)
         self.viola = Viola_1(amp=0.0002)
         self.viola2 = Viola_2(amp = 0.0005)
         self.instruments = {}
@@ -253,14 +253,7 @@ class O9(Beat):
         
         return m0 + v0 + v0 + v1 + v2 + v1 + v2
         
-    def save(self, sound, name = "", convert = True):
-        """Save the sound to the desired folder"""
-        super().save(sound, name, True, convert, os.path.join("Tangible_Light", "ost", "09"))
-
     
 def main():
     beat = O9(180)
-
-    beat.get_instruments()
-    beat.produce_full(export = True, stereo=True)
-    beat.save(beat.production, "_prod", convert=False)
+    beat.export_full()
