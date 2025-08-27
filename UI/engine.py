@@ -54,8 +54,8 @@ class Engine:
         self.bpm = 38
 
         #   Instrument   #
-        self.instrument = Bass_1()
-        # self.instrument = First4()
+        self.instrument = Bass_1(amp=1.0, attack=0.01, attack_max = 0.02, freq_mod = 0.5, sustain=0.3, release= 0.01, amp_final = 0.00000000001, harmonics=3)
+        # self.instrument = First4(wave_1 = False, wave_2 = True, wave_3 = False)
         # self.instrument = Acoustic3(harmonics=12,
         #                         vol_1 = 0.01, vol_2 = 0.01, vol_3 = 0.000000000001, vol_4=1.0, vol_5 = 0.01, vol_6 = 0.01, vol_7 = 0.01, vol_8 = 0.01)
 
