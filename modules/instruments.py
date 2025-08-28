@@ -1049,25 +1049,37 @@ class Tap3(Instrument):
         
         self.func = func
 
-
 class Tap4(Instrument):
-    def __init__(self, amp: float = 1.0, attack: int = 90, noise_amount: float = 0.5):
+    """A simple, percussive wave created with noise and an attack"""
+    def __init__(self, amp: float = 1.0, attack: float = 0.001, decay = 0.05, sustain = 0.2, release = 0.05, noise_start = 0.0, noise_amount: float = 0.5, dist = 0.0, low=0, high=0,
+                 freq_mod = 1.0):
 
         def func(freq, dur):
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
-
+            freq *= freq_mod
             base = sine_wave(freq, dur)
-            noise = np.random.normal(0, noise_amount, base.shape)
-
-            base = envelope(base,
-                             0.001, 0.05, 0.0, 0.0)
+            noise = np.random.normal(noise_start, noise_amount, base.shape)
             noise = envelope(noise,
-                             0.001, 0.05, 0.0, 0.0)
-            final = mix(base, noise)
+                             attack, decay, sustain, release)
+
+            wave1 = envelope(base,
+                             attack, decay, sustain, release)
+            
+            final = mix(wave1, noise)
+
+            if dist > 0.0:
+                final  = distort(final, dist)
+
+            if low > 0:
+                final = lowpass(final, low)
+
+            if high > 0:
+                final = highpass(final, high)
 
             return final * amp
         
         self.func = func
+
 
 class Tap5(Instrument):
     """A simple, percussive wave created with noise and an attack"""
@@ -1477,7 +1489,7 @@ class Snare(Instrument):
             self.func = func
 
 class Bass_1(Instrument):
-    def __init__(self, amp = 1.0, freq_mod = 1, attack = 0.01, attack_max = 0.1, decay = 0.1, sustain = 0.75, release = 0.2,
+    def __init__(self, amp = 1.0, freq_mod = 1, top_freq = 3, attack = 0.01, attack_max = 0.1, decay = 0.1, sustain = 0.75, release = 0.2,
                  dist = 0.0, amp_final = 0.0001,
                  harmonics = 60, coeff = 2, freq_func = None, amp_func = lin(5),
                  wave_2 = True):
@@ -1503,8 +1515,11 @@ class Bass_1(Instrument):
             #                         attack, decay, sustain, release, custom_env=True
             #                         ) * 0.1
             
-            freqs = np.linspace(freq, freq*3, harmonics)
-            attacks = np.geomspace(attack, attack_max, endpoint=False)
+            freqs = np.linspace(freq, freq*top_freq, harmonics)
+            if attack == 0.0:
+                attacks = [0 for i in range(harmonics)]
+            else:
+                attacks = np.geomspace(attack, attack_max, endpoint=False)
             amps = np.linspace(1.0, amp_final, harmonics, endpoint=False)
 
             count = 0

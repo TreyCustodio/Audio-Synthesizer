@@ -8,8 +8,9 @@ class O11(Beat):
         super().__init__(bpm, path = os.path.join("Tangible_Light", "ost", "11"))
 
         #   Bass    #
-        self.bass1 = Bass_1(amp=1.0, attack=0.01, attack_max = 0.02, freq_mod = 0.5, sustain=0.3, release= 0.01, amp_final = 0.00000000001, harmonics=3)
-        self.bass2 = Bass(freq_mod=2, attack=0.01, sustain=1.0, release=0.01)
+        mod = Ds2 / Gs2
+        self.bass1 = Bass_1(amp=1.0, attack=0.005, attack_max = 0.003, freq_mod = mod, sustain=0.3, release= 0.01, amp_final = 0.00000000001, top_freq = 2, harmonics=2)
+        self.bass2 = Bass_1(amp=1.0, attack=0.0, attack_max = 0.15, freq_mod = mod, decay = 0.00, sustain=0.3, release= 0.01, amp_final = 0.00000000001, top_freq = 2, harmonics=2)
 
         #   Synths  #
         self.synth1 = Acoustic3(amp=0.5, harmonics=12, attack=0.05, decay=0.0, sustain=1.0, release=0.01,
@@ -44,7 +45,7 @@ class O11(Beat):
         self.snare5 = Rapping.Crackle_Snare(amp=0.00001)
 
         ##  Kicks   ##
-        self.kick1 = Tap3(6.0, 25, freq_mod = 1.5, noise_amount=0.00000)
+        self.kick1 = Tap4(6.0, decay = 0.05, sustain=0.0, noise_amount=0.00000)
 
 
         #   Samples #
@@ -65,15 +66,15 @@ class O11(Beat):
 
 
             #   Percussion  #
-            1: [None, self.hats_a()],
-            2: [None, self.snare_a()],
+            # 1: [None, self.hats_a()],
+            # 2: [None, self.snare_a()],
             3: [None, self.kicks_a()],
 
 
             #   Synths  #
 
             #   Samples #
-            4: [None, self.violin_a()],
+            # 4: [None, self.violin_a()],
 
         }
         return
@@ -117,33 +118,51 @@ class O11(Beat):
         b2 = self.bass2
 
         m1 = [
-            b.n(Gs2, self.w),
+            rest(self.w)
         ]
 
         m2 = [
-            b.n(Gs2, self.w),
+            rest(self.w)
         ]
 
         m3 = [
-            b.n(Gs2, self.e), rest(self.e),
-            rest(self.e), b.n(Gs2, self.e),
             rest(self.e), rest(self.e),
-            rest(self.e), rest(self.e), 
+            rest(self.e), b2.n(Gs2, self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
         ]
 
-        m4 = [
-            b.n(Gs2, self.e), rest(self.e),
-            rest(self.e), b.n(Gs2, self.e) + b.n(F3, self.e, amp=0.4),
-            rest(self.e), b.n(Fs2, self.e + self.q),
+        m3b = [
+            rest(self.e), rest(self.e),
+            rest(self.e), b.n(Gs2, self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
         ]
+
+
+        m4 = [
+            rest(self.e), b2.n(Gs2, self.e),
+            rest(self.e), b2.n(Gs2, self.e),
+            rest(self.e), b2.n(Fs2, self.e + self.q),
+        ]
+
+        
 
         v0 = [rest(self.w*4)]
         v1 = m1 + m2 + m3 + m4
-        return v0 + v0 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1
+        v2 = m1 + m2 + m3b + m4
+
+        return v0 + v0 + v1 + v2 + v1 + v2 + v1 + v2 + v1 + v2 + v1 + v2 + v1 + v2
     
     def bass_b(self):
         b = self.bass1
-        amp = 0.5
+        b2 = self.bass2
+
+        amp = 1.0
+
+        m0 = [
+            b2.n(Gs2, self.w*2, amp),
+        ]
 
         m1 = [rest(self.w)]
         m2 = [
@@ -151,50 +170,92 @@ class O11(Beat):
             ]
 
         m3 = [
-            b.n(Gs2, self.w, amp, fade=True, fade_amount=14),
+            b2.n(Gs2, self.e * 3, amp, fade=True, fade_amount=16),
+            rest(self.e), # 2
+            rest(self.e),
+            b2.n(Gs2, self.e * 3, amp),
         ]
 
         m4 = [
-            b.n(Gs2, self.w, amp, fade=True, fade_amount=14),
+            rest(self.w)
         ]
-
+        
+        m5 = [
+            b2.n(Gs2, self.w*2, amp),
+        ]
         v0 = [rest(self.w*4)]
-        v1 = m1 + m2 + m3 + m4
-        return v0 + v0 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1
+        v1 = m0 + m3 + m4
+        v2 = m0 + m3 + m4
+
+        return v0 + v0 + v1 + v2 + v1 + v2 + v1 + v2 + v1 + v2 + v1 + v2 + v1 + v2
     
     def kicks_a(self):
         k = self.kick1
+        #   (1) Set the pitch to the same as the bass
+        #   (2) Set the pitch 7 semitones higher
 
+        #   1   #
         m1 = [
-            k.n(C1, self.e), rest(self.e),
-            rest(self.e), k.n(C1, self.e),
+            k.n(Gs1, self.e), rest(self.e),
+            rest(self.e), k.n(Gs1, self.e),
             rest(self.e), rest(self.e),
             rest(self.e), rest(self.e),
         ]
 
         m2 = [
-            k.n(C1, self.e), rest(self.e),
-            rest(self.e), k.n(C1, self.e),
+            k.n(Gs1, self.e), rest(self.e),
+            rest(self.e), k.n(Gs1, self.e),
             rest(self.e), rest(self.e),
             rest(self.e), rest(self.e),
         ]
 
         m3 = [
-            k.n(C1, self.e), rest(self.e),
+            k.n(Gs1, self.e), rest(self.e),
             rest(self.e), rest(self.e),
-            k.n(C1, self.e), k.n(C1, self.e),
+            k.n(Gs1, self.e), k.n(Gs1, self.e),
             rest(self.e), rest(self.e)
         ]
         m4 = [
-            k.n(C1, self.e), rest(self.e),
-            rest(self.e), k.n(C1, self.e),
+            k.n(Gs1, self.e), rest(self.e),
+            rest(self.e), k.n(Gs1, self.e),
             rest(self.e), rest(self.e),
-            k.n(C1, self.e), rest(self.e),
+            k.n(Fs1, self.e), rest(self.e),
+
+        ]
+
+        m5 = [
+            k.n(Gs1, self.e), rest(self.e),
+            rest(self.e), k.n(Gs1, self.e),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
+        ]
+
+        m6 = [
+            k.n(Gs1, self.e), rest(self.e),
+            rest(self.e), k.n(Gs1, self.e),
+            rest(self.e), rest(self.e),
+            k.n(Gs1, self.e), rest(self.e),
+        ]
+
+        m7 = [
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.e),
+            k.n(Gs1, self.e), k.n(Gs1, self.e),
+            rest(self.e), rest(self.e)
+        ]
+        m8 = [
+            rest(self.e), rest(self.e),
+            k.n(Gs1, self.e), rest(self.e),
+            rest(self.e), 
+            k.n(Fs1, self.e), rest(self.e),
+            rest(self.e),
+
         ]
 
         v1 = m1 + m2 + m3 + m4
+        v2 = v1
 
-        return v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1 + v1
+        return v1 + v1 + v2 + v2 + v2 + v2 + v2 + v2 + v2 + v2 + v2 + v2 + v2 + v2
 
     def hats_a(self):
 
