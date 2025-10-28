@@ -1,11 +1,30 @@
+#   Import Modules  #
 from modules import audio, instruments
-#from beats import digital_storytelling, dress, firstup
-# from beatsnew import firstup, second, trap, how, new, training
-from Tangible_Light.scripts import title, journal, firstup, \
-    o4, o5, o7, o8, o9, o10, o11, fpdg, trap
-
-from UI import interface
 from os import path
+
+#   Import the Interface    #
+from UI import interface
+
+#   Old Beats   #
+from beats import digital_storytelling, dress
+from beatsnew import second, trap, how, new, training
+
+#   Tangible Light  #
+from Tangible_Light.scripts import \
+    o1, o2, o3, \
+    o4, o5, o6, \
+    o7, o8, o9, \
+    o10, o11, \
+    fpdg
+
+from AMTR.scripts import \
+    title
+
+#   Random Projects #
+import l, sein, ff
+
+
+
 
 
 """
@@ -34,10 +53,19 @@ def text_sounds():
     # audio.write(angry, "game", "text_angry1" )
 
 
+def player():
+    interface.main()
 
 def main():
     """Main Function: Create any sounds you want"""
     
+    #   Singles #
+    # l.main()
+    # sein.main()
+    # ff.main()
+
+    #   AMTR OST    #
+    title.main()
     #   Run the Interface
     # interface.main()
     # text_sounds()
@@ -56,42 +84,42 @@ def main():
 
     #   Tangible Light OST  #
     #   (1) Title   #
-    # title.main()
+    # o1.main()
 
 
     #   (2) Journaling #
-    # journal.main()
+    # o2.main()
 
 
-    #   (3) First Up #
-    # firstup.main()
+    # #   (3) First Up #
+    # o3.main()
 
 
-    #   (4) 04 #
+    # #   (4) 04 #
     # o4.main()
     
 
-    #   (5) Page One    #
+    # #   (5) Page One    #
     # o5.main()
 
 
-    #   (6) Boss Theme  #
-    # trap.main()
+    # #   (6) Boss Theme  #
+    # o6.main()
 
-    #   (7) Untitled    #
+    # #   (7) Untitled    #
     # o7.main()
 
-    #   (8) Death by Defualt    #
+    # #   (8) Death by Defualt    #
     # o8.main()
     
-    #   (9) Surprise    #
+    # #   (9) Surprise    #
     # o9.main()
 
-    #   (10) Surprise    #
+    # #   (10) Surprise    #
     # o10.main()
 
-    #   (11) Pac type beat  #
-    o11.main()
+    # #   (11) Pac type beat  #
+    # o11.main()
 
     #   Test the Sampler    #
     # b = instruments.Bass()

@@ -6,7 +6,7 @@ class O7(Beat):
 
     def __init__(self, bpm):
         """Hardcoded beat; not optimized for use in the editor"""
-        super().__init__(bpm)
+        super().__init__(bpm, path = os.path.join("Tangible_Light", "ost", "07"))
         
         #   Bass    #
         self.bass1 = Key_Harms(amp=0.4, freq_mod=0.25, harmonics = 1, attack=0.001, decay=0.00, sustain=1.0, release = 0.01, metal = False)
@@ -73,11 +73,6 @@ class O7(Beat):
     def set_instruments(self, save = False):
         self.instruments = self.get_instruments(save)
 
-
-    def save(self, sound, name = "", convert = True):
-        """Save the sound to the desired folder"""
-        super().save(sound, name, True, convert, os.path.join("Tangible_Light", "ost", "07"))
-    
     
     def hats(self, save = False):
         t = self.tap1
@@ -567,9 +562,4 @@ def main():
 
     #   Export each instrument  #
     beat.get_instruments(save=True)
-
-    #   Export the full beat    #
-    # beat.set_instruments(save=False)
-    # beat.produce_full()
-    # beat.save(beat.production, "_prod", convert=False)
-
+    beat.export_full()

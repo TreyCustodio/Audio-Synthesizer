@@ -5,7 +5,7 @@ from modules.audio import *
 class O8(Beat):
     def __init__(self, bpm):
         """Hardcoded beat; not optimized for use in the editor"""
-        super().__init__(bpm)
+        super().__init__(bpm, path = os.path.join("Tangible_Light", "ost", "08"))
 
         #   Bass    #
         self.bass1 = Tangible_Light.Title_Bass(amp=1.0, punchy=True)
@@ -313,10 +313,6 @@ class O8(Beat):
 
         return v0 + v0 + v1 + v1
     
-    def save(self, sound, name = "", convert = True):
-        """Save the sound to the desired folder"""
-        super().save(sound, name, True, convert, os.path.join("Tangible_Light", "ost", "08"))
-
 
     def get_first(self):
         return
@@ -326,7 +322,4 @@ class O8(Beat):
     
 def main():
     beat = O8(44)
-
-    beat.get_instruments()
-    beat.produce_full(export = True)
-    beat.save(beat.production, "_prod", convert=False)
+    beat.export_full()

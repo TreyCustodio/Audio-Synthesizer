@@ -148,7 +148,10 @@ class Beat:
         if stereo:
             sound = np.column_stack((sound, sound))
 
-        write(sound, path, name, norm=norm, volume_factor=10_000)
+        if not os.path.isdir(path):
+            os.mkdir(path)
+
+        write(sound, path, name, norm=norm, volume_factor=13_000)
 
     def get_instruments(self):
         return
@@ -157,9 +160,9 @@ class Beat:
         self.instruments[key][1] = notes
     
 
-    def export_full(self):
+    def export_full(self, stereo = True):
         self.get_instruments()
-        self.produce_full(export = True, stereo=True)
+        self.produce_full(export = True, stereo=stereo)
         self.save(self.production, "_prod", convert=False, stereo=False)
 
 

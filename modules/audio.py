@@ -195,6 +195,10 @@ class Dynamics:
 def get_measure(bpm):
     return (1 / (bpm / 60)) * 4
 
+def get_note(bpm, frac):
+    """Pass in a fraction of a measure; return the duration of the note"""
+    return
+
 def get_sixteenth(bpm):
     return (1 / (bpm / 60)) / 4
 
@@ -643,6 +647,8 @@ def write(effect, folder: str = "", name: str = "", stereo=True, norm=True, volu
         file = os.path.join(folder, name)
     else:
         file = name
+    
+    
 
     #   (3) Convert to Stereo?
     # if stereo:
@@ -870,7 +876,7 @@ def scale_amplitude(wav):
     return (wav * factor).astype(np.int16)
 
 """Sound Effect Functions --------------------------------"""
-def sine_wave(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0.5, verticalShift=0, stereo = False):
+def sine_wave(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=1.0, verticalShift=0, stereo = False):
     """Generates a sine wave"""
 
     #   (1) Create discrete time points over the duration of the sound. Generate (sampleRate * duration) numbers over the duration.
@@ -890,6 +896,23 @@ def sine_wave(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0
     #   Return a mono wave  #
     else:
         return wave
+
+def saw_wave(frequency=C3, duration=1.0, sample_rate=SAMPLE_RATE, amplitude = 1.0, stereo = False):
+
+    samples = int(sample_rate * duration)
+    t = np.linspace(0, duration, samples)
+
+    cycles = frequency * t
+    wave = amplitude * (cycles - np.floor(cycles))
+
+    return wave
+
+def triangle_wave(frequency=C3, duration=1.0, sample_rate=SAMPLE_RATE, amplitude = 1.0, stereo = False):
+    t = np.linspace(0, duration, int(sample_rate*duration))
+    phase = (frequency * t) % 1
+
+    return 4 * np.abs(phase - 0.5) - 1
+
 
 def sine_wave_t(frequency=444.0, duration=1.0, sampleRate=SAMPLE_RATE, amplitude=0.5, verticalShift=0, stereo = False):
     """Generates a sine wave by specifying t"""

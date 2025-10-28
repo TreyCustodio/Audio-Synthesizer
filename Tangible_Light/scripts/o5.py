@@ -8,7 +8,7 @@ class O5(Beat):
 
     def __init__(self, bpm):
         """Hardcoded beat; not optimized for use in the editor"""
-        super().__init__(bpm)
+        super().__init__(bpm, path = os.path.join("Tangible_Light", "ost", "05"))
         
         #   Bass    #
         self.bass1 = Tangible_Light.Title_Bass(amp=1.0, punchy=True, freq_mod=4)
@@ -32,8 +32,9 @@ class O5(Beat):
         self.skirt2 = Tap3(1.0, 120, 0.0, 0.5)
 
         # self.clap1 = PercussiveNoise(4.0, 14, 0.0, 0.1)
-        self.clap1 = Hi_Hat()
         self.clap1 = Rapping.Snare_1()
+        # self.clap1 = Rapping.Snare_1()
+
         self.kick1 = Tap3(3.0, 25, noise_amount=0.01)
         self.cymbal1 = PercussiveNoise(1.0, 7, noise_amount=0.04) 
         self.chime1 = Tap3(attack=25, noise_amount=0.01)
@@ -76,9 +77,6 @@ class O5(Beat):
         self.instruments = self.get_instruments(save)
 
 
-    def save(self, sound, name = "", convert = True):
-        """Save the sound to the desired folder"""
-        super().save(sound, name, True, convert, os.path.join("Tangible_Light", "ost", "05"))
     
     # def cow(self, save = False):
     #     s = self.skirt2
@@ -685,7 +683,7 @@ def main():
     beat = O5(43)
 
     #   Export each instrument  #
-    beat.get_instruments(save=True)
+    beat.export_full()
 
     #   Export the full beat    #
     # beat.set_instruments(save=False)

@@ -6,57 +6,57 @@ from modules.audio import *
 class O4(Beat):
     def __init__(self, bpm):
         """Hardcoded beat; not optimized for use in the editor"""
-        super().__init__(bpm)
+        super().__init__(bpm, path = os.path.join("Tangible_Light", "ost", "04"))
         
         #   Bass    #
         self.bass1 = Tangible_Light.Title_Bass(amp=0.4)
 
         #   Plucky, Accoustic Synths   #
         self.acou1 = Acoustic1()
-        # self.acou2 = Acoustic2(amp=0.4)
+        self.acou2 = Acoustic2(amp=0.4)
         self.acou3 = Acoustic2(amp=0.1)
 
         # #   Synths  #
-        # self.synth1 = Plucky()
-        # self.synth2 = Plucky(amp=0.3)
+        self.synth1 = Plucky()
+        self.synth2 = Plucky(amp=0.3)
 
         # #   Melody Synths   #
         self.synth3 = DontTell2()
 
         # #   Drums   #
-        # self.tap1 = Tap3(attack=10, amp=0.5) # clap
-        # self.tap2 = Tap3(attack=100, amp=0.3)
+        self.tap1 = Tap3(attack=10, amp=0.5) # clap
+        self.tap2 = Tap3(attack=100, amp=0.3)
 
-        # self.kick1 = Tap3(amp=2.5, attack=60, noise_amount=0.0)
+        self.kick1 = Tap3(amp=2.5, attack=60, noise_amount=0.0)
 
-        # self.hat1 = Hi_Hat(amp=2.0)
-        # self.chime1 = Snare()
+        self.hat1 = Hi_Hat(amp=2.0)
+        self.chime1 = Snare()
 
+        
+    def get_instruments(self):
         #   Instrument Dictionary   #
         self.instruments = {
 
             #   Bass    #
-            # 0: [self.bass1, self.bass()],
+            0: [self.bass1, self.bass()],
 
             # #   Accoustics  #
             1: [self.acou1, self.acoustic_1()],
-            # 2: [self.acou2, self.acoustic_2()],
+            2: [self.acou2, self.acoustic_2()],
             3: [self.acou3, self.acoustic_3()],
 
             # #   Synths  #
-            # 4: [self.synth1, self.synth_1()],
-            # 8: [self.synth2, self.synth_2()],
+            4: [self.synth1, self.synth_1()],
+            8: [self.synth2, self.synth_2()],
             9: [self.synth3, self.melody_1()],
             
 
             # #   Percussion
-            # 5: [self.tap1, self.claps()],
-            # 6: [self.tap2, self.taps()],
-            # 7: [self.kick1, self.kicks()],
-
-
+            5: [self.tap1, self.claps()],
+            6: [self.tap2, self.taps()],
+            7: [self.kick1, self.kicks()],
         }
-
+        
     def acoustic_1(self):
         s = self.acou1
 
@@ -658,14 +658,6 @@ class O4(Beat):
 
         return
 
-    def save(self, sound, name = "", norm=True):
-        """Save the sound to the desired folder"""
-
-        write(sound, os.path.join("Tangible_Light", "ost"), name, norm=norm, volume_factor=10_000)
-
-
 def main():
     beat = O4(40)
-    beat.produce_full()
-    beat.save(beat.production, "04")
-
+    beat.export_full(stereo=False)
