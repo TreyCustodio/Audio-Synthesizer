@@ -215,24 +215,24 @@ class Instrument:
 class Sample(Instrument):
     def __init__(self, amp=1.0, path="", name="untitled sample"):
 
-        def func(duration):
-            return Sampler.sample(path, duration) * amp
+        def func(duration, start_time = 0.0):
+            return Sampler.sample(path, duration, starting_time=start_time) * amp
 
         self.func = func
         self.name = name
 
     
-    def note(self, dur: float = 0.0, amp=1.0, fade = False, fadeIn = False, fade_amount = 12):
+    def note(self, dur: float = 0.0, amp=1.0, fade = False, fadeIn = False, fade_amount = 12, start_time = 0.0):
         """Get a note based on a pitch and a duration"""
         if fade:
-            return Note(fade_out(self.func(dur), fade_amount), 0.0, amp)
+            return Note(fade_out(self.func(dur, start_time), fade_amount), 0.0, amp)
         elif fadeIn:
-            return Note(fade_in(self.func(dur), fade_amount), 0.0, amp)
+            return Note(fade_in(self.func(dur, start_time), fade_amount), 0.0, amp)
         
-        return Note(self.func(dur), 0.0, amp)
+        return Note(self.func(dur, start_time), 0.0, amp)
 
-    def n(self, dur: float = 0.0, amp=1.0, fade = False, fadeIn = False, fade_amount = 12):
-        return self.note(dur, amp, fade, fadeIn, fade_amount)
+    def n(self, dur: float = 0.0, amp=1.0, fade = False, fadeIn = False, fade_amount = 12, start_time = 0.0):
+        return self.note(dur, amp, fade, fadeIn, fade_amount, start_time)
     
     def get_name(self):
         return self.name
@@ -312,12 +312,10 @@ class Rapping:
         def get_name(self):
             return "Lo-Fi Snare"    
         
-    class Hat_1(Instrument):
+    class Hat_1(Sample):
         def __init__(self, amp=0.0001):
-            def func(frequency, duration):
-                return Sampler.sample(os.path.join("samples", "hats", "hat_1.wav"), duration) * amp
+            super().__init__(amp, os.path.join("samples", "hats", "hat_1.wav"), "Hat 1")
 
-            self.func = func
 
         def get_name(self):
             return "Hi Hat"
@@ -329,26 +327,17 @@ class Rapping:
         def get_name(self):
             return "Hi Hat 2"
 
-    class Hat_3(Instrument):
+    class Hat_3(Sample):
         def __init__(self, amp=0.0001):
-            def func(frequency, duration):
-                return Sampler.sample(os.path.join("samples", "hats", "hat_3.wav"), duration) * amp
-
-            self.func = func
+            super().__init__(amp, os.path.join("samples", "hats", "hat_3.wav"), "Closed Hat 1")
 
         def get_name(self):
             return "Closed Hat"
         
-    class Drill_Hat(Instrument):
+    class Drill_Hat(Sample):
         def __init__(self, amp=0.0001):
-            def func(frequency, duration):
-                return Sampler.sample(os.path.join("samples", "hats", "drill_hat.wav"), duration) * amp
+            super().__init__(amp, os.path.join("samples", "hats", "drill_hat.wav"), "Drill Hat 1")
 
-            self.func = func
-
-        def get_name(self):
-            return "Drill Hat"
-        
     class Surprise(Instrument):
         def __init__(self, amp=0.0001):
             def func(frequency, duration):
@@ -536,14 +525,16 @@ class Tangible_Light:
 
     class Bell(Instrument):
         def __init__(self, amp=1.0, freq_mod = 1, noise_amount=0.0,
-                     sustain = 0.0,
-                     wave_1 = True, wave_2 = True, wave_3 = True):
+                     sustain = 0.0, attack = 0.01, decay = 0.1, release = 0.05,
+                     wave_1 = True, wave_2 = True, wave_3 = True,
+                     geo = True, env = True):
 
             def func(freq, dur):
                 freq *= freq_mod
                 base = sine_wave(freq, dur)
                 base2 = sine_wave(freq * 2, dur)
                 base3 = sine_wave(freq * 4, dur)
+                metal= saw_wave(freq * 8, dur)
 
                 noise = white_noise(base, noise_amount)
 
@@ -553,17 +544,54 @@ class Tangible_Light:
                 )
 
                 if sustain != 0.0:
-                    for b in [base, base2, base3]:
-                        b = envelope(b,
-                                     0.0, 0.0, sustain, 0.0)
+                    base = envelope(base,
+                                     attack, decay, sustain, release)
+
+                    base2 = envelope(base2,
+                                     attack, decay, sustain, release) * 0.5
+                    
+                    base3 = envelope(base3,
+                                     attack, decay, sustain, release) * 0.2
+                    
+                    # metal = envelope(metal,
+                    #                  attack, decay, sustain, release) * 0.01
+
+                    # base = mix(base,
+                    #            metal)
+                    
+                    # for b in [base, base2, base3]:
+                    #     base += envelope(b,
+                    #                  attack, decay, sustain, release)
                 else:
-                    geometric_decay(base)
-                    geometric_decay(base2)
-                    geometric_decay(base3)
+                    if geo:
+                        geometric_decay(base)
+                    if env:
+                        base = envelope(
+                            base,
+                            0.001, dur - 0.001, 0.0, 0.0
+                        )
+                    if wave_2:
+                        if geo:
+                            geometric_decay(base2)
+                        if env:
+                            base2 = envelope(
+                            base2,
+                            0.001, dur - 0.001, 0.0, 0.0
+                        )
+                            
+                    if wave_3:
+                        if geo:
+                            geometric_decay(base3)
+                        if env:
+                            base3 = envelope(
+                            base3,
+                            0.001, dur - 0.001, 0.0, 0.0
+                        )
 
                 final = base
                 if wave_2:
                     final = mix(final, base2)
+
                 if wave_3:
                     final = mix(final, base3)
 
@@ -723,6 +751,111 @@ class Tangible_Light:
             self.func = func
 
 
+class AMTR:
+    class IsoBell(Instrument):
+        """Only the top wave from Bell"""
+        def __init__(self, amp=1.0, freq_mod = 1, noise_amount=0.0,
+                     sustain = 0.0, attack = 0.01, decay = 0.1, release = 0.05,
+                     geo = True, env = True):
+
+            def func(freq, dur):
+                freq *= freq_mod
+                base3 = sine_wave(freq * 4, dur)
+
+                if sustain != 0.0:
+                    base3 = envelope(base3,
+                                     attack, decay, sustain, release) * 0.2
+                    
+                else:
+                    if geo:
+                        geometric_decay(base3)
+                    if env:
+                        base3 = envelope(
+                        base3,
+                        0.001, dur - 0.001, 0.0, 0.0
+                    )
+
+                final = base3
+
+                return final * amp
+            
+            self.func = func
+    class Bell(Instrument):
+        def __init__(self, amp=1.0, freq_mod = 1, noise_amount=0.0,
+                     sustain = 0.0, attack = 0.01, decay = 0.1, release = 0.05,
+                     wave_1 = True, wave_2 = True, wave_3 = True,
+                     geo = True, env = True):
+
+            def func(freq, dur):
+                freq *= freq_mod
+                base = sine_wave(freq, dur)
+                base2 = sine_wave(freq * 2, dur)
+                base3 = sine_wave(freq * 4, dur)
+                metal= saw_wave(freq * 8, dur)
+
+                noise = white_noise(base, noise_amount)
+
+                base = mix(
+                    base,
+                    noise
+                )
+
+                if sustain != 0.0:
+                    base = envelope(base,
+                                     attack, decay, sustain, release)
+
+                    base2 = envelope(base2,
+                                     attack, decay, sustain, release) * 0.5
+                    
+                    base3 = envelope(base3,
+                                     attack, decay, sustain, release) * 0.2
+                    
+                    # metal = envelope(metal,
+                    #                  attack, decay, sustain, release) * 0.01
+
+                    # base = mix(base,
+                    #            metal)
+                    
+                    # for b in [base, base2, base3]:
+                    #     base += envelope(b,
+                    #                  attack, decay, sustain, release)
+                else:
+                    if geo:
+                        geometric_decay(base)
+                    if env:
+                        base = envelope(
+                            base,
+                            0.001, dur - 0.001, 0.0, 0.0
+                        )
+                    if wave_2:
+                        if geo:
+                            geometric_decay(base2)
+                        if env:
+                            base2 = envelope(
+                            base2,
+                            0.001, dur - 0.001, 0.0, 0.0
+                        )
+                            
+                    if wave_3:
+                        if geo:
+                            geometric_decay(base3)
+                        if env:
+                            base3 = envelope(
+                            base3,
+                            0.001, dur - 0.001, 0.0, 0.0
+                        )
+
+                final = base
+                if wave_2:
+                    final = mix(final, base2)
+
+                if wave_3:
+                    final = mix(final, base3)
+
+
+                return final * amp
+            
+            self.func = func
     
 
 class Horn(Instrument):
@@ -2346,7 +2479,47 @@ class DontTell2(Instrument):
     def get_name(self):
         return "Dont Tell Em Bout My Synth"
     
+class DontTell3(Instrument):
+    def __init__(self, amp = 1.0, freq_mod = 1, octave_shift = 1,
+                 attack = 0.02,
+                 decay = 0.1, release = 0.05):
 
+        def func(freq, dur):
+            freq *= freq_mod
+            t = np.linspace(0, dur, int(44100 * dur))
+            freq *= octave_shift
+
+            #   Wave Foundation #
+            base1 = sine_wave(freq, dur)
+            base2 = sine_wave(freq / 2, dur)
+            base3 = sine_wave(freq *2, dur)
+        
+            wave3 = envelope(base3,
+                             attack, decay, 0.1, release) * 0.2
+            
+            wave1 = envelope(base1,
+                             attack, decay, 0.5, release)
+
+            wave2 = envelope(base2,
+                             attack, decay, 0.2, release)
+
+
+
+            final = mix(
+                wave1, 
+                wave2,
+                wave3
+            )
+
+            final = fade_out(final, 4)
+
+            return final * amp
+        
+        self.func = func
+
+    def get_name(self):
+        return "Dont Tell Em Bout My Synth"
+    
 class RapSynth(Instrument):
     def __init__(self, amp = 1.0, freq_mod = 1):
         self.a = 0.0
@@ -2608,6 +2781,101 @@ class ChimySynth(Instrument):
         
         self.func = func
 
+class SawDefinition(Instrument):
+    def __init__(self, amp = 1.0, dist = 0.0, atk = 0.0, freq_mod = 1):
+        self.a = 0.01
+        self.d = 0.5
+        self.s = 0.0
+        self.r = 0.0
+
+
+        def func(freq, dur):
+            #   Mod the frequency   #
+            freq *= freq_mod
+
+            #   Wave Foundation #
+            wave1 = saw_wave(freq *8, dur)
+            wave1 = envelope(wave1,
+                0.1, 0.1, 0.5, 0.05
+            )
+
+            final = wave1
+            if dist > 0.0:
+                final = distort(final, dist)
+            
+            return final * amp
+        
+        self.func = func
+
+class Saw(Instrument):
+    def __init__(self, amp = 1.0, dist = 0.0, atk = 0.0, freq_mod = 1):
+        self.a = 0.01
+        self.d = 0.5
+        self.s = 0.0
+        self.r = 0.0
+
+
+        def func(freq, dur):
+            #   Mod the frequency   #
+            freq /= freq_mod
+
+            #   Wave Foundation #
+            wave1 = saw_wave(freq, dur) * 0.5
+            wave2 = saw_wave(freq * 2, dur) * 0.5
+            wave3 = saw_wave(freq * 3, dur) * 0.5
+            wave4 = saw_wave(freq * 4, dur) * 0.5
+            wave5 = saw_wave(freq * 5, dur) * 0.5
+            wave6 = saw_wave(freq * 6, dur) * 0.5
+
+
+            amps = np.geomspace(1.0, 0.01, 6)
+
+            wave1 = envelope(
+                wave1,
+                0.01, 0.1, 0.3, 0.01
+            )
+
+            wave2 = envelope(
+                wave2,
+                0.01, 0.1, 0.3, 0.01
+            ) * amps[1]
+
+            wave3 = envelope(
+                wave3,
+                0.01, 0.1, 0.3, 0.01
+            ) * amps[2]
+
+            wave4 = envelope(
+                wave4,
+                0.01, 0.1, 0.3, 0.01
+            ) * amps[3]
+
+            wave5 = envelope(
+                wave5,
+                0.01, 0.1, 0.3, 0.01
+            ) * amps[4]
+
+            wave6 = envelope(
+                wave6,
+                0.1, 0.1, 0.7, 0.01
+            ) * amps[5]
+
+            final = mix(
+                wave1,
+                wave2,
+                wave3,
+                wave4,
+                wave5,
+                wave6
+            )
+
+            if dist > 0.0:
+                final = distort(final, dist)
+            
+            return final * amp
+        
+        self.func = func
+
 class LowSynth(Instrument):
     def __init__(self, amp = 1.0, dist = 0.0, atk = 0.0, freq_mod = 1):
         self.a = 0.01
@@ -2621,10 +2889,18 @@ class LowSynth(Instrument):
             freq /= freq_mod
 
             #   Wave Foundation #
-            wave1 = saw_wave(freq, dur) * 0.01
-            wave2 = sine_wave(freq/1.5, dur) * 2.0
-            wave3 = sine_wave(freq * 1.5, dur) * 0.1
+            wave1 = saw_wave(freq / 1.5, dur) * 0.01
+            wave2 = sine_wave(freq/1.5, dur)
 
+            wave1 = envelope(
+                wave1,
+                0.01, 0.2, 0.3, 0.01
+            )
+
+            wave2 = envelope(
+                wave2,
+                0.01, 0.2, 0.3, 0.01
+            )
 
 
             #   Final Mods  #
@@ -2633,11 +2909,7 @@ class LowSynth(Instrument):
             wave2 #+\
             # wave3
 
-            final = envelope(
-                final,
-                0.01, 0.1, 0.3, 0.01
-            )
-
+            
             if dist > 0.0:
                 final = distort(final, dist)
             
@@ -2670,15 +2942,16 @@ class Church(Instrument):
 class WhinyString(Instrument):
     """Generate a whiny string sound by creating a linear space from the
     fundamental frequency to an integer multiple of the fundamental frequency."""
-    def __init__(self, amp=1.0, harmonics=4, base_attack = 0.001):
+    def __init__(self, amp=1.0, harmonics=4, base_attack = 0.001,
+                 freq_mod = 1.0, sustain = 0.5):
         self.a = 0.4
         self.d = 0.1
         self.s = 0.7
         self.r = 0.4
 
         def func(freq, dur):
+            freq *= freq_mod
             decay = 0.1
-            sustain = 0.5
             release = 0.04
 
             t = np.linspace(0, dur, int(SAMPLE_RATE*dur), endpoint=False)
@@ -2696,7 +2969,8 @@ class WhinyString(Instrument):
                 base += envelope(sine_wave(f, dur),
                                  attacks[counter], decay, sustain, release) * amps[counter]
                 counter += 1
-                
+        
+
             return base * amp
         
         self.func = func
@@ -3126,6 +3400,38 @@ class First3(Instrument):
             final = synth1 + synth2
             return final * amp
 
+        self.func = func
+
+class Menu_1(Instrument):
+    def __init__(self, amp = 1.0, freq_mod = 1.0):
+        def func(freq, dur):
+            freq /= freq_mod
+
+            #   Create the foundational waves
+            w1 = sine_wave(freq / 2, dur)
+            w2 = sine_wave(freq / 4, dur)
+            w3 = sine_wave(freq*2, dur)
+
+            #   Apply envelopes to each waves
+            w1 = envelope(w1,
+                            0.002, 0.0, 1.0, 0.03)
+
+            w2 = envelope(w2,
+                            0.002, 0.0, 1.0, 0.03)
+
+            w3 = envelope(w3,
+                          0.001, 0.2, 0.0, 0.0)
+            
+            #   Mix the waves together
+            final = mix(
+                w1,
+                w2,
+                w3
+            )
+
+
+            return final * amp
+        
         self.func = func
 
 class Old:

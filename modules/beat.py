@@ -136,7 +136,7 @@ class Beat:
         return
 
 
-    def save(self, sound, name = "", norm=True, convert=True, stereo = True, folder=""):
+    def save(self, sound, name = "", norm=True, convert=True, stereo = True, folder="", volume = 13_000):
         """Save the sound to the desired folder.
         Set convert to false if *sound* is already an np.ndarray"""
         path = os.path.join(self.path, folder)
@@ -151,7 +151,7 @@ class Beat:
         if not os.path.isdir(path):
             os.mkdir(path)
 
-        write(sound, path, name, norm=norm, volume_factor=13_000)
+        write(sound, path, name, norm=norm, volume_factor=volume)
 
     def get_instruments(self):
         return
@@ -160,10 +160,18 @@ class Beat:
         self.instruments[key][1] = notes
     
 
+    def set_path(self, path):
+        self.path = path
+        print("Path changed to \'" + path + "\'")
+
     def export_full(self, stereo = True):
         self.get_instruments()
         self.produce_full(export = True, stereo=stereo)
         self.save(self.production, "_prod", convert=False, stereo=False)
+
+    def export_selection(self, instruments = {}, name = "_selection", stereo=True, volume = 13_000):
+        self.produce_full(instruments, export = False, stereo=stereo)
+        self.save(self.production, name, convert=False, stereo=False, volume = volume)
 
 
     def metronome(self, bars=1):

@@ -7,7 +7,7 @@ from scipy.signal import resample
 SAMPLE_FOLDER = "samples"
 
 class Sampler:
-    def sample(sound, dur = 1.0, sample_rate=44100):
+    def sample(sound, dur = 1.0, sample_rate=44100, starting_time = 0.0):
         """Convert a sound file to a numpy array using pygame's mixer.
         Returns a stereo audio file.
         """
@@ -20,16 +20,21 @@ class Sampler:
 
         #   Convert the sound to a numpy array  #
         sound_data = pygame.sndarray.array(sound)
-        write(sound_data, "", "surprise", volume_factor = 1, sample_rate=44100)
+        # write(sound_data, "", "surprise", volume_factor = 1, sample_rate=44100)
 
         #   Ensure the sound is monotone    #
         if len(sound_data.shape) > 1:  # Stereo audio
             # Convert to mono by averaging the two channels
             sound_data = sound_data.mean(axis=1).astype(sound_data.dtype)
 
-        #   Cut off or add padding to the sample to achieve the desired duration   #
-        target_length = int(dur * sample_rate)  # Calculate the target number of samples
+        if starting_time > 0.0:
+            start_point = int(starting_time * sample_rate)
+            sound_data = sound_data[start_point:]
+
+        target_length = int(dur * sample_rate)
         current_length = len(sound_data)
+
+        #   Cut off or add padding to the sample to achieve the desired duration at the starting time   #
 
         ##  Cut the array   #
         if current_length > target_length:

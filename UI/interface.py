@@ -22,6 +22,8 @@ UPSCALED = RESOLUTION * SCALE
 
 def main():
     #   Initialize modules  #
+    
+
     pygame.init()
     pygame.font.init()
     #pygame.mixer.pre_init(44100, size=16, channels = 2)

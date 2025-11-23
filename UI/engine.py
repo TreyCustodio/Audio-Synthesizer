@@ -54,15 +54,11 @@ class Engine:
         self.bpm = 38
 
         #   Instrument   #
-        # self.instrument = Tangible_Light.Bell()
-        self.instrument = Bass_1(amp=1.0, attack=0.005, attack_max = 0.003, freq_mod = 1, sustain=0.3, release= 0.01, amp_final = 0.1, top_freq = 2, harmonics=2)
-
-        # self.instrument = First4(wave_1 = False, wave_2 = True, wave_3 = False)
-        # self.instrument = Acoustic3(harmonics=12,
-        #                         vol_1 = 0.01, vol_2 = 0.01, vol_3 = 0.000000000001, vol_4=1.0, vol_5 = 0.01, vol_6 = 0.01, vol_7 = 0.01, vol_8 = 0.01)
-
-        # self.instrument = Key_Harms(harmonics=30,
-        #                             attack=0.1, decay = 0.05)
+        # self.instrument = Saw()
+        # self.instrument = WhinyString(amp=1.0)
+        # self.instrument = Tangible_Light.Bell(amp=1.0, freq_mod=1.5, wave_2 = False, wave_3=False)
+        # self.instrument = SawDefinition(amp=0.1)
+        self.instrument = Skirt(amp=5.0, noise_amount=0.1, attack=50)
 
         #   Octave   #
         self.octave = 1

@@ -47,6 +47,8 @@ class FF(Beat):
 
     def get_instruments(self):
         self.instruments = {
+            #   Main Melody #
+            
             #   Rhythm and Bass #
             'snares':[None, self.snare_1()]
 
@@ -74,4 +76,5 @@ class FF(Beat):
 
 def main():
     beat = FF(41)
-    beat.export_full()
+    beat.get_instruments()
+    beat.export_selection()

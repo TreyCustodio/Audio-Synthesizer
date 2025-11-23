@@ -1,28 +1,33 @@
 #   Import Modules  #
-from modules import audio, instruments
+from modules.audio import *
+from modules import instruments
 from os import path
 
 #   Import the Interface    #
 from UI import interface
 
 #   Old Beats   #
-from beats import digital_storytelling, dress
-from beatsnew import second, trap, how, new, training
+# from beats import digital_storytelling, dress
+# from beatsnew import second, trap, how, new, training
 
 #   Tangible Light  #
-from Tangible_Light.scripts import \
-    o1, o2, o3, \
-    o4, o5, o6, \
-    o7, o8, o9, \
-    o10, o11, \
-    fpdg
+# from Tangible_Light.scripts import \
+#     o1, o2, o3, \
+#     o4, o5, o6, \
+#     o7, o8, o9, \
+#     o10, o11, \
+#     fpdg
 
 from AMTR.scripts import \
-    title
+    title, middle, over, intro, ff, o7, ptw, bio
 
 #   Random Projects #
-import l, sein, ff
+# import l, sein
 
+#   Paths for quick exporting   #
+AMTR_SFX = os.path.join(os.getcwd(), os.pardir, "AMTR", "sfx")
+AMTR_MENU = os.path.join(os.getcwd(), os.pardir, "AMTR", "sfx", "menu")
+AMTR_TEXT = os.path.join(os.getcwd(), os.pardir, "AMTR", "sfx", "text")
 
 
 
@@ -38,68 +43,117 @@ def text_sounds():
     #   (1) Generate the sounds
     close = audio.text_close()
     interact = audio.text_next()
-    # text = audio.text()
     done = audio.text_done()
-    # sad = audio.text_sad()
-    # angry = audio.text_angry()
 
 
     #   (2) Save the sounds
     audio.write(close, "game" ,"text_close1")
     audio.write(interact, "game", "text_next1" )
-    # audio.write(text, "game", "text_2" )
     audio.write(done, "game", "text_done1" )
-    # audio.write(sad, "game", "text_sad1" )
-    # audio.write(angry, "game", "text_angry1" )
 
+def sfx():
+    """Generate a sound effect(s)"""
+    instr = instruments.Menu_1()
+
+    #   Audio 1
+    sound = instr.n(F3, 0.3)()
+    write(sound, "game", os.path.join(AMTR_MENU, "menu_1"), volume_factor=1_000)
+
+    #   Audio 2
+    sound = instr.n(D3, 0.3)()
+    write(sound, "game", os.path.join(AMTR_MENU, "menu_2"), volume_factor=1_000)
 
 def player():
     interface.main()
 
 def main():
     """Main Function: Create any sounds you want"""
+    #   ---------- Interface Control ----------  #
+    #   Run the Interface   #
+    # interface.main()
     
-    #   Singles #
+
+    #   ---------- Sound Effects ----------  #
+    # sfx()
+    # text_sounds()
+
+
+    #   ---------- One-offs ----------  #
+    #   Singles    #
     # l.main()
     # sein.main()
     # ff.main()
 
-    #   AMTR OST    #
-    title.main()
-    #   Run the Interface
-    # interface.main()
-    # text_sounds()
+    
+    #   ---------- AMTR OST ----------  #
+    #   Side A  #
 
-    #   Ask the User if they want to run the interface  #
-    # print("Run interface? y/n: ", end="")
-    # prompt = input()
-    # if prompt == "y" or prompt == "Y":
-    #     ##   Run the Interface   #
-    #     interface.main()
-    # elif prompt == "n" or prompt == "N":
-    #     pass
-    # else:
-    #     print("\nInput Error: Please type 'Y', 'y', 'N', or 'n'")
+    #   01 - Title Beat
+    # title.main()
+
+    #   02 - Welcome to Earth
+    # intro.main()
+
+    #   03 - Name Him
+    # ff.main()
+
+    #   04 - Middle Ground Main
+    # middle.main()
+
+    #   05 - Middle Ground Biotech
+    bio.main()
+
+    #   06 - Underground Fire
+
+    #   07 - Underground Ice
+
+    #   08 - Overground Entrance
+    # over.main()
+
+    #   09 - Overground Peak
+    # o7.main()
+    
+
+    #   Side B  #
+    #   10 - Silent Dreams
+
+    #   11 - Pave the Way
+    # ptw.main()
+
+    #   12 - Scripted Encounter
+
+    #   13 - Last Reverie
+
+    #   14 -
+
+    #   15 -
+
+    #   16 - Earth's Revival
+
+    #   17 - Final Boss
+
+    #   18 - Credits
 
 
-    #   Tangible Light OST  #
-    #   (1) Title   #
+
+
+    #   ---------- Tangible Light ----------  #
+    #   01 - Title   #
     # o1.main()
 
 
-    #   (2) Journaling #
+    #   02 - Journaling #
     # o2.main()
 
 
-    # #   (3) First Up #
+    #   03 - First Up
     # o3.main()
 
 
-    # #   (4) 04 #
+    #   04 - 04 #
     # o4.main()
     
-
-    # #   (5) Page One    #
+    #   05 - Page One
     # o5.main()
 
 
@@ -121,17 +175,7 @@ def main():
     # #   (11) Pac type beat  #
     # o11.main()
 
-    #   Test the Sampler    #
-    # b = instruments.Bass()
-    # note = b.note(audio.C1, 1.0)
-    # print(note.pitch)
-    # audio.write(note(), "", "test")
-
-    #sampler.main()
 
 
 if __name__ == '__main__':
     main()
-    
-
-    
