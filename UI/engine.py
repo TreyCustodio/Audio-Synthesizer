@@ -55,11 +55,15 @@ class Engine:
 
         #   Instrument   #
         # self.instrument = Saw()
+        self.instrument = Bass()
         # self.instrument = WhinyString(amp=1.0)
-        # self.instrument = Tangible_Light.Bell(amp=1.0, freq_mod=1.5, wave_2 = False, wave_3=False)
+        # self.instrument = Tangible_Light.Bell(amp=1.0, freq_mod=1.0, wave_2 = False, wave_3=False)
         # self.instrument = SawDefinition(amp=0.1)
-        self.instrument = Skirt(amp=5.0, noise_amount=0.1, attack=50)
 
+        # self.instrument = Bass_1(amp=0.6, attack=0.05, attack_max = 0.15,
+        #                          freq_mod = 0.5, decay = 0.1, sustain=0.3, release= 0.05,
+        #                          amp_final = 0.00000000001, top_freq = 2, harmonics=1)
+        
         #   Octave   #
         self.octave = 1
 

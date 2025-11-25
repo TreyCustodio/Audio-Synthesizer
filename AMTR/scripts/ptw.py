@@ -53,6 +53,8 @@ class PTW(Beat):
         ##  Kicks   ##
         self.kick1 = Tap4(5.0, attack=0.001, decay = 0.025, sustain=0.0, noise_amount=0.00000)
         self.kick2 = GlobalSample(amp=0.00003, file_path=os.path.join("samples", "kick", "new-kick.wav"))
+        self.kick3 = GlobalSample(amp=0.00002, file_path=os.path.join("samples", "kick", "new-kick_2.wav"))
+
 
 
         #   Samples #
@@ -92,29 +94,7 @@ class PTW(Beat):
 
         }
 
-    def __str__(self):
-        return \
-        "\n\
-        Track Name: " + self.fileName + "\n\
-        \n\
-        Instrument Sections:\
-        \n\
-        Intro: 12 Bars\n\
-        Main: 16 Bars\n\
-        \n\
-        Full Length: 28 Bars\n\
-        Total Time: " + str(self.str_total_time()) + " seconds"   
-    
-    def str_total_time(self):
-        duration = self.get_duration()
-        minutes = int(duration / self.bpm)
-        seconds = duration % self.bpm
 
-        return str(minutes) + ":" + str(seconds)
-
-    def get_duration(self):
-        print(len(self.production))
-        return (round((self.bpm / 60) * 28, 2)) + 60
 
     def hats_1(self, verse="full"):
         

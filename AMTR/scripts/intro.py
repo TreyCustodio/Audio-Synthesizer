@@ -6,7 +6,7 @@ from modules import *
 
 class Intro(Beat):
     def __init__(self, bpm):
-        super().__init__(bpm, name = "Welcome_To_Earth", path=os.path.join("AMTR", "ost", "05"))
+        super().__init__(bpm, name = "Welcome_To_Earth", path=os.path.join("AMTR", "ost", "02"))
 
         #   Instruments #
 
@@ -615,12 +615,13 @@ def main():
     print(beat)
 
     # beat.export_full()
+    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
 
     beat.get_instruments(verse = "main")
-    beat.export_selection(name="05_main")
+    beat.export_selection(name="02_main")
 
     beat.get_instruments(verse = "intro")
-    beat.export_selection(name="05_intro")
+    beat.export_selection(name="02_intro")
 
     # beat.export_selection(name = '02_full')
 

@@ -13,7 +13,7 @@ class O4(Beat):
         (2) Make melody 1 octave higher for intro
         """
         
-        super().__init__(bpm, path = os.path.join("AMTR", "ost", "04"))
+        super().__init__(bpm, path = os.path.join("AMTR", "ost", "08"))
         
         #   Bass    #
         # self.bass1 = Tangible_Light.Title_Bass(amp=0.4)
@@ -806,6 +806,7 @@ class O4(Beat):
         return
 
 def main():
-    beat = O4(80)
+    # 80 bpm
+    beat = O4(90)
     beat.get_instruments()
-    beat.export_selection(name="04_main")
+    beat.export_selection(name="08_main")

@@ -18,8 +18,10 @@ from UI import interface
 #     o10, o11, \
 #     fpdg
 
+#   AMTR OST    #
 from AMTR.scripts import \
-    title, middle, over, intro, ff, o7, ptw, bio
+    title, middle, over, intro, ff, o7, ptw, bio, \
+    silent, ice
 
 #   Random Projects #
 # import l, sein
@@ -73,9 +75,11 @@ def main():
     # interface.main()
     
 
+
     #   ---------- Sound Effects ----------  #
     # sfx()
     # text_sounds()
+
 
 
     #   ---------- One-offs ----------  #
@@ -85,11 +89,12 @@ def main():
     # ff.main()
 
     
+
     #   ---------- AMTR OST ----------  #
     #   Side A  #
 
     #   01 - Title Beat
-    # title.main()
+    title.main()
 
     #   02 - Welcome to Earth
     # intro.main()
@@ -101,21 +106,23 @@ def main():
     # middle.main()
 
     #   05 - Middle Ground Biotech
-    bio.main()
+    # bio.main()
 
     #   06 - Underground Fire
 
-    #   07 - Underground Ice
+    #   07 - Frozen Core
+    # ice.main()
+    # o7.main()
 
     #   08 - Overground Entrance
     # over.main()
 
     #   09 - Overground Peak
-    # o7.main()
     
 
     #   Side B  #
     #   10 - Silent Dreams
+    # silent.main()
 
     #   11 - Pave the Way
     # ptw.main()

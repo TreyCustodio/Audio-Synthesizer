@@ -46,7 +46,7 @@ class Bio(Beat):
         # hat 2
         self.quick_hat = GlobalSample(0.000005, os.path.join("samples", "hats", "quicky.wav"))
         # hat 3
-        self.hatd = Rapping.Drill_Hat(amp=0.00004)
+        self.hatd = Rapping.Drill_Hat(amp=0.00002)
 
         ##  Snares  ##
         self.snare1 = Rapping.Snare_1(amp=0.00001)
@@ -68,7 +68,7 @@ class Bio(Beat):
 
         #   Samples #
         self.bass_mid = GlobalSample(0.00001, os.path.join("samples", "AMTR", "05_Bass_synth.wav"))
-        self.key_mid = GlobalSample(0.00001, os.path.join("samples", "AMTR", "05_Keys.wav"))
+        self.key_mid = GlobalSample(0.00002, os.path.join("samples", "AMTR", "05_Keys.wav"))
 
         self.go = GlobalSample(0.00001, os.path.join("samples", "go_low.wav"))
         self.ha1 = GlobalSample(0.00003, os.path.join("samples", "has", "ha_1.wav"))
@@ -135,6 +135,16 @@ class Bio(Beat):
         
         v1 = m1 + m2 + m3
 
+        if verse == "intro":
+            return \
+            v1 + v1 + v1
+        
+        if verse == "main":
+            return \
+            v0 + v0 +\
+            v0 +\
+            v1 + v1
+
         return \
         v1 + v1 + v1 +\
         v0 + v0 +\
@@ -155,6 +165,16 @@ class Bio(Beat):
 
         v1 = m1 + m1 + m1 + m1
 
+        if verse == "intro":
+            return \
+            v0 + v1 + v1
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v1 +\
+            v1 + v1
+        
         return \
         v0 + v1 + v1 +\
         v1 + v1 +\
@@ -196,6 +216,16 @@ class Bio(Beat):
         vi = m0 + m0 + m0 + m4
         v1 = m1 + m2 + m3 + m4
 
+        if verse == "intro":
+            return \
+            vi + vi + vi
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v0 +\
+            v1 + v1
+        
         return \
         vi + vi + vi +\
         v1 + v1 +\
@@ -219,6 +249,16 @@ class Bio(Beat):
         v1 = m1 + m0 + m0 + m0
         v2 = m1 + m1 + m1 + m1
 
+        if verse == "intro":
+            return \
+            v1 + v0 + v0
+        
+        if verse == "main":
+            return \
+            v0 + v0 +\
+            v0 +\
+            v2 + v2
+        
         return \
         v1 + v0 + v0 +\
         v0 + v0 +\
@@ -277,6 +317,16 @@ class Bio(Beat):
 
         v3 = m5 + m8 + m7 + m6
 
+        if verse == "intro":
+            return \
+            v0 + v0 + v0
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v2 +\
+            v3 + v3
+        
         return \
         v0 + v0 + v0 +\
         v1 + v1 +\
@@ -325,6 +375,16 @@ class Bio(Beat):
 
         v3 = m5 + m5 + m5 + m5
 
+        if verse == "intro":
+            return \
+            v0 + v0 + v0
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v2 +\
+            v3 + v3
+        
         return \
         v0 + v0 + v0 +\
         v1 + v1 +\
@@ -353,6 +413,16 @@ class Bio(Beat):
         v1 = m1 + m2 + m1 + m2
         v2 = m2 + m2 + m2 + m2
 
+        if verse == "intro":
+            return \
+            v0 + v1 + v1
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v0 +\
+            v1 + v1
+        
         return\
         v0 + v1 + v1 +\
         v1 + v1 +\
@@ -386,6 +456,17 @@ class Bio(Beat):
         ]
 
         v1 = m1 + m1 + m1 + m1
+
+        if verse == "intro":
+            return \
+            v0 + v0 + v1
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v0 +\
+            v1 + v1
+        
         return \
         v0 + v0 + v1 +\
         v1 + v1 +\
@@ -411,6 +492,17 @@ class Bio(Beat):
         ]
 
         v1 = m1 + m2 + m1 + m4
+
+        if verse == "intro":
+            return \
+            v0 + v1 + v1
+        
+        if verse == "main":
+            return \
+            v0 + v1 +\
+            v1 +\
+            v0 + v1
+        
         return \
         v0 + v1 + v1 +\
         v0 + v1 +\
@@ -462,10 +554,18 @@ class Bio(Beat):
         #     v1 + v1 +\
         #     v1 + v1
         
+        if verse == "intro":
+            return \
+            v1 + v1 + v1
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v0 +\
+            v1 + v1
+        
         return \
-        v1 +\
-        v1 +\
-        v1 +\
+        v1 + v1 + v1 +\
         v1 + v1 +\
         v0 +\
         v1 + v1
@@ -527,6 +627,16 @@ class Bio(Beat):
         #     v1 + v1 +\
         #     v1 + v1
 
+        if verse == "intro":
+            return \
+            v0 + v0 + v0
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v0 +\
+            v1 + v1
+        
         return \
         v0 + v0 + v0 +\
         v1 + v1 +\
@@ -577,12 +687,23 @@ class Bio(Beat):
         #     v1 + v1 +\
         #     v1 + v1
         
+        if verse == "intro":
+            return \
+            v1 + v1 + v1
+        
+        if verse == "main":
+            return \
+            v1 + v1 +\
+            v1 +\
+            v1 + v1
+        
         return \
         v1 + v1 + v1 +\
         v1 + v1 +\
         v1 +\
         v1 + v1
 
+    
 def main():
     """
     One more Verse to loop back to verse 1.
@@ -590,10 +711,50 @@ def main():
 
     beat = Bio(70)
     # beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
+
     beat.get_instruments()
-    beat.export_selection(name="05_main", volume=14_500)
+    beat.export_selection(name="05_full")
+
+    """
+    #   Intro   #
+    beat.get_instruments("intro")
+    #   Drums
+    drums = {}
+    for i in beat.instruments:
+        if i == "hats1" or i == "hats2":
+            drums[i] = beat.instruments[i]
+    beat.export_selection(drums, name="05_drums_intro", volume=15_500)
+    
+    #   Main
+    main = {}
+    for i in beat.instruments:
+        if i != "hats1" and i != "hats2":
+            main[i] = beat.instruments[i]
+
+    beat.export_selection(main, name="05_intro", volume=15_500)
+
+
+    #   Main    #
+    beat.get_instruments("main")
+    #   Drums
+    drums = {}
+    for i in beat.instruments:
+        if i == "hats1" or i == "hats2":
+            drums[i] = beat.instruments[i]
+    beat.export_selection(drums, name="05_drums", volume=15_500)
+    
+    #   Main
+    main = {}
+    for i in beat.instruments:
+        if i != "hats1" and i != "hats2":
+            main[i] = beat.instruments[i]
+
+    beat.export_selection(main, name="05_main", volume=15_500)
+
+    
 
     # beat.get_instruments("intro")
     # beat.export_selection(name = "04_intro", volume=14_500)
     # beat.get_instruments("main")
     # beat.export_selection(name = "04_main", volume=14_500)
+    """

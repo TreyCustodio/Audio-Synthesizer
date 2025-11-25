@@ -5,24 +5,14 @@ from modules.audio import *
 class Title(Beat):
     def __init__(self, bpm):
         super().__init__(bpm, path = os.path.join("AMTR", "ost", "01"))
-        #   Instruments #
-
-        #   Melody  #
+        #   ----- Melody -----  #
 
 
-        #   Rhythm / Percussion  #
-        ##  Bass    ##5
+        #   ----- Rhythm / Percussion -----  #
         mod = 0.5
         self.bass1 = LowSynth(2.0)
         
         self.bass2 = Bass_1(amp=1.0, attack=0.0, attack_max = 0.15, freq_mod = mod, decay = 0.00, sustain=0.3, release= 0.01, amp_final = 0.00000000001, top_freq = 2, harmonics=2)
-
-        ##  Whistle ##
-        self.whistle1 = First4(freq_mod=8, wave_1 = False, wave_2 = False, wave_3=True,
-                                    sustain = 0.5,
-                                    decay=0.1,
-                                    attack_3=0.4,
-                                    amp_1 = 1.0)
 
         ##  Hats    ##
         self.hat1 = Rapping.Hat_1(amp=0.000025)
@@ -32,7 +22,7 @@ class Title(Beat):
         # hat 1
         self.hat4 = Hat_4(amp=0.00005)
         # hat 2
-        self.quick_hat = GlobalSample(0.00001, os.path.join("samples", "hats", "quicky.wav"))
+        self.quick_hat = GlobalSample(0.000004, os.path.join("samples", "hats", "quicky.wav"))
         # hat 3
         self.hatd = Rapping.Drill_Hat(amp=0.00004)
 
@@ -51,6 +41,11 @@ class Title(Beat):
         ##  Kicks   ##
         self.kick1 = Tap4(1.0, attack=0.001, decay = 0.03, sustain=0.0, noise_amount=0.0)
 
+        #   ----- MIDIs -----   #
+
+
+
+        #   ----- Samples ----- #
         #   Samples #
         self.go = Go(amp=0.00001)
         self.ha1 = GlobalSample(0.00003, os.path.join("samples", "has", "ha_1.wav"))
@@ -69,7 +64,7 @@ class Title(Beat):
             'kicks':[None, self.kick_1(verse)],
             'hats':[None, self.hats_1(verse)],
             'hats_2':[None, self.hats_2(verse)],
-            'hats_3':[None, self.hats_3(verse)],
+            # 'hats_3':[None, self.hats_3(verse)],
 
 
 
@@ -86,27 +81,34 @@ class Title(Beat):
         v0 = [rest(self.w*4)]
 
         m1 = [
-            h1.n(self.s), h1.n(self.s), rest(self.e),
-            h1.n(self.s), h1.n(self.s), h1.n(self.s), h1.n(self.s),
-            rest(self.q),
+            h1.n(self.s), h1.n(self.s), h1.n(self.s), rest(self.s),
+            h1.n(self.s), h1.n(self.s), h1.n(self.s/2), h1.n(self.s/2), h1.n(self.s),
+            h1.n(self.s), h1.n(self.s), h1.n(self.s/2), h1.n(self.s/2), h1.n(self.s),
             h1.n(self.s), rest(self.s), h1.n(self.s), h1.n(self.s),
         ]
 
         m2 = [
+            h1.n(self.s), h1.n(self.s), h1.n(self.s), h1.n(self.s),
+            h1.n(self.s), h1.n(self.s), h1.n(self.s/2), h1.n(self.s/2), h1.n(self.s),
+            h1.n(self.s), h1.n(self.s), h1.n(self.s/2), h1.n(self.s/2), h1.n(self.s),
+            h1.n(self.s), rest(self.s), h1.n(self.s), h1.n(self.s),
+        ]
+        
+        m3 = [
             h1.n(self.s), h1.n(self.s), rest(self.e),
             h1.n(self.s), h1.n(self.s), h1.n(self.s), h1.n(self.s),
             rest(self.q),
             h1.n(self.s), rest(self.s), h1.n(self.s), h1.n(self.s),
         ]
-        
-        m3 = [
-            h1.n(self.e), h1.n(self.e),
-            h1.n(self.e), h1.n(self.e),
-            h1.n(self.s), h1.n(self.s), h1.n(self.s), h1.n(self.s),
-            h1.n(self.s), h1.n(self.s), h1.n(self.s), h1.n(self.s),
-        ]
 
         m4 = [
+            h1.n(self.s), h1.n(self.s), rest(self.e),
+            h1.n(self.s), h1.n(self.s), h1.n(self.s), h1.n(self.s),
+            rest(self.e), h1.n(self.e),
+            h1.n(self.s), rest(self.s), h1.n(self.s), h1.n(self.s),
+        ]
+
+        m8 = [
             h1.n(self.e), h1.n(self.e),
             h1.n(self.e), h1.n(self.e),
             rest(self.e), h1.n(self.e),
@@ -137,6 +139,8 @@ class Title(Beat):
     def hats_2(self, verse = "main"):
         h = self.quick_hat
 
+        v0 = [rest(self.w*4)]
+
         m1 = [
             rest(self.q),
             rest(self.q),
@@ -162,7 +166,7 @@ class Title(Beat):
         m4 = [
             rest(self.q),
             rest(self.q),
-            rest(self.e), h.n(self.e),
+            rest(self.e), rest(self.e),
             rest(self.e), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2)
         ]
 
@@ -180,8 +184,9 @@ class Title(Beat):
             h.n(self.e), h.n(self.e),
         ]
 
+        m0 = [rest(self.w)]
 
-        v1 = m1 + m2 + m1 + m4
+        v1 = m0 + m0 + m0 + m4
 
         v2 = m1 + m2 + m1 + m8
 
@@ -304,8 +309,7 @@ class Title(Beat):
         m1 = [
             b1.n(E2, self.q + self.e),
             b1.n(G2, self.q),
-            rest(self.e),
-            rest(self.q)
+            b1.n(D2, self.q + self.e),
         ]
 
         m2 = [
@@ -317,8 +321,7 @@ class Title(Beat):
         m3 = [
             b1.n(C2, self.q + self.e),
             b1.n(E2, self.q),
-            rest(self.e),
-            rest(self.q)
+            b1.n(D2, self.q + self.e),
         ]
 
 
@@ -486,8 +489,12 @@ class Title(Beat):
 
 def main():
     beat = Title(78)
-    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
-    beat.get_instruments("intro")
-    beat.export_selection(name = "01_intro", volume=14_500)
-    beat.get_instruments("loop")
-    beat.export_selection(name = "01_main", volume=14_500)
+    # beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
+    beat.get_instruments()
+    beat.export_selection(name = "01_full", volume=14_500)
+    
+    
+    # beat.get_instruments("intro")
+    # beat.export_selection(name = "01_intro", volume=14_500)
+    # beat.get_instruments("loop")
+    # beat.export_selection(name = "01_main", volume=14_500)

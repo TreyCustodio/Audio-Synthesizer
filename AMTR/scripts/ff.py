@@ -6,7 +6,7 @@ Project Frozen FLame
 
 class FF(Beat):
     def __init__(self, bpm):
-        super().__init__(bpm, path=os.path.join("AMTR", "ost", "06"))
+        super().__init__(bpm, path=os.path.join("AMTR", "ost", "03"))
 
         #   Instruments #
 
@@ -42,6 +42,7 @@ class FF(Beat):
         self.snare4 = Rapping.Lofi_Snare(amp=0.00005)
         self.snare5 = Rapping.Crackle_Snare(amp=0.00001)
         self.afro_snare = GlobalSample(0.00003, os.path.join("samples", "snares", "afro_snare.mp3"))
+        self.quick_hat = GlobalSample(0.000005, os.path.join("samples", "hats", "quicky.wav"))
 
         ##  Kicks   ##
         self.kick1 = Tap4(6.0, attack=0.001, decay = 0.05, sustain=0.0, noise_amount=0.00000)
@@ -64,6 +65,7 @@ class FF(Beat):
             
             #   Rhythm and Bass #
             # 'snares':[None, self.snare_1()],
+            # 'hat1': [0, self.hats_1()],
 
             #   Melody  #
 
@@ -184,11 +186,25 @@ class FF(Beat):
         v1 = m1 + m1 + m1 + m1
 
         return m0 + v1
+    
+    def hats_1(self):
+        h = self.quick_hat
+
+        m1 = [
+            h.n(self.q),
+            h.n(self.q),
+            h.n(self.q),
+            h.n(self.q),
+        ]
+
+        v1 = m1 + m1 + m1 + m1
+
+        return v1 + v1
 
 
 
 def main():
-    beat = FF(56)
+    beat = FF(122)
     beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
     beat.get_instruments()
-    beat.export_selection(name="06_main", volume = 16_000)
+    beat.export_selection(name="03_main", volume = 16_000)

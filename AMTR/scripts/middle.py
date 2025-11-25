@@ -6,7 +6,7 @@ Project L
 
 class Mid(Beat):
     def __init__(self, bpm):
-        super().__init__(bpm, path=os.path.join("AMTR", "ost", "02"))
+        super().__init__(bpm, path=os.path.join("AMTR", "ost", "04"))
 
         #   Instruments #
 
@@ -650,6 +650,8 @@ class Mid(Beat):
     
 def main():
     beat = Mid(152)
+    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
+
     beat.get_instruments()
     # beat.export_selection(name = '02_full')
 
@@ -663,5 +665,5 @@ def main():
         if k != "kick2" and k != "snare1" and k != "hats2":
             main[k] = beat.instruments[k]
 
-    beat.export_selection(drums, "02_drums")
-    beat.export_selection(main, "02_main")
+    beat.export_selection(drums, "04_drums")
+    beat.export_selection(main, "04_main")
