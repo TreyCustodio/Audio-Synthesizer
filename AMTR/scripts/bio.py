@@ -68,7 +68,8 @@ class Bio(Beat):
 
         #   Samples #
         self.bass_mid = GlobalSample(0.00001, os.path.join("samples", "AMTR", "05_Bass_synth.wav"))
-        self.key_mid = GlobalSample(0.00002, os.path.join("samples", "AMTR", "05_Keys.wav"))
+        self.key_mid = GlobalSample(0.00003, os.path.join("samples", "AMTR", "05_Keys.wav"))
+        self.tag = GlobalSample(0.001, os.path.join("samples", "tag.wav"))
 
         self.go = GlobalSample(0.00001, os.path.join("samples", "go_low.wav"))
         self.ha1 = GlobalSample(0.00003, os.path.join("samples", "has", "ha_1.wav"))
@@ -84,7 +85,7 @@ class Bio(Beat):
         self.instruments = {}
 
 
-    def get_instruments(self, verse = "main"):
+    def get_instruments(self, verse = "full"):
         self.instruments = {
             #   Rhythm and Bass #
             "hats1": [None, self.hats_1(verse)],
@@ -103,12 +104,29 @@ class Bio(Beat):
 
             #   Samples / Libs  #
             "go": [self.go, self.go_1(verse)],
+            "tag": [self.go, self.producer_tag(verse)],
             "squeak": [self.go, self.squeak_1(verse)],
             "drop": [None, self.drop_1(verse)],
             "wind": [None, self.wind_1(verse)]
 
         }
 
+    def producer_tag(self, verse):
+        t = self.tag
+        
+        m0 = [
+            rest(self.w)
+        ]
+
+        m1 = [
+            t.n(self.w)
+        ]
+
+        v1 = [rest(39.0),
+              m1]
+
+        return v1
+    
     def wind_1(self, verse = "full"):
         w1 = self.wind1
         w2 = self.wind2
@@ -713,7 +731,7 @@ def main():
     # beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
 
     beat.get_instruments()
-    beat.export_selection(name="05_full")
+    beat.export_selection(name="05_full", volume=30_500)
 
     """
     #   Intro   #

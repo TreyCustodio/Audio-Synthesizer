@@ -21,7 +21,7 @@ from UI import interface
 #   AMTR OST    #
 from AMTR.scripts import \
     title, middle, over, intro, ff, o7, ptw, bio, \
-    silent, ice
+    silent, ice, fpdg, rev1, temp
 
 #   Random Projects #
 # import l, sein
@@ -87,14 +87,17 @@ def main():
     # l.main()
     # sein.main()
     # ff.main()
+    
 
     
 
     #   ---------- AMTR OST ----------  #
+    # temp.main()
+
     #   Side A  #
 
     #   01 - Title Beat
-    title.main()
+    # title.main()
 
     #   02 - Welcome to Earth
     # intro.main()
@@ -106,13 +109,12 @@ def main():
     # middle.main()
 
     #   05 - Middle Ground Biotech
-    # bio.main()
+    bio.main()
 
     #   06 - Underground Fire
 
     #   07 - Frozen Core
     # ice.main()
-    # o7.main()
 
     #   08 - Overground Entrance
     # over.main()
@@ -128,10 +130,12 @@ def main():
     # ptw.main()
 
     #   12 - Scripted Encounter
+    # fpdg.main()
+    
+    #   13 - Reverie 1
+    # rev1.main()
 
-    #   13 - Last Reverie
-
-    #   14 -
+    #   14 - 
 
     #   15 -
 

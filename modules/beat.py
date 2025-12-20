@@ -172,6 +172,7 @@ class Beat:
     def export_selection(self, instruments = {}, name = "_selection", stereo=True, volume = 13_000):
         self.produce_full(instruments, export = False, stereo=stereo)
         self.save(self.production, name, convert=False, stereo=False, volume = volume)
+        print(name + " has been exported successfully!")
 
 
     def metronome(self, bars=1):

@@ -257,6 +257,14 @@ class GlobalSample_2(Instrument):
 """
 Sound Fonts
 """
+class E1_Samples(Sample):
+    def __init__(self, amp=0.0001, name="clap01.wav"):
+        super().__init__(amp, os.path.join("samples", "BPB-Korg-Electribe-ER-1", "drums", name), "E1 Drum Sample")
+
+class Nine_Sample(Sample):
+    def __init__(self, amp=0.0001, name="clap-808.wav"):
+        super().__init__(amp, os.path.join("samples", "99-Drum-Samples", "Samples", name), "99 Sounds Drum Sample")
+        
 class Rapping:
     class Snare_1(Sample):
         def __init__(self, amp=0.0001):
@@ -1589,7 +1597,7 @@ class KickBass2(Instrument):
         self.func = func
 
 class Cymbal(Instrument):
-    def __init__(self, amp=1.0, atk1 = 5, atk2 = 15, dist=0.0):
+    def __init__(self, amp=1.0, dist=0.0):
         self.a = 0.001
         self.d = 0.1
         self.s = 0.3
@@ -1598,18 +1606,20 @@ class Cymbal(Instrument):
         def func(freq, dur):
             t = np.linspace(0, dur, int(44100 * dur), endpoint=False)
             
-            wave = sine_wave(15_000, dur)
+            wave = sine_wave(freq, dur)
             wave = envelope(wave,
-                            0.001, 0.0, 0.3, dur / 6)
+                            0.01, dur - 0.01, 0.0, 0.00)
             
 
-            noise = white_noise(sine_wave(1, dur), 0.5)
+            noise = white_noise(saw_wave(1, dur), 0.2)
 
-            noise - distort(noise, 2.0)
             noise = envelope(noise,
-                             0.001, 0.0, 0.3, dur / 6)
+                             0.001, dur - 0.001, 0.0, 0.00)
             
-            wave += noise
+            # wave += noise
+            wave = noise
+
+            wave = fade_out(wave, 6)
 
             if dist != 0.0:
                 wave = distort(wave, dist)

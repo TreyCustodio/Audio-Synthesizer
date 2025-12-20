@@ -42,7 +42,7 @@ class Title(Beat):
         self.kick1 = Tap4(1.0, attack=0.001, decay = 0.03, sustain=0.0, noise_amount=0.0)
 
         #   ----- MIDIs -----   #
-
+        self.midi = GlobalSample(0.00001, os.path.join("samples", "AMTR", "01_MIDI.wav"))
 
 
         #   ----- Samples ----- #
@@ -66,16 +66,38 @@ class Title(Beat):
             'hats_2':[None, self.hats_2(verse)],
             # 'hats_3':[None, self.hats_3(verse)],
 
-
-
-
             #   Melody  #
 
             #   Samples / Libs  #
-            # 'scratch_1':[None, self.scratch_1()],
+            "midi": [None, self.midi_1(verse)]
 
         }
 
+    def midi_1(self, verse):
+        m = self.midi
+
+        v0 = [rest(self.w*4)]
+
+        v1 = [m.n(self.w*8)]
+
+        if verse == "intro":
+            return \
+            v0 + v0
+
+        elif verse == "loop":
+            return \
+            v0 + v0 +\
+            \
+            v0 + v0 +\
+            v1
+        
+        return \
+        v0 + v0 +\
+        \
+        v0 + v0 +\
+        \
+        v1
+    
     def hats_1(self, verse = "main"):
         h1 = self.hat4
         v0 = [rest(self.w*4)]
@@ -489,12 +511,13 @@ class Title(Beat):
 
 def main():
     beat = Title(78)
-    # beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
-    beat.get_instruments()
-    beat.export_selection(name = "01_full", volume=14_500)
-    
-    
-    # beat.get_instruments("intro")
-    # beat.export_selection(name = "01_intro", volume=14_500)
-    # beat.get_instruments("loop")
-    # beat.export_selection(name = "01_main", volume=14_500)
+    vol = 18_000
+
+    # beat.get_instruments()
+    # beat.export_selection(name = "01_full", volume=vol)
+
+    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
+    beat.get_instruments("intro")
+    beat.export_selection(name = "01_intro", volume=vol)
+    beat.get_instruments("loop")
+    beat.export_selection(name = "01_main", volume=vol)

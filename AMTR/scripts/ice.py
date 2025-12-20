@@ -48,7 +48,7 @@ class Ice(Beat):
 
         self.snare4 = GlobalSample(0.00005, os.path.join("samples", "snares", "snare_4.wav"))
 
-        self.snare5 = GlobalSample(0.00005, os.path.join("samples", "snares", "snare_5.wav"))
+        self.snare5 = GlobalSample(0.000015, os.path.join("samples", "snares", "snare_5.wav"))
         
         self.lofi_snare = Rapping.Lofi_Snare(amp=0.00005)
         
@@ -64,15 +64,16 @@ class Ice(Beat):
        
 
        #    Kicks   #
-        self.kick1 = Tap4(1.0, attack=0.001, decay = 0.03, sustain=0.0, noise_amount=0.0)
+        self.kick4 = E1_Samples(amp=0.0000135, name="kick04.wav")
+        self.kick_long = E1_Samples(amp=0.00003, name="kick08.wav")
+
+        # self.hat1 = E1_Samples(amp=0.00001, name="perc02.wav")
+        self.hat1 = E1_Samples(amp=0.000005, name="rim01.wav")
+        # self.hat1 = E1_Samples(amp=0.000005, name="snare15.wav")
+
+
+
         
-        self.kick2 = GlobalSample(amp=0.00002, file_path=os.path.join("samples", "kick", "new-kick.wav"))
-        
-        self.kick3 = GlobalSample(amp=0.000008, file_path=os.path.join("samples", "kick", "new-kick_2.wav"))
-
-        self.kick4 = GlobalSample(amp=0.00002, file_path=os.path.join("samples", "kick", "kick_1.wav"))
-
-
         #   Chimes  #
         self.chime1 = Skirt(amp=0.25, noise_amount=0.1, attack=10)
         
@@ -89,8 +90,7 @@ class Ice(Beat):
 
 
         #   ----- MIDIs -----   #
-        self.main_midi = GlobalSample(0.00005, os.path.join("samples", "AMTR", "07_MIDI.wav"))
-        self.v1_midi = GlobalSample(0.00005, os.path.join("samples", "AMTR", "07_v1.wav"))
+        self.full_midi = GlobalSample(0.00005, os.path.join("samples", "AMTR", "07_full.wav"))
 
 
 
@@ -99,9 +99,12 @@ class Ice(Beat):
         
         self.ha1 = GlobalSample(0.00003, os.path.join("samples", "has", "ha_1.wav"))
 
-        self.ice1 = GlobalSample(0.000006, os.path.join("samples", "ambience", "glass_1.wav"))
+        self.ice1 = GlobalSample(0.000004, os.path.join("samples", "ambience", "glass_1.wav"))
         self.cold1 = GlobalSample(0.00005, os.path.join("samples", "ambience", "cold_1.wav"))
         self.cold2 = GlobalSample(0.00005, os.path.join("samples", "ambience", "cold_2.wav"))
+        # self.crash1 = GlobalSample(0.000005, os.path.join("samples", "ambience", "crash_1.wav"))
+
+        self.crash1 = Cymbal(amp=0.05)
 
 
 
@@ -117,6 +120,8 @@ class Ice(Beat):
             "midi" : [0, self.midi(verse)],
             "kicks": [0, self.kick(verse)],
             "snare": [0, self.snare(verse)],
+            "hat": [0, self.hat(verse)],
+
 
             #   Melody  #
 
@@ -125,29 +130,26 @@ class Ice(Beat):
             #   Samples / Libs  #
             "ice1": [0, self.ice_1(verse)],
             "cold1": [0, self.cold_1(verse)],
-
+            "crash1": [0, self.crash_1(verse)],
         }
 
     def midi(self, verse = "full"):
-        vi = [self.main_midi.n(self.w*4 - self.e)]
-        v1 = [self.main_midi.n(self.w*16)]
-        v2 = [self.v1_midi.n(self.w*12 + self.e)]
+        vf = [self.full_midi.n(self.w * 32)]
+        vi = [self.full_midi.n(self.w*4 - self.e)]
+        vm = [self.full_midi.n(self.w*32, start_time = self.w*4 - self.e)]
+        
         
         if verse == "intro":
             return vi
         
         elif verse == "main":
+            # return \
+            # v2 + v1
             return \
-            v2 + v1
+            vm
         
-        # return \
-        # v1 +\
-        # v1
-    
         return \
-        vi +\
-        \
-        v2 + v1
+        vf
     
     def ice_1(self, verse):
         i = self.ice1
@@ -183,17 +185,75 @@ class Ice(Beat):
         elif verse == "main":
             return \
             v2 + v1 + v1 +\
-            v1 + v1 + v1 + v1 +\
+            \
+            v1 +\
+            \
+            v1 + v1 + v1 +\
+            \
             v0
         
         return \
         vi +\
         \
         v2 + v1 + v1 +\
-        v1 + v1 + v1 + v1 +\
+        \
+        v1 +\
+        \
+        v1 + v1 + v1 +\
+        \
+        vi
+        
+    def crash_1(self, verse):
+        c = self.crash1
+
+        v0 = [
+            rest(self.w*4)
+        ]
+
+        m0 = [rest(self.w)]
+
+        m1 = [
+            rest(self.q),
+            rest(self.q),
+            c.n(C6, self.q),
+            rest(self.e), rest(self.e)
+        ]
+
+        m2 = [
+            rest(self.q),
+            rest(self.q),
+            c.n(C6, self.e),
+            rest(self.q),
+            rest(self.e)
+        ]
+
+        v1 = m0 + m2 + m0 + m2
+
+
+        if verse == "intro":
+            return self.vi
+        
+        elif verse == "main":
+            return \
+            v0 + v1 + v1 +\
+            \
+            v0 +\
+            \
+            v1 + v1 + v0 +\
+            \
+            v0
+        
+        return \
+        self.vi +\
+        \
+        v0 + v1 + v1 +\
+        \
+        v0 +\
+        \
+        v0 + v1 + v1 +\
+        \
         v0
-        
-        
+    
     def cold_1(self, verse):
         c = self.cold1
 
@@ -214,18 +274,29 @@ class Ice(Beat):
         elif verse == "main":
             return \
             v0 + v0 + v0 +\
-            v1 + v0 + v0 + v0 +\
+            \
+            v1 +\
+            \
+            v0 + v0 + v0 +\
+            \
             v0
         
         return \
         vi +\
         \
         v0 + v0 + v0 +\
-        v1 + v0 + v0 + v0+\
+        \
+        v1 +\
+        \
+        v0 + v0 + v0 +\
+        \
         v0
     
     def kick(self, verse):
+        # k = self.kick3
         k = self.kick4
+        kl = self.kick_long
+
 
         v0 = [
             rest(self.w*4)
@@ -240,7 +311,7 @@ class Ice(Beat):
             k.n(self.q),
             rest(self.q),
             k.n(self.e), k.n(self.e),
-            rest(self.e), k.n(self.e),
+            rest(self.e), rest(self.e),
         ]
 
         m2 = [
@@ -253,17 +324,23 @@ class Ice(Beat):
         
 
         m5 = [
-            rest(self.q),
-            k.n(self.e), rest(self.e),
-            k.n(self.q),
-            rest(self.q),
+            rest(self.e), k.n(self.e),
+            rest(self.e), k.n(self.e),
+            kl.n(self.h),
         ]
 
         m6 = [
             k.n(self.e), k.n(self.e),
             rest(self.e), k.n(self.e),
             k.n(self.q),
-            rest(self.q),
+            k.n(self.q),
+        ]
+
+        m7 = [
+            k.n(self.q),
+            rest(self.e), k.n(self.e),
+            k.n(self.e), k.n(self.e),
+            rest(self.e), k.n(self.e),
         ]
 
         mf = [
@@ -273,14 +350,16 @@ class Ice(Beat):
             k.n(self.q),
         ]
 
+        #   Should m7 be m1 ??
         v1 = m1 + m2 + m1 + m2
 
-        v2 = m5 + m6 + m1 + m6
+        v2 = m5 + m6 + m5 + m6
 
         v3 = m0 + m0 + m1 + m2
 
-        v4 = m5 + m6 + m1 + mf
+        v4 = m5 + m6 + m5 + mf
 
+        vi = [rest(self.w*4)]
 
         if verse == "intro":
             return self.vi
@@ -288,15 +367,25 @@ class Ice(Beat):
         elif verse == "main":
             return \
             v1 + v2 + v1 +\
-            v1 + v2 + v1 + v3 +\
+            \
+            v3 +\
+            \
+            v1 + v2 + v3 +\
+            \
             v4
         
+        # Can consider swapping v2 and v1 after the refrain.
+
         return \
         self.vi +\
         \
         v1 + v2 + v1 +\
-        v1 + v2 + v1 + v3 +\
-        v2
+        \
+        v3 +\
+        \
+        v1 + v2 + v3 +\
+        \
+        v4
         
 
     def snare(self, verse):
@@ -328,22 +417,99 @@ class Ice(Beat):
 
         v3 = m1 + m1 + m1 + mf
 
+        vi = [rest(self.w*4)]
+
         if verse == "intro":
             return self.vi
         
         elif verse == "main":
             return \
             v1 + v1 + v1 +\
-            v1 + v1 + v1 + v2 +\
+            \
+            v2 +\
+            \
+            v1 + v1 + v2 +\
+            \
             v3
         
         return \
         self.vi +\
         \
         v1 + v1 + v1 +\
-        v1 + v1 + v1 + v2 +\
+        \
+        v2 +\
+        \
+        v1 + v1 + v2 +\
+        \
         v3
 
+    def hat(self, verse):
+        h = self.hat1
+
+
+        v0 = [
+            rest(self.w*4)
+        ]
+
+
+        m0 = [
+            rest(self.w)
+        ]
+
+        m3 = [
+            rest(self.w - self.e),
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2),
+        ]
+        m4 = [
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2),
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2),
+
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2),
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2),
+
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2),
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s/2), h.n(self.s/2),
+
+            h.n(self.s/4), h.n(self.s/4), h.n(self.s/4), h.n(self.s/4), h.n(self.s/4), h.n(self.s/4), h.n(self.s/2),
+        ]
+
+        
+        #   Should m7 be m1 ??
+        v1 = v0
+
+        v2 = v0
+
+        v3 = v0
+
+        v4 = v0
+
+        vi = [rest(self.w*4 - self.e)]
+
+        vi = m0 + m0 + m3 + m4
+
+        if verse == "intro":
+            return vi
+        
+        elif verse == "main":
+            return \
+            v1 + v2 + v1 +\
+            \
+            v3 +\
+            \
+            v2 + v1 + v3 +\
+            \
+            v4
+        
+        return \
+        vi +\
+        \
+        v1 + v2 + v1 +\
+        \
+        v3 +\
+        \
+        v1 + v2 + v3 +\
+        \
+        v4
     
     
 
@@ -353,12 +519,12 @@ def main():
     """
 
     beat = Ice(70)
-    beat.get_instruments("full")
-    beat.export_selection(name="07_full", volume=30_500)
+    # beat.get_instruments("full")
+    # beat.export_selection(name="07_full", volume=60_500)
 
-    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
+    # beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
     beat.get_instruments("intro")
-    beat.export_selection(name="07_intro", volume=30_500)
+    beat.export_selection(name="07_intro", volume=60_500)
 
     beat.get_instruments("main")
-    beat.export_selection(name="07_main", volume=30_500)
+    beat.export_selection(name="07_main", volume=60_500)

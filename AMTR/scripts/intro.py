@@ -57,6 +57,8 @@ class Intro(Beat):
 
         #   Samples #
         self.go = Go(amp=0.00001 * 1.5)
+        self.hey = GlobalSample(0.00003, os.path.join("samples", "hey.wav"))
+
         self.surprise = Rapping.Surprise(amp=0.00000002)
         self.ha1 = GlobalSample(0.00003, os.path.join("samples", "has", "ha_1.wav"))
         self.record1 = GlobalSample(0.00003, os.path.join("samples", "records", "record_1.wav"))
@@ -89,7 +91,7 @@ class Intro(Beat):
 
 
             #   Samples / Libs  #
-            # 'goha': [self.go, self.go_1()],
+            # 'hey': [self.hey, self.hey_1(verse)],
 
 
             #   Tag #
@@ -132,6 +134,36 @@ class Intro(Beat):
         print(len(self.production))
         return (round((self.bpm / 60) * 28, 2)) + 60
 
+    def hey_1(self, verse):
+        h = self.hey
+
+        v0 = [rest(self.w*4)]
+
+        m0 = [
+            rest(self.w)
+        ]
+
+        m4 = [
+            rest(self.t + self.e),
+            h.n(self.e)
+        ]
+
+        v1 = m0 + m0 + m0 + m4
+
+        if verse == "intro":
+            return \
+            v0 + v0 + v0
+
+        elif verse == "main":
+            return \
+            v0 + v0 +\
+            v0 + v1
+
+        return \
+        v0 + v0 + v0 +\
+        v0 + v0 +\
+        v0 + v1
+    
     def bass_midi(self, verse = "full"):
         b = self.bass_m
 
@@ -535,6 +567,14 @@ class Intro(Beat):
             k.n(self.q),
         ]
 
+        m2 = [
+            k.n(self.e), k.n(self.e),
+            rest(self.s), k.n(self.e), rest(self.s),
+            rest(self.e), k.n(self.s),
+            rest(self.e), k.n(self.e),
+            rest(self.s)
+        ]
+
         m3 = [
             k.n(self.q),
             rest(self.q),
@@ -542,14 +582,22 @@ class Intro(Beat):
             rest(self.q),
         ]
 
-        v1 = m1 + m1 + m3 + m3
+        m4 = [
+            k.n(self.q),
+            rest(self.q),
+            k.n(self.q),
+            rest(self.e), k.n(self.e),
+        ]
+
+        v1 = m1 + m2 + m3 + m4
 
         
         m6 = [
             k.n(self.e), k.n(self.e),
-            rest(self.q),
-            k.n(self.q),
-            k.n(self.q),
+            rest(self.s), k.n(self.e), 
+            rest(self.s), k.n(self.e),
+            rest(self.s), k.n(self.e), 
+            rest(self.s), k.n(self.e), 
         ]
 
         m8 = [
@@ -559,7 +607,7 @@ class Intro(Beat):
             k.n(self.q),
         ]
 
-        v2 = m1 + m6 + m6 + m8
+        v2 = m1 + m6 + m1 + m8
         v2b = m6 + m6 + m6 + m6
 
         v0a = mi + m0 + mi + m0
@@ -569,7 +617,7 @@ class Intro(Beat):
 
         if verse == "main":
             return \
-            v1 + v2 +\
+            v1 + v1 +\
             v1 + v2
         
         elif verse == "intro":
@@ -577,7 +625,7 @@ class Intro(Beat):
         
         return \
         v0a + v0b + v0c +\
-        v1 + v2 +\
+        v1 + v1 +\
         v1 + v2
     
     def snares_1(self, verse = "full"):
@@ -593,7 +641,15 @@ class Intro(Beat):
             rest(self.s), s.n(self.e),
         ]
 
-        v1 = m1 + m1 + m1 + m1
+        m2 = [
+            rest(self.e), rest(self.e),
+            s.n(self.e), rest(self.e), # 2
+            s.n(self.e),
+            rest(self.s), s.n(self.e),
+            rest(self.s), s.n(self.e),
+        ]
+
+        v1 = m1 + m2 + m1 + m1
 
         if verse == "main":
             return \
@@ -612,9 +668,9 @@ class Intro(Beat):
     
 def main():
     beat = Intro(64)
-    print(beat)
+    # beat.get_instruments()
+    # beat.export_selection(name="02_full")
 
-    # beat.export_full()
     beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
 
     beat.get_instruments(verse = "main")
@@ -622,18 +678,3 @@ def main():
 
     beat.get_instruments(verse = "intro")
     beat.export_selection(name="02_intro")
-
-    # beat.export_selection(name = '02_full')
-
-    # drums = {}
-    # for k in beat.instruments:
-    #     if k == "kick2" or k == "snare1" or k == "hats2":
-    #         drums[k] = beat.instruments[k]
-    
-    # main = {}
-    # for k in beat.instruments:
-    #     if k != "kick2" and k != "snare1" and k != "hats2":
-    #         main[k] = beat.instruments[k]
-    
-    # beat.export_selection(name="05_intro")
-    # beat.export_selection(drums, "05_drums")

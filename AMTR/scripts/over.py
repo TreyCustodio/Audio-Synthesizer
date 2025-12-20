@@ -16,8 +16,8 @@ class O4(Beat):
         super().__init__(bpm, path = os.path.join("AMTR", "ost", "08"))
         
         #   Bass    #
-        # self.bass1 = Tangible_Light.Title_Bass(amp=0.4)
-        self.bass1 = LowSynth(amp=2.0, freq_mod=2)
+        self.bass1 = Bass_1(amp=0.3, attack=0.01, attack_max = 0.02, freq_mod = 1, sustain=1.0, release= 0.01, amp_final = 0.00000000001, harmonics=3)
+        # self.bass1 = LowSynth(amp=2.0, freq_mod=2)
 
 
         #   Plucky, Accoustic Synths   #
@@ -40,10 +40,44 @@ class O4(Beat):
         self.tap1 = Tap3(attack=10, amp=0.5) # clap
         self.tap2 = Tap3(attack=100, amp=0.3)
 
-        self.kick1 = Tap3(amp=2.5, attack=60, noise_amount=0.0)
-
         self.hat1 = Hi_Hat(amp=2.0)
         self.chime1 = Snare(attack=3)
+
+
+
+        #   Percussion  #
+        ##  Kicks
+        self.kick1 = Nine_Sample(amp=0.00007, name="kick-electro01.wav")
+
+        ##  Claps
+        self.clap1 = Nine_Sample(name="clap-tape.wav")
+        self.clap2 = Nine_Sample(name="clap-slapper.wav") # long clap
+
+        ##  Crashes
+        self.crash1 = Nine_Sample(name="crash-acoustic.wav")
+
+        ##  Shakes
+        self.shake1 = Nine_Sample(name="shaker-shuffle.wav")
+
+        ##  Hats
+        self.closed1 = Nine_Sample(name="hihat-808.wav")
+        self.open1 = Nine_Sample(name="openhat-slick.wav")
+
+        ##  Snares
+        self.snare1 = Nine_Sample(amp=0.00007, name="snare-acoustic01.wav")
+        self.snare2 = Nine_Sample(amp=0.00007, name="snare-acoustic02.wav")
+        self.snare3 = Rapping.Snare_1()
+
+        self.snare_lof = Nine_Sample(name="snare-lofi01.wav")
+
+        ##  Tom
+        self.tom1 = Nine_Sample(name="tom-rototom.wav")
+
+
+        #   Additional Samples
+        self.hoy = GlobalSample(0.00004, os.path.join("samples", "vocals", "phonk-vocal-fx-wet-shot.wav"))
+        self.midi_full = GlobalSample(0.00015, os.path.join("samples", "AMTR", "08_midi.wav"))
+
 
         
     def get_instruments(self):
@@ -58,18 +92,25 @@ class O4(Beat):
             2: [self.acou2, self.acoustic_2()],
             3: [self.acou3, self.acoustic_3()],
 
-            #   Synths  #
-            4: [self.synth1, self.synth_1()],
-            8: [self.synth2, self.synth_2()],
-            9: [self.synth3, self.melody_1()],
-            # 'melody': [self.synth4, self.melody_2()],
-
             
 
-            # #   Percussion
-            5: [self.tap1, self.claps()],
-            6: [self.tap2, self.taps()],
-            7: [self.kick1, self.kicks()],
+            #   Percussion
+            'hat': [self.hat1, self.hat_1()],
+
+            'snare1': [self.hat1, self.snare_1()],
+            'snare2': [self.hat1, self.snare_2()],
+
+            'lofi snare': [self.hat1, self.snare_lofi()],
+
+            'kick': [self.hat1, self.kick_1()],
+
+            'crash': [self.hat1, self.crash()],
+
+            #   Samples #
+            # 'vocal': [self.hoy, self.vocals()],
+
+            #   MIDI    #
+            'midi': [None, self.midi()]
         }
         
     def acoustic_1(self):
@@ -247,6 +288,21 @@ class O4(Beat):
             v1 +\
             v1
 
+    def midi(self, verse = "full"):
+        m = self.midi_full
+        
+        if verse == "intro":
+            return [m.n(self.w*4)]
+
+        elif verse == "main":
+            return [m.n(self.w*40, start_time=self.w*4)]
+        
+        return \
+        [m.n(self.w*40)]
+    
+    """
+    Deprecated instruments
+    """
     def melody_1(self):
         s = self.synth3
 
@@ -512,6 +568,7 @@ class O4(Beat):
         v2
     
     def synth_1(self):
+        """Main Melody after break"""
         s = self.synth3
 
         m1 = [
@@ -603,7 +660,10 @@ class O4(Beat):
             \
             v1 +\
             v1
-       
+    """
+    End of deprecated instruments section
+    """
+
     def bass(self):
         """Bass melody"""
         b = self.bass1
@@ -650,163 +710,232 @@ class O4(Beat):
         v1 +\
         v1
     
-    def kicks(self):
-        b = self.kick1
+    def vocals(self):
+        h = self.hoy
+
+        m0 = [
+            rest(self.w)
+        ]
+        v0 = [rest(self.w*4)]
+
         m1 = [
-            b.n(D2, self.e), rest(self.s),
-            b.n(D2, self.e), rest(self.s), # 1.5
-            b.n(D2, self.h + self.e),
+            h.n(self.w * 2)
+        ]
+
+        v1 = m1 + m0 + m0
+
+        return \
+        v0 + v0 + v0 + v0 +\
+        v1 + v1 +\
+        v0 + v0 + v0 + v0
+    
+    def hat_1(self):
+        h = self.closed1
+
+        m1 = [
+            h.n(self.s), h.n(self.s), h.n(self.s), h.n(self.s),
+            rest(self.s), rest(self.s), h.n(self.s), h.n(self.s),
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s), h.n(self.s), h.n(self.s),
+            h.n(self.s/2), h.n(self.s/2), h.n(self.s), h.n(self.s), h.n(self.s),
         ]
 
         m2 = [
-            b.n(A1, self.e), rest(self.s),
-            b.n(A1, self.e), rest(self.s), # 1.5
-            b.n(A1, self.h + self.e),
+            h.n(self.s), h.n(self.s), h.n(self.s), h.n(self.s),
+            rest(self.s), rest(self.s), h.n(self.s), h.n(self.s),
+            h.n(self.s), h.n(self.s), h.n(self.s), h.n(self.s),
+            h.n(self.s), h.n(self.s), h.n(self.s), h.n(self.s),
         ]
+        v0 = [rest(self.w*4)]
 
-        m3 = [
-            b.n(D2, self.e), rest(self.s),
-            b.n(D2, self.e), rest(self.s), # 1.5
-            rest(self.q),
-            b.n(D2, self.e), b.n(D2, self.e),
-            rest(self.e)
-        ]
-
-        m4 = [
-            b.n(A1, self.e), rest(self.s),
-            b.n(A1, self.e), rest(self.s), # 1.5
-            rest(self.q),
-            b.n(A1, self.e), b.n(A1, self.e),
-            rest(self.e)
-        ]
-
-        off_verse = [rest(self.w*4)]
-        v1 = m3 + m3 + m4 + m4
+        v1 = m1 + m1 + m2 + m2
 
         return \
-        off_verse +\
-        off_verse +\
-        off_verse +\
-        off_verse +\
-        \
-        \
-        v1 +\
-        v1 +\
-        \
-        v1 +\
-        v1
-    
-    def claps(self):
-        """Tap melody"""
-        d = self.tap1
+        v1 + v1 + v1 + v1 +\
+        v0 + v0 +\
+        v1 + v1 + v1 + v1 +\
+        v0 + v1
+        
+    def kick_1(self):
+        k = self.kick1
 
-        intro = [
-            rest(self.w*3),
-            rest(self.t),
-            d.n(C2, self.q)
+        v0 = [rest(self.w*4)]
+
+        m1 = [
+            k.n(self.e), rest(self.s), k.n(self.s),
+            rest(self.e), k.n(self.e),
+            rest(self.e), rest(self.s), k.n(self.s),
+            rest(self.e), k.n(self.e),
         ]
+
+        m2 = [
+            k.n(self.e), rest(self.s), k.n(self.s),
+            rest(self.e), k.n(self.s), k.n(self.s),
+            rest(self.e), rest(self.s), k.n(self.s),
+            rest(self.e), k.n(self.e),
+        ]
+
+        v1 = m1 + m2 + m1 + m2
+
+        return \
+        v0 + v0 + v0 + v0 +\
+        v0 + v0 +\
+        v1 + v1 + v1 + v1 +\
+        v1 + v1
+
+    def snare_1(self):
+        s = self.snare1
+        s2 = self.snare2
+
+        v0 = [rest(self.w*4)]
 
         m1 = [
             rest(self.q),
-            d.n(C2, self.q),
+            s.n(self.e), rest(self.e),
             rest(self.q),
-            d.n(C2, self.q),
+            s.n(self.e), rest(self.s), s.n(self.s)
+        ]
+
+        m3 = [
+            rest(self.q),
+            s2.n(self.e), rest(self.e),
+            rest(self.q),
+            s.n(self.e), rest(self.e)
         ]
 
         m4 = [
             rest(self.q),
-            d.n(C2, self.q),
+            s2.n(self.e), rest(self.s), s.n(self.s),
             rest(self.q),
-            d.n(C2, self.s), d.n(C2, self.s), d.n(C2, self.s), d.n(C2, self.s),
+            s.n(self.e), s.n(self.e),
         ]
 
-
-        v1 = m1 + m1 + m1 + m4
-        off_verse = [rest(self.w*4)]
-
-        return \
-        off_verse +\
-        off_verse +\
-        off_verse +\
-        off_verse +\
-        \
-        \
-        off_verse +\
-        intro +\
-        \
-        v1 +\
-        v1
-
-    def taps(self):
-        """Tap melody"""
-        d = self.tap2
 
         
 
+        v1 = m1 + m1 + m3 + m4
+
+        return \
+        v1 + v1 + v1 + v1 +\
+        v0 + v0 +\
+        v1 + v1 + v1 + v1 +\
+        v1 + v1
+
+    def snare_2(self):
+        s = self.snare3
+
+        v0 = [rest(self.w*4)]
+
         m1 = [
-            d.n(C2, self.q),
             rest(self.q),
-            d.n(C1, self.q),
+            rest(self.e), rest(self.e),
+            s.n(self.e), rest(self.s), s.n(self.s),
             rest(self.q),
-
-
         ]
 
         m2 = [
-            d.n(C2, self.q),
             rest(self.q),
-            d.n(C1, self.q),
-            rest(self.q),
-
-
+            rest(self.e), rest(self.e),
+            s.n(self.e), rest(self.s), s.n(self.s),
+            rest(self.e), s.n(self.e)
         ]
 
         m3 = [
-            d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s),
-            d.n(C1, self.e), d.n(C1, self.e), 
-            d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s),
-            d.n(C1, self.e), rest(self.e)
+            rest(self.q),
+            rest(self.e), rest(self.e),
+            s.n(self.s), s.n(self.s), rest(self.s), s.n(self.s),
+            rest(self.e), s.n(self.e),
         ]
 
         m4 = [
-            d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s),
-            d.n(C1, self.e), d.n(C1, self.e), 
-            d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s),
-            d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s), d.n(C1, self.s),
+            rest(self.q),
+            s.n(self.e), rest(self.s), s.n(self.s),
+            rest(self.q),
+            s.n(self.e), s.n(self.e),
         ]
 
+        v1 = m1 + m2 + m3 + m2
 
-        v1 = m1 + m2 + m1 + m2
-        v2 = m3 + m4 + m3 + m4
 
-        off_verse = [rest(self.w*4)]
+        m5 = [
+            rest(self.q),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.s), s.n(self.s),
+            rest(self.q),
+        ]
+
+        m6 = [
+            rest(self.q),
+            rest(self.e), rest(self.e),
+            rest(self.e), rest(self.s), s.n(self.s),
+            rest(self.e), s.n(self.e)
+        ]
+
+        m7 = [
+            rest(self.q),
+            rest(self.e), rest(self.e),
+            rest(self.s), s.n(self.s), rest(self.s), s.n(self.s),
+            rest(self.e), s.n(self.e),
+        ]
+
+        v2 = m5 + m6 + m7 + m6
+
         return \
-        off_verse +\
-        off_verse +\
-        off_verse +\
-        off_verse +\
-        \
-        \
-        off_verse +\
-        off_verse +\
-        \
-        v1 +\
-        v2
-
+        v1 + v1 + v1 + v1 +\
+        v2 + v2 +\
+        v1 + v1 + v1 + v1 +\
+        v1 + v1
     
-    def hats(self):
-        """Hi-hat crashes"""
-        d = self.hat1
+    def snare_lofi(self):
+        s = self.snare_lof
 
-        return
-    
-    def chimes(self):
-        d = self.chime1
+        m1 = [
+            rest(self.q),
+            rest(self.q),
+            s.n(self.q),
+            rest(self.q),
+        ]
 
-        return
+        v0 = [rest(self.w*4)]
+        v1 = m1 + m1 + m1 + m1
+
+        return \
+        v0 + v0 + v0 + v0 +\
+        v1 + v1 +\
+        v0 + v0 + v0 + v0 +\
+        v0 + v0
+
+    def crash(self):
+        c = self.crash1
+
+        v0 = [
+            rest(self.w*4)
+        ]
+
+        m0 = [
+            rest(self.w)
+        ]
+
+        mi = [
+            c.n(self.w, amp=0.1)
+        ]
+        
+
+        v1 = mi + m0 + m0 + m0
+        v2 = m0 + m0 + m0 + mi
+
+        return \
+        v1 + v0 + v0 + v0 +\
+        v0 + v2 +\
+        v0 + v2 + v0 + v2 +\
+        v0 + v0
 
 def main():
-    # 80 bpm
     beat = O4(90)
     beat.get_instruments()
+    
+    #   Export Here
+    beat.export_selection(name="08_full")
+    
+    #   Export to AMTR directory
+    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
     beat.export_selection(name="08_main")
