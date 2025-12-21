@@ -1,8 +1,8 @@
 from .audio import *
 import pygame
 import wave
-import scipy.io.wavfile as wav
-from scipy.signal import resample
+# import scipy.io.wavfile as wav
+# from scipy.signal import resample
 
 SAMPLE_FOLDER = "samples"
 

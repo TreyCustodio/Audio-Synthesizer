@@ -9,6 +9,8 @@ from UI import interface
 #   Old Beats   #
 # from beats import digital_storytelling, dress
 # from beatsnew import second, trap, how, new, training
+from beatsnew import pan
+
 
 #   Tangible Light  #
 # from Tangible_Light.scripts import \
@@ -84,6 +86,7 @@ def main():
 
     #   ---------- One-offs ----------  #
     #   Singles    #
+    pan.main()
     # l.main()
     # sein.main()
     # ff.main()
@@ -109,7 +112,7 @@ def main():
     # middle.main()
 
     #   05 - Middle Ground Biotech
-    bio.main()
+    # bio.main()
 
     #   06 - Underground Fire
 
