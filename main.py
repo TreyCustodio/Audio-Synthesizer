@@ -9,21 +9,21 @@ from UI import interface
 #   Old Beats   #
 # from beats import digital_storytelling, dress
 # from beatsnew import second, trap, how, new, training
-from beatsnew import pan
+# from beatsnew import pan
 
 
 #   Tangible Light  #
-# from Tangible_Light.scripts import \
-#     o1, o2, o3, \
-#     o4, o5, o6, \
-#     o7, o8, o9, \
-#     o10, o11, \
-#     fpdg
+from Tangible_Light.scripts import \
+    o1, o2, o3, \
+    o4, o5, o6, \
+    o7, o8, o9, \
+    o10, o11,  \
+    fpdg
 
 #   AMTR OST    #
 from AMTR.scripts import \
-    title, middle, over, intro, ff, o7, ptw, bio, \
-    silent, ice, fpdg, rev1, temp
+    title, middle, over, intro, ff, name, o7, ptw, bio, \
+    silent, ice, fpdg, rev1, temp, o14, o15, o16
 
 #   Random Projects #
 # import l, sein
@@ -86,7 +86,8 @@ def main():
 
     #   ---------- One-offs ----------  #
     #   Singles    #
-    pan.main()
+    # experiments.main()
+    # pan.main()
     # l.main()
     # sein.main()
     # ff.main()
@@ -106,7 +107,7 @@ def main():
     # intro.main()
 
     #   03 - Name Him
-    # ff.main()
+    name.main()
 
     #   04 - Middle Ground Main
     # middle.main()
@@ -139,10 +140,13 @@ def main():
     # rev1.main()
 
     #   14 - 
+    # o14.main()
 
     #   15 -
+    # o15.main()
 
     #   16 - Earth's Revival
+    # o16.main()
 
     #   17 - Final Boss
 

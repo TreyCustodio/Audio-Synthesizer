@@ -1,0 +1,119 @@
+﻿<region> 
+sample=.\Prophet Brass\80s_ProBrass_A1.wav 
+lokey=45 
+hikey=47 
+lovel=1 
+hivel=127 
+pitch_keycenter=45 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_A2.wav 
+lokey=57 
+hikey=59 
+lovel=1 
+hivel=127 
+pitch_keycenter=57 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_A3.wav 
+lokey=69 
+hikey=71 
+lovel=1 
+hivel=127 
+pitch_keycenter=69 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_A4.wav 
+lokey=81 
+hikey=83 
+lovel=1 
+hivel=127 
+pitch_keycenter=81 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_C1.wav 
+lokey=36 
+hikey=38 
+lovel=1 
+hivel=127 
+pitch_keycenter=36 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_C2.wav 
+lokey=48 
+hikey=50 
+lovel=1 
+hivel=127 
+pitch_keycenter=48 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_C3.wav 
+lokey=60 
+hikey=62 
+lovel=1 
+hivel=127 
+pitch_keycenter=60 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_C4.wav 
+lokey=72 
+hikey=74 
+lovel=1 
+hivel=127 
+pitch_keycenter=72 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_C5.wav 
+lokey=84 
+hikey=84
+lovel=1 
+hivel=127 
+pitch_keycenter=84 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_D#1.wav 
+lokey=39 
+hikey=41 
+lovel=1 
+hivel=127 
+pitch_keycenter=39 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_D#2.wav 
+lokey=51 
+hikey=53 
+lovel=1 
+hivel=127 
+pitch_keycenter=51 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_D#3.wav 
+lokey=63 
+hikey=65 
+lovel=1 
+hivel=127 
+pitch_keycenter=63 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_D#4.wav 
+lokey=75 
+hikey=77 
+lovel=1 
+hivel=127 
+pitch_keycenter=75 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_F#1.wav 
+lokey=42 
+hikey=44 
+lovel=1 
+hivel=127 
+pitch_keycenter=42 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_F#2.wav 
+lokey=54 
+hikey=56 
+lovel=1 
+hivel=127 
+pitch_keycenter=54 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_F#3.wav 
+lokey=66 
+hikey=68 
+lovel=1 
+hivel=127 
+pitch_keycenter=66 
+<region> 
+sample=.\Prophet Brass\80s_ProBrass_F#4.wav 
+lokey=78 
+hikey=80 
+lovel=1 
+hivel=127 
+pitch_keycenter=78

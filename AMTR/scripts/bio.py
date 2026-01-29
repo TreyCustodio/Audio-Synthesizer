@@ -727,10 +727,12 @@ def main():
     """
 
     beat = Bio(70)
-    # beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
+    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
 
-    beat.get_instruments()
-    beat.export_selection(name="05_full", volume=30_500)
+    beat.get_instruments("intro")
+    beat.export_selection(name="05_intro", volume=30_500)
+    beat.get_instruments("main")
+    beat.export_selection(name="05_main", volume=30_500)
 
     """
     #   Intro   #

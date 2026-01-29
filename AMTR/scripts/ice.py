@@ -522,7 +522,7 @@ def main():
     # beat.get_instruments("full")
     # beat.export_selection(name="07_full", volume=60_500)
 
-    # beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
+    beat.set_path(os.path.join(os.getcwd(), os.pardir, "AMTR", "ost"))
     beat.get_instruments("intro")
     beat.export_selection(name="07_intro", volume=60_500)
 

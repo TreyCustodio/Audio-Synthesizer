@@ -264,7 +264,19 @@ class E1_Samples(Sample):
 class Nine_Sample(Sample):
     def __init__(self, amp=0.0001, name="clap-808.wav"):
         super().__init__(amp, os.path.join("samples", "99-Drum-Samples", "Samples", name), "99 Sounds Drum Sample")
-        
+
+class Eighties_Synths(Sample):
+    def __init__(self, amp=0.0001, path = os.path.join("Polys and Pads", "105bpm", "80s_JupiPoly[105]-C.wav")):
+        super().__init__(amp, os.path.join("samples", "80s", "80s Synths Samples", path), "Sample Radar 80s Synth Sample")
+
+class Eighties_Synths(Sample):
+    def __init__(self, amp=0.0001, path = os.path.join("Polys and Pads", "105bpm", "80s_JupiPoly[105]-C.wav")):
+        super().__init__(amp, os.path.join("samples", "80s", "80s Synths Samples", path), "Sample Radar 80s Synth Sample")
+
+class Radar_Jazz(Sample):
+    def __init__(self, amp=0.0001, path = os.path.join("Drum_Hits", "Kit_Hat02.wav")):
+        super().__init__(amp, os.path.join("samples", "Musicradar-jazz-groove-samples", path), "Music Radar Jazz Sample")
+
 class Rapping:
     class Snare_1(Sample):
         def __init__(self, amp=0.0001):
@@ -425,10 +437,10 @@ class Tangible_Light:
                     0.01, dur - 0.05, 0.0, 0.0)
 
                     wave2 = envelope(base2,
-                    0.05, dur - 0.05 - 0.1, 0.5, 0.1)
+                    0.05, dur - 0.05, 0.5, 0.0)
 
                     wave3 = envelope(base3,
-                    0.1, dur - 0.2, 0.3, 0.1)
+                    0.1, dur - 0.1, 0.3, 0.0)
 
 
                 final = mix(
@@ -2887,7 +2899,9 @@ class Saw(Instrument):
         self.func = func
 
 class LowSynth(Instrument):
-    def __init__(self, amp = 1.0, dist = 0.0, atk = 0.0, freq_mod = 1):
+    def __init__(self, amp = 1.0, dist = 0.0, atk = 0.0, freq_mod = 1,
+                 wave_1 = True, wave_2 = True, wave_3 = True,
+                 sustain = 0.3):
         self.a = 0.01
         self.d = 0.5
         self.s = 0.0
@@ -2900,25 +2914,43 @@ class LowSynth(Instrument):
 
             #   Wave Foundation #
             wave1 = saw_wave(freq / 1.5, dur) * 0.01
-            wave2 = sine_wave(freq/1.5, dur)
+            wave2 = sine_wave(freq / 1.5, dur)
+            wave3 = sine_wave((freq / 1.5) * 2, dur) * 0.5
+
 
             wave1 = envelope(
                 wave1,
-                0.01, 0.2, 0.3, 0.01
+                0.01, 0.2, sustain, 0.01
             )
 
             wave2 = envelope(
                 wave2,
-                0.01, 0.2, 0.3, 0.01
+                0.01, 0.2, sustain, 0.01
+            )
+
+            wave3 = envelope(
+                wave3,
+                0.01, 0.2, sustain, 0.01
             )
 
 
             #   Final Mods  #
-            final = \
-            wave1 +\
-            wave2 #+\
-            # wave3
-
+            if wave_1 and wave_2 and wave_3:
+                final = wave1 + wave2 + wave3
+            elif wave_1 and wave_2:
+                final = wave1 + wave2
+            elif wave_1 and wave_3:
+                final = wave1 + wave3
+            elif wave_2 and wave_3:
+                final = wave2 + wave3
+            elif wave_1:
+                final = wave1
+            elif wave_2:
+                final = wave2
+            elif wave_3:
+                final = wave3
+            else:
+                raise ValueError("Must select either wave1 or wave2")
             
             if dist > 0.0:
                 final = distort(final, dist)

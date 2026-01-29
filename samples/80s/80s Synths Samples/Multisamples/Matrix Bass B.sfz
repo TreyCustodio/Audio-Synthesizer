@@ -1,0 +1,91 @@
+﻿<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-A1.wav 
+lokey=45 
+hikey=47 
+lovel=1 
+hivel=127 
+pitch_keycenter=45 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-A2.wav 
+lokey=57 
+hikey=59 
+lovel=1 
+hivel=127 
+pitch_keycenter=57 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-A3.wav 
+lokey=69 
+hikey=71 
+lovel=1 
+hivel=127 
+pitch_keycenter=69 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-C1.wav 
+lokey=36 
+hikey=38 
+lovel=1 
+hivel=127 
+pitch_keycenter=36 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-C2.wav 
+lokey=48 
+hikey=50 
+lovel=1 
+hivel=127 
+pitch_keycenter=48 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-C3.wav 
+lokey=60 
+hikey=62 
+lovel=1 
+hivel=127 
+pitch_keycenter=60 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-C4.wav 
+lokey=72 
+hikey=72 
+lovel=1 
+hivel=127 
+pitch_keycenter=72 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-D#1.wav 
+lokey=39 
+hikey=41 
+lovel=1 
+hivel=127 
+pitch_keycenter=39 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-D#2.wav 
+lokey=51 
+hikey=53 
+lovel=1 
+hivel=127 
+pitch_keycenter=51 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-D#3.wav 
+lokey=63 
+hikey=65 
+lovel=1 
+hivel=127 
+pitch_keycenter=63 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-F#1.wav 
+lokey=42 
+hikey=44 
+lovel=1 
+hivel=127 
+pitch_keycenter=42 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-F#2.wav 
+lokey=54 
+hikey=56 
+lovel=1 
+hivel=127 
+pitch_keycenter=54 
+<region> 
+sample=.\Matrix Bass B\80s_MatrixBassB-F#3.wav 
+lokey=66 
+hikey=68 
+lovel=1 
+hivel=127 
+pitch_keycenter=66
